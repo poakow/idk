@@ -1,0 +1,752 @@
+<title>Coin Crawl</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Nunito:wght@400;600;800&display=swap">
+<style>
+/* Layout: arena + stats + log on the left, gear shop + relics + retire on the right; stacks to one column on phones. Single dark dungeon look on purpose. */
+:root{
+  --stone:#16131d;
+  --wall:#211c2c;
+  --edge:#3a3150;
+  --text:#f1ecff;
+  --mute:#a99fc2;
+  --gold:#f5b942;
+  --hp:#ff5d73;
+  --combo:#ff7ad9;
+  --heal:#62d2c4;
+  --pixel:"Pixelify Sans","Courier New",monospace;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+body{background:var(--stone);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.45;
+  padding-block:16px 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-tap-highlight-color:transparent}
+.wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.lbl{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.num{font-family:var(--pixel);font-variant-numeric:tabular-nums}
+
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-family:var(--pixel);font-weight:700;font-size:32px;line-height:1;letter-spacing:.02em;color:var(--gold)}
+.tag{color:var(--mute);font-size:13px}
+.purse{display:flex;align-items:center;gap:18px}
+.coin{display:inline-block;width:18px;height:18px;border-radius:50%;background:var(--gold);box-shadow:inset -3px -3px 0 rgba(0,0,0,.25),inset 2px 2px 0 rgba(255,255,255,.35);vertical-align:-3px;margin-right:6px}
+#gold{font-size:30px;font-weight:600;color:var(--gold)}
+.tales{color:var(--heal);font-size:14px}
+.tales b{font-family:var(--pixel);font-size:20px;font-weight:600}
+#mute{font:inherit;font-size:12px;font-weight:700;color:var(--mute);background:transparent;border:1px solid var(--edge);border-radius:999px;padding:6px 12px;cursor:pointer}
+#mute:hover{color:var(--text)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--wall);border:1px solid var(--edge);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+
+.floorbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#floorName{font-family:var(--pixel);font-size:20px;font-weight:600}
+.pips{display:flex;gap:5px}
+.pip{width:14px;height:14px;border-radius:3px;background:var(--stone);border:1px solid var(--edge)}
+.pip.done{background:var(--gold);border-color:var(--gold)}
+.pip.now{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,185,66,.25)}
+.pip.boss{width:20px;border-radius:4px}
+.pip.boss.now{border-color:var(--hp);box-shadow:0 0 0 2px rgba(255,93,115,.3)}
+#arena{display:block;width:100%;height:270px;border-radius:8px;cursor:crosshair;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.hint{margin:0;font-size:13px;color:var(--mute)}
+.hint b{color:var(--combo)}
+
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:480px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.stat{background:var(--stone);border-radius:6px;padding:8px 10px;min-width:0}
+.stat b{display:block;font-family:var(--pixel);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+#log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute);min-height:96px}
+#log li:first-child{color:var(--text)}
+#log .g{color:var(--gold)} #log .r{color:var(--hp)} #log .t{color:var(--heal)} #log .c{color:var(--combo)}
+
+.shophead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+h2{margin:0;font-family:var(--pixel);font-weight:600;font-size:20px}
+.amt{display:flex;background:var(--stone);border-radius:999px;padding:3px;gap:2px}
+.amt button{font:inherit;font-size:12px;font-weight:800;color:var(--mute);background:transparent;border:0;border-radius:999px;padding:5px 12px;cursor:pointer}
+.amt button[aria-pressed="true"]{background:var(--edge);color:var(--text)}
+.parts{display:flex;flex-direction:column;gap:8px}
+.part{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--stone);border-radius:8px;padding:8px 10px 8px 8px}
+.part img{width:40px;height:40px;image-rendering:pixelated;background:var(--wall);border-radius:6px}
+.pname{font-weight:800}
+.pname .lv{font-family:var(--pixel);font-weight:400;color:var(--mute);margin-left:6px;font-size:14px}
+.pfx{font-size:13px;color:var(--mute)}
+.pfx .up{color:var(--heal)}
+.buy{font:inherit;min-width:92px;display:flex;flex-direction:column;align-items:center;gap:0;background:var(--edge);color:var(--mute);border:0;border-radius:8px;padding:6px 10px;cursor:not-allowed}
+.buy .bn{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.buy .bc{font-family:var(--pixel);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.buy.ok{background:var(--gold);color:var(--stone);cursor:pointer}
+.buy.ok:hover{filter:brightness(1.08)}
+.buy.ok:active{transform:translateY(1px)}
+button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
+
+.relics{display:flex;flex-wrap:wrap;gap:6px}
+.relic{font-size:12px;background:var(--stone);border:1px solid var(--edge);border-radius:999px;padding:4px 10px;color:var(--text)}
+.relic i{font-style:normal;color:var(--heal)}
+.relic.unknown{color:var(--mute);border-style:dashed}
+.retire{background:var(--stone);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.retire p{margin:0;font-size:13px;color:var(--mute)}
+#retireBtn{font:inherit;font-weight:800;background:var(--heal);color:var(--stone);border:0;border-radius:8px;padding:10px 14px;cursor:pointer}
+#retireBtn:disabled{background:var(--edge);color:var(--mute);cursor:not-allowed}
+#retireBtn.armed{background:var(--combo)}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--mute)}
+#wipe{font:inherit;font-size:12px;color:var(--mute);background:transparent;border:0;text-decoration:underline;cursor:pointer;padding:0}
+@media (prefers-reduced-motion:reduce){.buy.ok:active{transform:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand"><h1>Coin Crawl</h1><span class="tag">Your hero fights. You tap, buy gear and go deeper.</span></div>
+    <div class="purse">
+      <span class="tales" id="talesBox" hidden><b id="tales">0</b> tales</span>
+      <span><span class="coin" aria-hidden="true"></span><span id="gold" class="num">0</span></span>
+      <button id="mute" type="button" aria-pressed="false">Sound on</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="panel" aria-label="Dungeon">
+      <div class="floorbar">
+        <div><div class="lbl" id="floorNum">Floor 1</div><div id="floorName">Damp Cellar</div></div>
+        <div class="pips" id="pips" aria-label="Floor progress"></div>
+      </div>
+      <canvas id="arena" aria-label="Battle. Tap the monster to hit it."></canvas>
+      <p class="hint">Tap the monster (or press Space) to hit it yourself. Tap fast to build a <b>combo</b> that boosts all damage. Grab chests before they vanish.</p>
+      <div class="stats">
+        <div class="stat"><span class="lbl">Damage</span><b id="sDmg">3</b></div>
+        <div class="stat"><span class="lbl">Swings/s</span><b id="sSpd">1.00</b></div>
+        <div class="stat"><span class="lbl">Health</span><b id="sHp">30</b></div>
+        <div class="stat"><span class="lbl">Crit</span><b id="sCrit">5%</b></div>
+        <div class="stat"><span class="lbl">Tap</span><b id="sTap">1</b></div>
+      </div>
+      <ol id="log" aria-live="polite"></ol>
+    </section>
+
+    <section class="panel" aria-label="Shop">
+      <div class="shophead">
+        <h2>Gear upgrades</h2>
+        <div class="amt" role="group" aria-label="How many to buy">
+          <button type="button" id="amt1" data-amt="1" aria-pressed="true">×1</button>
+          <button type="button" id="amt10" data-amt="10" aria-pressed="false">×10</button>
+          <button type="button" id="amtMax" data-amt="max" aria-pressed="false">Max</button>
+        </div>
+      </div>
+      <div class="parts" id="parts"></div>
+
+      <div class="shophead"><h2>Relics</h2><span class="lbl" id="relicCount">0 / 14 found</span></div>
+      <div class="relics" id="relics"></div>
+      <p class="hint" style="margin-top:-4px">Bosses sometimes drop relics. Relics stack and you keep them when you retire.</p>
+
+      <div class="retire">
+        <h2>Retire</h2>
+        <p>Reach floor 10 to retire. Your hero tells stories at the tavern and earns <b style="color:var(--heal)">tales</b>: each one is +10% damage and gold forever. Gold, gear and floor reset. Relics and tales stay.</p>
+        <button id="retireBtn" type="button" disabled>Reach floor 10 to retire</button>
+      </div>
+      <div class="foot"><span id="bestLine">Deepest floor: 1</span><button id="wipe" type="button">Erase save</button></div>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const pick = a => a[(Math.random() * a.length) | 0];
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function fmt(n) {
+    if (!isFinite(n)) return '∞';
+    if (n < 1000) return n < 10 && n % 1 ? n.toFixed(1) : String(Math.floor(n));
+    if (n >= 1e21) return n.toExponential(2).replace('+', '');
+    const u = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx'];
+    let i = -1;
+    while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; }
+    return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.floor(n)) + u[i];
+  }
+  const pct = v => Math.round(v * 100) + '%';
+  function hexToRgb(h) { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
+  function mix(a, b, t) { const A = hexToRgb(a), B = hexToRgb(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
+
+  /* ---------------- content ---------------- */
+  const SPR = {
+    slime: ['..........', '..........', '....aa....', '...aaaa...', '..aaaaaa..', '.acdaacda.', 'aaaaaaaaaa', 'aaabbbbaaa', 'aaaaaaaaaa', '.bbbbbbbb.'],
+    bat: ['..........', 'b........b', 'bb.a..a.bb', 'bbbaaaabbb', 'bbacdacdbb', '.bbaaaabb.', '..b.ee.b..', '...e..e...', '..........', '..........'],
+    goblin: ['..........', '...aaaa...', 'a.aaaaaa.a', 'aaacdacdaa', '.aaaaaaaa.', '.aaeeeeaa.', '..bbbbbb..', '.abbbbbba.', '..bb..bb..', '..bb..bb..'],
+    skeleton: ['...cccc...', '..cccccc..', '..cddcddc.', '..cccccc..', '...cdcd...', '....cc....', '..cccccc..', '.c.cccc.c.', '...c..c...', '..cc..cc..'],
+    mushroom: ['...aaaa...', '.aaaeaaaa.', 'aaeaaaaeaa', 'aaaaaaaaaa', '.bbbbbbbb.', '...cccc...', '..ccdcdc..', '..cccccc..', '..cccccc..', '...c..c...'],
+    hero: ['...eeee...', '..eeeeee..', '..ecdcde..', '..eeeeee.f', '...gggg..f', '..aaaaaa.f', '.gaaaaaaff', '..aaaaaa..', '..bb..bb..', '..bb..bb..'],
+    chest: ['..........', '..........', '.aaaaaaaa.', 'abbbbbbbba', 'abbbbbbbba', 'aaaaeeaaaa', 'abbbeebbba', 'abbbbbbbba', 'aaaaaaaaaa', '..........']
+  };
+  const ICON = {
+    sword: ['.......c', '......cc', '.....cc.', '....cc..', 'b..cc...', '.bcc....', '..b.....', '.b.b....'],
+    armor: ['.a....a.', 'aaa..aaa', 'aaaaaaaa', '.aaccaa.', '.aaaaaa.', '.aaccaa.', '.aaaaaa.', '..aaaa..'],
+    boots: ['..aa....', '..aa....', '..aa....', '..aa....', '..aaa...', '..aaaaa.', '.bbbbbb.', '........'],
+    ring: ['...cc...', '..cddc..', '...cc...', '..b..b..', '.b....b.', '.b....b.', '..b..b..', '...bb...'],
+    gaunt: ['.a.a.a..', '.a.a.a..', '.aaaaa.a', '.aaaaaaa', '.aaaaaa.', '.aaaaa..', '..bbb...', '..bbb...'],
+    torch: ['...e....', '..eee...', '..ede...', '...c....', '...b....', '...b....', '...b....', '...b....'],
+    pet: ['........', 'b......b', 'bb.aa.bb', 'bbaaaabb', 'bacaacab', '.baaaab.', '..b..b..', '........']
+  };
+  const ICON_PAL = {
+    sword: { c: '#e8eefc', b: '#f5b942' }, armor: { a: '#8f9bb8', c: '#c9d2ea' }, boots: { a: '#8a5a3c', b: '#4a3326' },
+    ring: { c: '#62d2c4', d: '#d8fff9', b: '#f5b942' }, gaunt: { a: '#b7bfd6', b: '#6d5a8a' },
+    torch: { e: '#ff8a3d', d: '#ffe066', c: '#9aa3ba', b: '#8a5a3c' }, pet: { a: '#a07be0', b: '#5d3f99', c: '#fff' }
+  };
+  const THEMES = [
+    { name: 'Damp Cellar', kinds: ['slime', 'bat'], tint: '#7bd88f', wall: '#1f2a2a' },
+    { name: 'Fungus Halls', kinds: ['mushroom', 'slime'], tint: '#c98bff', wall: '#281f33' },
+    { name: 'Goblin Market', kinds: ['goblin', 'bat'], tint: '#a6d35a', wall: '#2c2418' },
+    { name: 'Bone Pantry', kinds: ['skeleton', 'bat'], tint: '#e7dcc2', wall: '#26222a' },
+    { name: 'Lava Basement', kinds: ['slime', 'goblin', 'mushroom'], tint: '#ff7a45', wall: '#311a1a' },
+    { name: 'The Void Attic', kinds: ['skeleton', 'mushroom', 'bat'], tint: '#6fa8ff', wall: '#161a33' }
+  ];
+  const CNAME = { slime: 'Slime', bat: 'Bat', goblin: 'Goblin', skeleton: 'Skeleton', mushroom: 'Shroom' };
+  const ADJ = ['Grumpy', 'Soggy', 'Tiny', 'Overconfident', 'Sleepy', 'Tax-Evading', 'Moist', 'Polite', 'Furious', 'Suspicious', 'Dramatic', 'Wobbly', 'Snacking', 'Unemployed', 'Very Loud', 'Shy', 'Sweaty', 'Smug'];
+  const BOSSES = ['Big Steve', 'Lord Wobblebottom', 'The Landlord', 'Duke Dampness', 'Sir Chompsalot', 'Queen Gloop', 'Baron Von Crumbs', 'Auntie Fangs', 'Gary Sr.', 'The Intern'];
+  const RELICS = [
+    { id: 'spoon', name: "Grandma's Wooden Spoon", fx: 'gold', v: 0.10, text: '+10% gold' },
+    { id: 'rock', name: 'Suspiciously Warm Rock', fx: 'hp', v: 0.10, text: '+10% health' },
+    { id: 'sockl', name: 'Sock of Speed (Left)', fx: 'spd', v: 0.05, text: '+5% swing speed' },
+    { id: 'sockr', name: 'Sock of Speed (Right)', fx: 'spd', v: 0.05, text: '+5% swing speed' },
+    { id: 'tax', name: "Goblin's Tax Return", fx: 'gold', v: 0.15, text: '+15% gold' },
+    { id: 'chicken', name: 'Rubber Chicken', fx: 'critm', v: 0.25, text: '+0.25× crit damage' },
+    { id: 'bell', name: 'Very Loud Bell', fx: 'hold', v: 0.15, text: 'combo lasts 15% longer' },
+    { id: 'gary', name: 'Pet Rock Named Gary', fx: 'pet', v: 0.25, text: '+25% bat bites' },
+    { id: 'sandwich', name: 'Cursed Sandwich', fx: 'dmg', v: 0.12, text: '+12% damage (it whispers)' },
+    { id: 'tooth', name: 'Mimic Tooth', fx: 'boss', v: 0.20, text: '+20% damage to bosses' },
+    { id: 'shroom', name: 'Glowing Mushroom', fx: 'dmg', v: 0.08, text: '+8% damage' },
+    { id: 'homework', name: "Dragon's Lost Homework", fx: 'tap', v: 0.20, text: '+20% tap damage' },
+    { id: 'jar', name: 'Slime in a Jar', fx: 'regen', v: 0.30, text: '+30% healing' },
+    { id: 'map', name: 'Map Drawn in Crayon', fx: 'chest', v: 0.50, text: '+50% chest chance' }
+  ];
+  const PARTS = [
+    { id: 'sword', name: 'Sword', base: 8, r: 1.15, fx: (s, n) => `Hits for ${fmt(s.dmg)} <span class="up">→ ${fmt(n.dmg)}</span>` },
+    { id: 'armor', name: 'Armor', base: 12, r: 1.16, fx: (s, n) => `${fmt(s.maxHp)} health <span class="up">→ ${fmt(n.maxHp)}</span>` },
+    { id: 'boots', name: 'Boots', base: 30, r: 1.24, fx: (s, n) => `${(1 / s.atkInt).toFixed(2)} swings/s <span class="up">→ ${(1 / n.atkInt).toFixed(2)}</span>` },
+    { id: 'ring', name: 'Lucky Ring', base: 50, r: 1.21, fx: (s, n) => `${pct(s.crit)} crit, ×${s.ringGold.toFixed(2)} gold <span class="up">→ ${pct(n.crit)}, ×${n.ringGold.toFixed(2)}</span>` },
+    { id: 'gaunt', name: 'Gauntlets', base: 15, r: 1.15, fx: (s, n) => `Taps hit for ${fmt(s.tap)} <span class="up">→ ${fmt(n.tap)}</span>` },
+    { id: 'torch', name: 'Combo Torch', base: 60, r: 1.35, fx: (s, n) => `Combo up to ×${s.comboMax.toFixed(2)} <span class="up">→ ×${n.comboMax.toFixed(2)}</span>` },
+    { id: 'pet', name: 'Pet Bat', base: 120, r: 1.2, fx: (s, n) => s.petRate ? `Bites ${s.petRate.toFixed(1)}/s for you <span class="up">→ ${n.petRate.toFixed(1)}/s</span>` : `Hire a bat that taps for you <span class="up">→ ${n.petRate.toFixed(1)}/s</span>` }
+  ];
+
+  /* ---------------- save ---------------- */
+  const KEY = 'coincrawl.v1';
+  const fresh = () => ({ gold: 0, floor: 1, kill: 0, maxFloor: 1, deepest: 1, tales: 0, runs: 0, lv: { sword: 0, armor: 0, boots: 0, ring: 0, gaunt: 0, torch: 0, pet: 0 }, relics: {}, muted: false, amt: '1' });
+  let S = fresh();
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) { const o = JSON.parse(raw); S = Object.assign(fresh(), o); S.lv = Object.assign(fresh().lv, o.lv || {}); S.relics = o.relics || {}; }
+  } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+  /* ---------------- stats ---------------- */
+  function rel(fx) { let m = 1; for (const r of RELICS) if (r.fx === fx && S.relics[r.id]) m += r.v * S.relics[r.id]; return m; }
+  function stats(lv) {
+    const tale = 1 + 0.1 * S.tales;
+    const dmg = 3 * (1 + 0.6 * lv.sword) * Math.pow(1.05, lv.sword) * tale * rel('dmg');
+    const maxHp = 30 * (1 + 0.5 * lv.armor) * Math.pow(1.05, lv.armor) * rel('hp');
+    return {
+      dmg, maxHp,
+      regen: (maxHp * 0.02 + 0.5 * lv.armor) * rel('regen'),
+      atkInt: Math.max(0.15, 1 / ((1 + 0.08 * lv.boots) * rel('spd'))),
+      crit: Math.min(0.6, 0.05 + 0.02 * lv.ring),
+      critMult: 2 * rel('critm'),
+      ringGold: 1 + 0.08 * lv.ring,
+      goldMult: (1 + 0.08 * lv.ring) * tale * rel('gold'),
+      tap: dmg * (0.35 + 0.15 * lv.gaunt) * rel('tap'),
+      comboCap: 20 + 10 * lv.torch,
+      comboMax: 1 + 0.025 * (20 + 10 * lv.torch),
+      hold: (0.8 + 0.1 * lv.torch) * rel('hold'),
+      petRate: 0.8 * lv.pet * rel('pet'),
+      boss: rel('boss'),
+      chest: 0.05 * rel('chest')
+    };
+  }
+  let st = stats(S.lv);
+  const recalc = () => { st = stats(S.lv); };
+
+  /* ---------------- sound ---------------- */
+  let AC = null;
+  function audio() {
+    if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+    if (AC.state === 'suspended') AC.resume();
+    return AC;
+  }
+  function tone(f1, f2, dur, type = 'square', vol = 0.04, delay = 0) {
+    if (S.muted) return;
+    const a = audio(); if (!a) return;
+    const t = a.currentTime + delay, o = a.createOscillator(), g = a.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + 0.05);
+  }
+  let lastHitSnd = 0;
+  function sndHit(crit) { const n = performance.now(); if (n - lastHitSnd < 45) return; lastHitSnd = n; tone(crit ? 520 : 240 + Math.random() * 60, 90, 0.07, 'square', crit ? 0.05 : 0.03); }
+
+  /* ---------------- battle state ---------------- */
+  const cvs = $('#arena'), ctx = cvs.getContext('2d');
+  let W = 0, H = 0, PX = 6;
+  const hero = { hp: st.maxHp, atkT: 0.6, lunge: 0, flash: 0 };
+  let mon = null, fainted = 0, combo = 0, comboHold = 0, petT = 0, chest = null, shake = 0, banner = null, t = 0;
+  let floats = [], parts = [], slashes = [];
+
+  const theme = f => THEMES[Math.floor((f - 1) / 5) % THEMES.length];
+  const themeName = f => { const c = Math.floor((f - 1) / 30); return theme(f).name + (c ? ' ' + 'I'.repeat(Math.min(c + 1, 3)) + (c > 2 ? '+' : '') : ''); };
+
+  function spawn() {
+    const f = S.floor, boss = S.kill === 9, th = theme(f), kind = pick(th.kinds);
+    const hp = 10 * Math.pow(1.33, f - 1) * (boss ? 7 : 1);
+    mon = {
+      kind, boss, hp, max: hp,
+      name: boss ? `${pick(BOSSES)} the ${CNAME[kind]}` : `${pick(ADJ)} ${CNAME[kind]}`,
+      dmg: 2 * Math.pow(1.26, f - 1) * (boss ? 1.8 : 1), int: boss ? 1.3 : 1.5, atkT: 1.3,
+      gold: 3 * Math.pow(1.28, f - 1) * (boss ? 10 : 1),
+      tint: th.tint, flash: 0, pop: 0, dead: false, deadT: 0, lunge: 0
+    };
+  }
+
+  function addFloat(x, y, text, color, size = 16) { floats.push({ x: x + rand(-10, 10), y, text, color, size, life: 1, vy: -40 }); }
+  function burst(x, y, color, n, sp) {
+    n = reduceMotion ? Math.ceil(n / 3) : n;
+    for (let i = 0; i < n; i++) { const a = Math.random() * 6.28, v = rand(0.3, 1) * sp, l = rand(0.4, 0.8); parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 60, life: l, max: l, color, size: rand(2, 4) }); }
+  }
+  function log(html, cls = '') {
+    const li = document.createElement('li'); li.innerHTML = html; if (cls) li.className = cls;
+    const el = $('#log'); el.prepend(li); while (el.children.length > 5) el.lastChild.remove();
+  }
+
+  const monPos = () => ({ x: W * 0.7, y: H - 46 });
+  const heroPos = () => ({ x: W * 0.27, y: H - 46 });
+  const comboMult = () => 1 + 0.025 * Math.floor(combo);
+
+  function hit(base, src) {
+    if (!mon || mon.dead || fainted) return;
+    const crit = Math.random() < st.crit;
+    const amt = base * (crit ? st.critMult : 1) * comboMult() * (mon.boss ? st.boss : 1);
+    mon.hp -= amt; mon.flash = 0.12;
+    if (!reduceMotion) shake = Math.max(shake, crit ? 5 : 2);
+    const p = monPos();
+    addFloat(p.x, p.y - PX * (mon.boss ? 14 : 11), (crit ? 'CRIT ' : '') + fmt(amt), crit ? '#ffe066' : src === 'tap' ? '#ff7ad9' : src === 'pet' ? '#c7a6ff' : '#f1ecff', crit ? 22 : src === 'pet' ? 13 : 16);
+    sndHit(crit);
+    if (mon.hp <= 0) kill();
+  }
+
+  function kill() {
+    const p = monPos();
+    mon.dead = true; mon.deadT = 0;
+    const g = mon.gold * st.goldMult;
+    S.gold += g;
+    addFloat(p.x, p.y - PX * 6, `+${fmt(g)} gold`, '#f5b942', 18);
+    burst(p.x, p.y - PX * 4, mon.tint, 18, 160);
+    burst(p.x, p.y - PX * 4, '#f5b942', 8, 120);
+    tone(880, 1320, 0.08, 'triangle', 0.05);
+    if (mon.boss) {
+      log(`Beat <b>${mon.name}</b>! On to floor ${S.floor + 1}.`, 'g');
+      tone(523, 523, 0.12, 'triangle', 0.06, 0.05); tone(659, 659, 0.12, 'triangle', 0.06, 0.15); tone(784, 784, 0.2, 'triangle', 0.06, 0.25);
+      S.floor++; S.kill = 0;
+      S.maxFloor = Math.max(S.maxFloor, S.floor); S.deepest = Math.max(S.deepest, S.floor);
+      if (Math.random() < 0.45 || S.floor % 5 === 1) dropRelic();
+      banner = { text: `FLOOR ${S.floor}`, sub: themeName(S.floor), life: 1.8 };
+      save();
+    } else {
+      S.kill++;
+      if (!chest && Math.random() < st.chest) {
+        chest = { x: rand(W * 0.38, W * 0.58), y: H - 46, life: 5, gold: mon.gold * 12 };
+        log('A treasure chest appeared! Tap it quick.', 'g');
+        tone(660, 990, 0.15, 'triangle', 0.05);
+      }
+    }
+    buildPips();
+  }
+
+  function dropRelic() {
+    const r = pick(RELICS);
+    const had = S.relics[r.id] || 0;
+    S.relics[r.id] = had + 1;
+    recalc();
+    log(had ? `Relic: <b>${r.name}</b> again, now ×${had + 1}. (${r.text})` : `New relic: <b>${r.name}</b>! (${r.text})`, 't');
+    banner = { text: 'RELIC FOUND', sub: r.name, life: 2.2 };
+    tone(784, 1568, 0.3, 'sine', 0.06, 0.3);
+    renderRelics();
+  }
+
+  function heroAttack() {
+    hero.lunge = 1;
+    hit(st.dmg, 'auto');
+  }
+  function monAttack() {
+    mon.lunge = 1;
+    hero.hp -= mon.dmg; hero.flash = 0.12;
+    const p = heroPos();
+    addFloat(p.x, p.y - PX * 11, '-' + fmt(mon.dmg), '#ff5d73', 15);
+    if (hero.hp <= 0) {
+      hero.hp = 0; fainted = 2.2;
+      log(`You fainted to <b>${mon.name}</b>. Back to the start of floor ${S.floor}.`, 'r');
+      tone(300, 70, 0.6, 'sawtooth', 0.05);
+      S.kill = 0; mon = null; chest = null; combo = 0;
+      buildPips(); save();
+    }
+  }
+
+  function tap(x, y) {
+    audio();
+    if (chest && Math.abs(x - chest.x) < PX * 7 && y > chest.y - PX * 10 && y < chest.y + 10) {
+      const g = chest.gold * st.goldMult;
+      S.gold += g;
+      addFloat(chest.x, chest.y - PX * 9, `+${fmt(g)} gold!`, '#f5b942', 22);
+      burst(chest.x, chest.y - PX * 4, '#f5b942', 26, 200);
+      log(`Opened a chest: <b>+${fmt(g)} gold</b>.`, 'g');
+      tone(988, 1976, 0.2, 'triangle', 0.06); tone(1318, 2637, 0.2, 'triangle', 0.04, 0.08);
+      chest = null; return;
+    }
+    if (!mon || mon.dead || fainted) return;
+    const before = Math.floor(combo);
+    combo = Math.min(st.comboCap, combo + 1);
+    comboHold = st.hold;
+    const now = Math.floor(combo);
+    for (const m of [25, 50, 100]) if (before < m && now >= m) { banner = { text: m === 25 ? 'NICE COMBO' : m === 50 ? 'WILD COMBO' : 'UNSTOPPABLE', sub: `×${comboMult().toFixed(2)} damage`, life: 1.3 }; log(`Combo ${m}! Damage ×${comboMult().toFixed(2)}.`, 'c'); }
+    slashes.push({ x, y, a: rand(-0.8, 0.8), life: 0.25 });
+    hit(st.tap, 'tap');
+  }
+
+  /* ---------------- update ---------------- */
+  function update(dt) {
+    t += dt;
+    hero.lunge = Math.max(0, hero.lunge - dt * 6);
+    hero.flash = Math.max(0, hero.flash - dt);
+    shake = Math.max(0, shake - dt * 25);
+    if (fainted > 0) {
+      fainted -= dt;
+      hero.hp = Math.min(st.maxHp, hero.hp + st.maxHp * dt / 2);
+      if (fainted <= 0) { fainted = 0; hero.hp = st.maxHp; spawn(); }
+    } else if (!mon) spawn();
+    else if (mon.dead) {
+      mon.deadT += dt;
+      if (mon.deadT > 0.45) spawn();
+    } else {
+      mon.pop = Math.min(1, mon.pop + dt * 5);
+      mon.flash = Math.max(0, mon.flash - dt);
+      mon.lunge = Math.max(0, mon.lunge - dt * 5);
+      hero.atkT -= dt;
+      while (hero.atkT <= 0 && mon && !mon.dead) { hero.atkT += st.atkInt; heroAttack(); }
+      if (mon && !mon.dead) {
+        mon.atkT -= dt;
+        if (mon.atkT <= 0) { mon.atkT += mon.int; monAttack(); }
+      }
+      if (st.petRate && mon && !mon.dead) {
+        petT += dt * st.petRate;
+        while (petT >= 1 && mon && !mon.dead) { petT -= 1; hit(st.tap, 'pet'); }
+      }
+    }
+    if (!fainted) hero.hp = Math.min(st.maxHp, hero.hp + st.regen * dt);
+    if (comboHold > 0) comboHold -= dt; else combo = Math.max(0, combo - 18 * dt);
+    if (chest) { chest.life -= dt; if (chest.life <= 0) { chest = null; log('The chest wandered off. It had legs.'); } }
+    if (banner) { banner.life -= dt; if (banner.life <= 0) banner = null; }
+    for (const f of floats) { f.y += f.vy * dt; f.vy *= 0.96; f.life -= dt * 1.1; }
+    floats = floats.filter(f => f.life > 0);
+    for (const p of parts) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 300 * dt; p.life -= dt; }
+    parts = parts.filter(p => p.life > 0);
+    for (const s of slashes) s.life -= dt;
+    slashes = slashes.filter(s => s.life > 0);
+  }
+
+  /* ---------------- draw ---------------- */
+  function sprite(rows, cx, by, px, pal, flash, flip) {
+    const h = rows.length, w = rows[0].length, x0 = cx - (w * px) / 2, y0 = by - h * px;
+    for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) {
+      const ch = rows[r][c]; if (ch === '.') continue;
+      ctx.fillStyle = flash ? '#ffffff' : pal[ch];
+      const cc = flip ? w - 1 - c : c;
+      ctx.fillRect(Math.round(x0 + cc * px), Math.round(y0 + r * px), Math.ceil(px), Math.ceil(px));
+    }
+  }
+  function monPal(m) {
+    const d = '#1a1424';
+    if (m.kind === 'skeleton') return { c: '#ece4cc', d };
+    if (m.kind === 'mushroom') return { a: m.tint, b: mix(m.tint, '#000000', 0.45), c: '#efe3cf', d, e: '#ffffff' };
+    if (m.kind === 'goblin') return { a: m.tint, b: '#5b4636', c: '#ffffff', d, e: '#fff6d0' };
+    if (m.kind === 'bat') return { a: m.tint, b: mix(m.tint, '#000000', 0.5), c: '#ffffff', d, e: '#ffffff' };
+    return { a: m.tint, b: mix(m.tint, '#000000', 0.4), c: '#ffffff', d };
+  }
+  function bar(x, y, w, frac, color, label) {
+    ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(x - w / 2, y, w, 8);
+    ctx.fillStyle = color; ctx.fillRect(x - w / 2 + 1, y + 1, Math.max(0, (w - 2) * clamp(frac, 0, 1)), 6);
+    if (label) {
+      ctx.fillStyle = '#f1ecff'; ctx.font = '600 13px "Pixelify Sans", monospace'; ctx.textAlign = 'center';
+      ctx.fillText(label, x, y - 6);
+    }
+  }
+
+  function draw() {
+    const th = theme(S.floor);
+    ctx.save();
+    if (shake) ctx.translate(rand(-shake, shake), rand(-shake, shake));
+    ctx.fillStyle = th.wall; ctx.fillRect(-10, -10, W + 20, H + 20);
+    // bricks
+    ctx.fillStyle = 'rgba(255,255,255,.035)';
+    const bw = 44, bh = 22;
+    for (let y = 0, row = 0; y < H - 40; y += bh, row++) for (let x = (row % 2) * -bw / 2; x < W; x += bw) ctx.fillRect(x + 1, y + 1, bw - 3, bh - 3);
+    // torches
+    for (const tx of [W * 0.12, W * 0.88]) {
+      const fl = 0.8 + 0.2 * Math.sin(t * 13 + tx) + 0.1 * Math.sin(t * 29);
+      const g = ctx.createRadialGradient(tx, 50, 2, tx, 50, 90 * fl);
+      g.addColorStop(0, 'rgba(255,170,70,.35)'); g.addColorStop(1, 'rgba(255,170,70,0)');
+      ctx.fillStyle = g; ctx.fillRect(tx - 100, -50, 200, 200);
+      ctx.fillStyle = '#6b4a33'; ctx.fillRect(tx - 3, 54, 6, 22);
+      ctx.fillStyle = '#ff8a3d'; ctx.fillRect(tx - 5, 42 - fl * 3, 10, 12 + fl * 3);
+      ctx.fillStyle = '#ffe066'; ctx.fillRect(tx - 2, 46 - fl * 2, 4, 7);
+    }
+    // floor
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(-10, H - 40, W + 20, 50);
+    ctx.fillStyle = 'rgba(255,255,255,.05)';
+    for (let x = 0; x < W; x += 32) ctx.fillRect(x, H - 40, 30, 3);
+
+    const hp = heroPos(), mp = monPos();
+    // hero
+    if (!fainted) {
+      const hx = hp.x + hero.lunge * 22 - (mon && mon.lunge ? mon.lunge * 4 : 0);
+      ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(hp.x, hp.y + 2, PX * 4, PX * 0.8, 0, 0, 6.28); ctx.fill();
+      sprite(SPR.hero, hx, hp.y + Math.sin(t * 3) * 1.5, PX, { a: '#d1495b', b: '#4a3b5c', c: '#62d2c4', d: '#1a1424', e: '#c9cfe0', f: '#e8eefc', g: '#f2c9a0' }, hero.flash > 0);
+    } else {
+      ctx.save(); ctx.translate(hp.x, hp.y - PX * 2); ctx.rotate(-Math.PI / 2);
+      sprite(SPR.hero, 0, PX * 5, PX, { a: '#8a4a55', b: '#3a3048', c: '#2a2238', d: '#1a1424', e: '#8a8fa0', f: '#a9aec0', g: '#b89880' }, false);
+      ctx.restore();
+      ctx.fillStyle = '#f1ecff'; ctx.font = '600 15px "Pixelify Sans", monospace'; ctx.textAlign = 'center';
+      ctx.fillText('z z z', hp.x + 20, hp.y - PX * 7 - Math.sin(t * 3) * 4);
+    }
+    bar(hp.x, hp.y - PX * 10 - 14, PX * 10, hero.hp / st.maxHp, hero.hp / st.maxHp < 0.3 ? '#ff5d73' : '#62d2c4', 'You');
+
+    // monster
+    if (mon) {
+      const sc = mon.boss ? 1.45 : 1;
+      const px = PX * sc * (mon.dead ? Math.max(0, 1 - mon.deadT * 3) : (0.6 + 0.4 * mon.pop));
+      const mx = mp.x - mon.lunge * 18, bob = Math.sin(t * (mon.kind === 'bat' ? 8 : 3)) * (mon.kind === 'bat' ? 4 : 1.5);
+      const lift = mon.kind === 'bat' ? PX * 3 : 0;
+      ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(mp.x, mp.y + 2, PX * 4 * sc, PX * 0.8, 0, 0, 6.28); ctx.fill();
+      if (px > 0.3) {
+        sprite(SPR[mon.kind], mx, mp.y - lift + bob, px, monPal(mon), mon.flash > 0, true);
+        if (mon.boss) {
+          const cy = mp.y - lift + bob - 10 * px - px * 2.2;
+          ctx.fillStyle = '#f5b942';
+          ctx.fillRect(mx - px * 3, cy + px, px * 6, px * 1.2);
+          for (const k of [-3, -0.5, 2]) ctx.fillRect(mx + k * px, cy - px * 0.4, px, px * 1.6);
+        }
+      }
+      if (!mon.dead) {
+        const top = mp.y - lift - PX * 10 * sc - (mon.boss ? PX * 3 : 0) - 14;
+        bar(mp.x, top, Math.min(W * 0.4, PX * 10 * sc + 30), mon.hp / mon.max, mon.boss ? '#ff5d73' : '#f5b942', mon.name);
+      }
+    }
+
+    // chest
+    if (chest) {
+      const blink = chest.life < 1.5 && Math.floor(t * 8) % 2;
+      const jump = Math.abs(Math.sin(t * 6)) * 6;
+      if (!blink) sprite(SPR.chest, chest.x, chest.y - jump, PX * 0.9, { a: '#5b3a26', b: '#a8693e', e: '#f5b942' }, false);
+      ctx.fillStyle = '#f5b942'; ctx.font = '600 12px "Pixelify Sans", monospace'; ctx.textAlign = 'center';
+      ctx.fillText('TAP!', chest.x, chest.y - PX * 10 - jump);
+    }
+
+    // slashes
+    for (const s of slashes) {
+      const k = s.life / 0.25;
+      ctx.strokeStyle = `rgba(255,122,217,${k})`; ctx.lineWidth = 3 * k + 1;
+      ctx.beginPath(); ctx.moveTo(s.x - Math.cos(s.a) * 22, s.y - Math.sin(s.a) * 22); ctx.lineTo(s.x + Math.cos(s.a) * 22, s.y + Math.sin(s.a) * 22); ctx.stroke();
+    }
+    // particles
+    for (const p of parts) { ctx.globalAlpha = p.life / p.max; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size); }
+    ctx.globalAlpha = 1;
+    // floats
+    ctx.textAlign = 'center';
+    for (const f of floats) {
+      ctx.globalAlpha = clamp(f.life * 1.5, 0, 1);
+      ctx.font = `700 ${f.size}px "Pixelify Sans", monospace`;
+      ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillText(f.text, f.x + 1.5, f.y + 1.5);
+      ctx.fillStyle = f.color; ctx.fillText(f.text, f.x, f.y);
+    }
+    ctx.globalAlpha = 1;
+    ctx.restore();
+
+    // combo meter
+    if (combo >= 1) {
+      const c = Math.floor(combo), k = clamp(comboHold / st.hold, 0, 1);
+      ctx.textAlign = 'left';
+      ctx.font = `700 ${20 + Math.min(14, c / 4)}px "Pixelify Sans", monospace`;
+      ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillText(`${c} COMBO`, 15, 31);
+      ctx.fillStyle = '#ff7ad9'; ctx.fillText(`${c} COMBO`, 14, 30);
+      ctx.font = '600 13px "Pixelify Sans", monospace'; ctx.fillStyle = '#f1ecff';
+      ctx.fillText(`×${comboMult().toFixed(2)} damage`, 14, 48);
+      ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(14, 56, 90, 4);
+      ctx.fillStyle = '#ff7ad9'; ctx.fillRect(14, 56, 90 * k, 4);
+    }
+    // banner
+    if (banner) {
+      const a = clamp(banner.life * 2, 0, 1);
+      ctx.globalAlpha = a; ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(10,8,16,.6)'; ctx.fillRect(0, H * 0.3 - 30, W, 58);
+      ctx.font = '700 26px "Pixelify Sans", monospace'; ctx.fillStyle = '#f5b942'; ctx.fillText(banner.text, W / 2, H * 0.3);
+      ctx.font = '600 14px "Nunito", sans-serif'; ctx.fillStyle = '#f1ecff'; ctx.fillText(banner.sub, W / 2, H * 0.3 + 20);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function resize() {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = cvs.clientWidth; H = cvs.clientHeight;
+    cvs.width = Math.round(W * dpr); cvs.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = false;
+    PX = clamp(W / 75, 4.5, 7);
+  }
+
+  /* ---------------- shop UI ---------------- */
+  function iconURL(id) {
+    const c = document.createElement('canvas'); c.width = c.height = 32;
+    const x = c.getContext('2d'), rows = ICON[id], pal = ICON_PAL[id];
+    for (let r = 0; r < 8; r++) for (let k = 0; k < 8; k++) { const ch = rows[r][k]; if (ch === '.') continue; x.fillStyle = pal[ch]; x.fillRect(k * 4, r * 4, 4, 4); }
+    return c.toDataURL();
+  }
+  const rows = {};
+  function buildShop() {
+    const box = $('#parts');
+    for (const p of PARTS) {
+      const el = document.createElement('div'); el.className = 'part';
+      el.innerHTML = `<img alt="" src="${iconURL(p.id)}"><div style="min-width:0"><div class="pname">${p.name}<span class="lv"></span></div><div class="pfx"></div></div><button class="buy" type="button" id="buy-${p.id}"><span class="bn"></span><span class="bc"></span></button>`;
+      box.appendChild(el);
+      rows[p.id] = { lv: el.querySelector('.lv'), fx: el.querySelector('.pfx'), btn: el.querySelector('.buy'), bn: el.querySelector('.bn'), bc: el.querySelector('.bc') };
+      rows[p.id].btn.addEventListener('click', () => buy(p));
+    }
+  }
+  const costOf = (p, L, n) => p.base * Math.pow(p.r, L) * (Math.pow(p.r, n) - 1) / (p.r - 1);
+  const maxBuy = (p, L) => Math.max(0, Math.floor(Math.log(S.gold * (p.r - 1) / (p.base * Math.pow(p.r, L)) + 1) / Math.log(p.r)));
+  const amountFor = (p) => S.amt === 'max' ? Math.max(1, maxBuy(p, S.lv[p.id])) : +S.amt;
+  function buy(p) {
+    audio();
+    const n = amountFor(p), cost = costOf(p, S.lv[p.id], n);
+    if (S.gold < cost) return;
+    const oldMax = st.maxHp;
+    S.gold -= cost; S.lv[p.id] += n; recalc();
+    if (st.maxHp > oldMax) hero.hp += st.maxHp - oldMax;
+    tone(523, 784, 0.1, 'triangle', 0.05);
+    save(); renderShop(true);
+  }
+  let lastShopKey = '';
+  function renderShop(force) {
+    const key = Math.floor(S.gold) + '|' + S.amt + '|' + JSON.stringify(S.lv) + '|' + S.tales + '|' + JSON.stringify(S.relics);
+    if (!force && key === lastShopKey) return;
+    lastShopKey = key;
+    for (const p of PARTS) {
+      const r = rows[p.id], L = S.lv[p.id], n = amountFor(p), cost = costOf(p, L, n);
+      const next = stats(Object.assign({}, S.lv, { [p.id]: L + n }));
+      r.lv.textContent = 'Lv ' + L;
+      r.fx.innerHTML = p.fx(st, next);
+      r.bn.textContent = 'Buy ×' + n;
+      r.bc.textContent = fmt(Math.ceil(cost)) + 'g';
+      const ok = S.gold >= cost;
+      r.btn.classList.toggle('ok', ok);
+      r.btn.setAttribute('aria-disabled', String(!ok));
+    }
+  }
+  function renderRelics() {
+    const box = $('#relics'); box.innerHTML = '';
+    let found = 0;
+    for (const r of RELICS) {
+      const n = S.relics[r.id] || 0;
+      const el = document.createElement('span');
+      if (n) { found++; el.className = 'relic'; el.title = r.text; el.innerHTML = `${r.name}${n > 1 ? ` <i>×${n}</i>` : ''} · <i>${r.text}</i>`; }
+      else { el.className = 'relic unknown'; el.textContent = '???'; }
+      box.appendChild(el);
+    }
+    $('#relicCount').textContent = `${found} / ${RELICS.length} found`;
+  }
+  function buildPips() {
+    const box = $('#pips'); box.innerHTML = '';
+    for (let i = 0; i < 10; i++) {
+      const s = document.createElement('span');
+      s.className = 'pip' + (i === 9 ? ' boss' : '') + (i < S.kill ? ' done' : i === S.kill ? ' now' : '');
+      box.appendChild(s);
+    }
+    $('#floorNum').textContent = `Floor ${S.floor}` + (S.kill === 9 ? ' · Boss fight' : ` · Monster ${S.kill + 1} of 9`);
+    $('#floorName').textContent = themeName(S.floor);
+  }
+  const talesFor = f => f < 10 ? 0 : Math.floor(Math.pow(f / 5, 1.6));
+  let armed = 0;
+  function renderHud() {
+    $('#gold').textContent = fmt(Math.floor(S.gold));
+    $('#talesBox').hidden = !S.tales;
+    $('#tales').textContent = S.tales;
+    $('#sDmg').textContent = fmt(st.dmg * comboMult());
+    $('#sSpd').textContent = (1 / st.atkInt).toFixed(2);
+    $('#sHp').textContent = fmt(Math.ceil(hero.hp)) + '/' + fmt(st.maxHp);
+    $('#sCrit').textContent = pct(st.crit);
+    $('#sTap').textContent = fmt(st.tap * comboMult());
+    $('#bestLine').textContent = `Deepest floor: ${S.deepest}` + (S.runs ? ` · Retired ${S.runs}×` : '');
+    const gain = talesFor(S.maxFloor), btn = $('#retireBtn');
+    btn.disabled = gain <= 0;
+    if (gain <= 0) { btn.textContent = `Reach floor 10 to retire (now ${S.maxFloor})`; btn.classList.remove('armed'); }
+    else if (armed > performance.now()) { btn.textContent = `Tap again to retire for +${gain} tales`; btn.classList.add('armed'); }
+    else { btn.textContent = `Retire for +${gain} tales`; btn.classList.remove('armed'); }
+  }
+  $('#retireBtn').addEventListener('click', () => {
+    const gain = talesFor(S.maxFloor);
+    if (gain <= 0) return;
+    if (armed < performance.now()) { armed = performance.now() + 3000; renderHud(); return; }
+    armed = 0;
+    const keep = { tales: S.tales + gain, runs: S.runs + 1, relics: S.relics, deepest: S.deepest, muted: S.muted, amt: S.amt };
+    S = Object.assign(fresh(), keep);
+    recalc(); hero.hp = st.maxHp; mon = null; chest = null; combo = 0; fainted = 0;
+    log(`Retired! Your hero earned <b>+${gain} tales</b>. Everything hits ${pct(0.1 * S.tales)} harder now.`, 't');
+    banner = { text: 'NEW HERO', sub: `+${gain} tales · ${S.tales} total`, life: 2.4 };
+    tone(392, 392, 0.15, 'triangle', 0.06); tone(523, 523, 0.15, 'triangle', 0.06, 0.12); tone(784, 784, 0.3, 'triangle', 0.06, 0.24);
+    save(); buildPips(); renderShop(true); renderRelics();
+  });
+  let wipeArm = 0;
+  $('#wipe').addEventListener('click', () => {
+    if (wipeArm < performance.now()) { wipeArm = performance.now() + 3000; $('#wipe').textContent = 'Tap again to erase everything'; setTimeout(() => { $('#wipe').textContent = 'Erase save'; }, 3000); return; }
+    S = fresh(); save(); recalc(); hero.hp = st.maxHp; mon = null; chest = null; combo = 0; fainted = 0;
+    $('#log').innerHTML = ''; log('Fresh start. A new hero enters the Damp Cellar.');
+    $('#wipe').textContent = 'Erase save'; wipeArm = 0;
+    buildPips(); renderShop(true); renderRelics(); syncAmt(); syncMute();
+  });
+  function syncAmt() { for (const b of document.querySelectorAll('.amt button')) b.setAttribute('aria-pressed', String(b.dataset.amt === S.amt)); }
+  for (const b of document.querySelectorAll('.amt button')) b.addEventListener('click', () => { S.amt = b.dataset.amt; syncAmt(); renderShop(true); save(); });
+  function syncMute() { $('#mute').textContent = S.muted ? 'Sound off' : 'Sound on'; $('#mute').setAttribute('aria-pressed', String(S.muted)); }
+  $('#mute').addEventListener('click', () => { S.muted = !S.muted; syncMute(); save(); if (!S.muted) tone(660, 880, 0.08, 'triangle', 0.05); });
+
+  cvs.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    const r = cvs.getBoundingClientRect();
+    tap(e.clientX - r.left, e.clientY - r.top);
+  });
+  window.addEventListener('keydown', e => {
+    if (e.code !== 'Space' || (e.target && /BUTTON|INPUT/.test(e.target.tagName))) return;
+    e.preventDefault();
+    const p = monPos();
+    tap(p.x + rand(-20, 20), p.y - PX * 5 + rand(-15, 15));
+  });
+  window.addEventListener('resize', resize);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+
+  /* ---------------- boot ---------------- */
+  buildShop(); resize(); recalc(); hero.hp = st.maxHp;
+  buildPips(); renderRelics(); syncAmt(); syncMute(); renderShop(true); renderHud();
+  log(S.floor > 1 || S.gold > 0 ? `Welcome back. Floor ${S.floor}, ${fmt(S.gold)} gold in your pocket.` : 'A brave hero enters the Damp Cellar. Tap the slime!');
+  let last = performance.now(), uiT = 0, saveT = 0;
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    update(dt); draw();
+    uiT += dt; saveT += dt;
+    if (uiT > 0.12) { uiT = 0; renderHud(); renderShop(); }
+    if (saveT > 5) { saveT = 0; save(); }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
