@@ -328,7 +328,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
           </div>
         </div>
         <div class="row"><button class="pill" id="autobuyBtn" type="button" aria-pressed="false">Auto-buy: off</button><button class="pill" id="buyCheap" type="button">Buy cheapest</button></div>
-        <p class="hint"><b>Hold</b> any buy button to keep buying. Every 25 levels doubles the stat. At levels 100, 250, 500 and 1000 a part <b>evolves</b> into something much stronger.</p>
+        <p class="hint">Auto-buy and Buy cheapest also evolve parts when you can afford it (evolving costs gold and shards). <b>Hold</b> any buy button to keep buying. Every 25 levels doubles the stat. At levels 100, 250, 500 and 1000 a part <b>evolves</b> into something much stronger.</p>
         <div class="list" id="parts"></div>
       </div>
 
@@ -2043,6 +2043,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
   }
   function buyCheapest(silent) {
     let bought = 0;
+    for (const p of PARTS) if (atCap(p) && evolvePart(p)) bought++;
     for (let k = 0; k < 40; k++) {
       let best = null, bc = Infinity;
       for (const p of PARTS) { if (atCap(p)) continue; const c = costOf(p.base, p.r, S.lv[p.id], 1); if (c < bc) { bc = c; best = p; } }
