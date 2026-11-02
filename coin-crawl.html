@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Nunito:wght@400;600;800&display=swap">
 <style>
-/* Layout: running corridor + skill bar + stats + log on the left, six-tab shop on the right; one column on phones. Single dark dungeon look on purpose. */
+/* Layout: running corridor + skill bar + stats + log on the left, seven-tab shop on the right; one column on phones. Single dark dungeon look on purpose. */
 :root{
   --stone:#16131d;
   --wall:#211c2c;
@@ -13,6 +13,8 @@
   --mute:#a99fc2;
   --gold:#f5b942;
   --gem:#b98cff;
+  --rune:#6fd6ff;
+  --shard:#ff9a5a;
   --hp:#ff5d73;
   --combo:#ff7ad9;
   --heal:#62d2c4;
@@ -26,29 +28,33 @@ body{background:var(--stone);color:var(--text);font-family:var(--body);font-size
   padding-left:max(16px,env(safe-area-inset-left,0px));
   padding-right:max(16px,env(safe-area-inset-right,0px));
   -webkit-tap-highlight-color:transparent}
-.wrap{max-width:1160px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 .lbl{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
 .num{font-family:var(--pixel);font-variant-numeric:tabular-nums}
 
 header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 h1{margin:0;font-family:var(--pixel);font-weight:700;font-size:32px;line-height:1;letter-spacing:.02em;color:var(--gold)}
-.tag{color:var(--mute);font-size:13px}
-.purse{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.coin{display:inline-block;width:18px;height:18px;border-radius:50%;background:var(--gold);box-shadow:inset -3px -3px 0 rgba(0,0,0,.25),inset 2px 2px 0 rgba(255,255,255,.35);vertical-align:-3px;margin-right:6px}
-.gem{display:inline-block;width:13px;height:13px;background:var(--gem);transform:rotate(45deg);box-shadow:inset -2px -2px 0 rgba(0,0,0,.25),inset 2px 2px 0 rgba(255,255,255,.35);margin-right:8px;vertical-align:0}
-#gold{font-size:30px;font-weight:600;color:var(--gold)}
-#gems{font-family:var(--pixel);font-size:22px;font-weight:600;color:var(--gem)}
-.gps{font-size:12px;color:var(--mute);margin-left:6px}
+.rankchip{font-family:var(--pixel);font-size:14px;color:var(--heal);border:1px solid var(--heal);border-radius:999px;padding:2px 10px}
+.purse{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.cur{display:inline-flex;align-items:center;gap:6px;font-family:var(--pixel);font-weight:600;font-variant-numeric:tabular-nums}
+.ico{display:inline-block;width:14px;height:14px;flex:none}
+.ico.coin{border-radius:50%;background:var(--gold);box-shadow:inset -3px -3px 0 rgba(0,0,0,.25),inset 2px 2px 0 rgba(255,255,255,.35);width:18px;height:18px}
+.ico.gem{background:var(--gem);transform:rotate(45deg) scale(.85)}
+.ico.rune{background:var(--rune);clip-path:polygon(50% 0,100% 35%,80% 100%,20% 100%,0 35%)}
+.ico.shard{background:var(--shard);clip-path:polygon(30% 0,100% 20%,70% 100%,0 70%)}
+#gold{font-size:28px;color:var(--gold)}
+#gems{font-size:19px;color:var(--gem)} #runes{font-size:19px;color:var(--rune)} #shards{font-size:19px;color:var(--shard)}
+.gps{font-family:var(--body);font-weight:400;font-size:12px;color:var(--mute)}
 .tales{color:var(--heal);font-size:14px}
-.tales b{font-family:var(--pixel);font-size:20px;font-weight:600}
+.tales b{font-family:var(--pixel);font-size:19px;font-weight:600}
 .pill{font:inherit;font-size:12px;font-weight:700;color:var(--mute);background:transparent;border:1px solid var(--edge);border-radius:999px;padding:6px 12px;cursor:pointer}
 .pill:hover{color:var(--text)}
 .pill[aria-pressed="true"]{color:var(--heal);border-color:var(--heal)}
 .pill.hot{color:var(--stone);background:var(--hp);border-color:var(--hp)}
 
 .grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
-@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:920px){.grid{grid-template-columns:minmax(0,1fr)}}
 .panel{background:var(--wall);border:1px solid var(--edge);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
 
 .floorbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -62,7 +68,7 @@ h1{margin:0;font-family:var(--pixel);font-weight:700;font-size:32px;line-height:
 .pip.boss{width:20px;border-radius:4px}
 .pip.boss.now{border-color:var(--hp);box-shadow:0 0 0 2px rgba(255,93,115,.3)}
 .pips.farm .pip.boss{opacity:.35}
-#arena{display:block;width:100%;height:280px;border-radius:8px;cursor:crosshair;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#arena{display:block;width:100%;height:290px;border-radius:8px;cursor:crosshair;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .hint{margin:0;font-size:13px;color:var(--mute)}
 .hint b{color:var(--combo)}
 kbd{font-family:var(--pixel);font-size:12px;background:var(--stone);border:1px solid var(--edge);border-radius:4px;padding:0 5px}
@@ -78,26 +84,26 @@ kbd{font-family:var(--pixel);font-size:12px;background:var(--stone);border:1px s
 .sk.locked img{opacity:.25}
 .sk .cdn{position:absolute;top:50%;left:50%;transform:translate(-50%,-70%);font-family:var(--pixel);font-size:16px;z-index:1;text-shadow:0 1px 0 #000}
 
-.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-@media (max-width:480px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .stat{background:var(--stone);border-radius:6px;padding:8px 10px;min-width:0}
-.stat b{display:block;font-family:var(--pixel);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat b{display:block;font-family:var(--pixel);font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 #log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute);min-height:118px}
 #log li:first-child{color:var(--text)}
-#log .g{color:var(--gold)} #log .r{color:var(--hp)} #log .t{color:var(--heal)} #log .c{color:var(--combo)} #log .p{color:var(--gem)}
+#log .g{color:var(--gold)} #log .r{color:var(--hp)} #log .t{color:var(--heal)} #log .c{color:var(--combo)} #log .p{color:var(--gem)} #log .u{color:var(--rune)}
 
-.tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;background:var(--stone);border-radius:10px;padding:4px}
-@media (max-width:520px){.tabs{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.tabs button{font:inherit;font-family:var(--pixel);font-size:15px;font-weight:600;color:var(--mute);background:transparent;border:0;border-radius:7px;padding:8px 4px;cursor:pointer;position:relative}
+.tabs{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;background:var(--stone);border-radius:10px;padding:4px}
+@media (max-width:560px){.tabs{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.tabs button{font:inherit;font-family:var(--pixel);font-size:14px;font-weight:600;color:var(--mute);background:transparent;border:0;border-radius:7px;padding:8px 2px;cursor:pointer;position:relative}
 .tabs button[aria-selected="true"]{background:var(--edge);color:var(--text)}
-.tabs .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--combo)}
+.tabs .dot{position:absolute;top:4px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--combo)}
 .tabpanel{display:flex;flex-direction:column;gap:12px}
 .shophead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 h2{margin:0;font-family:var(--pixel);font-weight:600;font-size:20px}
 h3{margin:0;font-family:var(--pixel);font-weight:600;font-size:16px}
-.amt{display:flex;background:var(--stone);border-radius:999px;padding:3px;gap:2px}
-.amt button{font:inherit;font-size:12px;font-weight:800;color:var(--mute);background:transparent;border:0;border-radius:999px;padding:5px 12px;cursor:pointer}
+.amt{display:flex;background:var(--stone);border-radius:999px;padding:3px;gap:2px;flex-wrap:wrap}
+.amt button{font:inherit;font-size:12px;font-weight:800;color:var(--mute);background:transparent;border:0;border-radius:999px;padding:5px 10px;cursor:pointer}
 .amt button[aria-pressed="true"]{background:var(--edge);color:var(--text)}
 .list{display:flex;flex-direction:column;gap:8px}
 .part{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--stone);border-radius:8px;padding:8px 10px 8px 8px}
@@ -106,15 +112,17 @@ h3{margin:0;font-family:var(--pixel);font-weight:600;font-size:16px}
 .pname .lv{font-family:var(--pixel);font-weight:400;color:var(--mute);margin-left:6px;font-size:14px}
 .pfx{font-size:13px;color:var(--mute)}
 .pfx .up{color:var(--heal)}
-.buy{font:inherit;min-width:92px;display:flex;flex-direction:column;align-items:center;gap:0;background:var(--edge);color:var(--mute);border:0;border-radius:8px;padding:6px 10px;cursor:not-allowed}
+.buy{font:inherit;min-width:96px;display:flex;flex-direction:column;align-items:center;gap:0;background:var(--edge);color:var(--mute);border:0;border-radius:8px;padding:6px 10px;cursor:not-allowed}
 .buy .bn{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.buy .bc{font-family:var(--pixel);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.buy .bc{font-family:var(--pixel);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
 .buy.ok{background:var(--gold);color:var(--stone);cursor:pointer}
 .buy.gemb.ok{background:var(--gem)}
+.buy.runeb.ok{background:var(--rune)}
+.buy.shardb.ok{background:var(--shard)}
 .buy.claim.ok{background:var(--heal)}
 .buy.ok:hover{filter:brightness(1.08)}
 .buy.ok:active{transform:translateY(1px)}
-button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
 
 .card{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:center;background:var(--stone);border:1px solid var(--rc,var(--edge));border-radius:8px;padding:10px}
 .card img{width:40px;height:40px;image-rendering:pixelated}
@@ -122,6 +130,18 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
 .card .wr{font-size:13px;color:var(--mute)}
 .cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 @media (max-width:520px){.cards2{grid-template-columns:minmax(0,1fr)}}
+.box{background:var(--stone);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.box p{margin:0;font-size:13px;color:var(--mute)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ench{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;background:var(--wall);border-radius:6px;padding:6px 8px;font-size:13px;border-left:3px solid var(--tc,var(--edge))}
+.ench .tn{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--tc,var(--mute))}
+.ench.off{opacity:.55;border-left-color:var(--edge)}
+.lock{font:inherit;font-size:11px;font-weight:800;color:var(--mute);background:transparent;border:1px solid var(--edge);border-radius:6px;padding:4px 8px;cursor:pointer}
+.lock[aria-pressed="true"]{color:var(--stone);background:var(--rune);border-color:var(--rune)}
+.act{font:inherit;font-weight:800;font-size:13px;border:0;border-radius:8px;padding:8px 12px;cursor:pointer;background:var(--edge);color:var(--mute)}
+.act.ok{color:var(--stone)}
+.act.ok.rune{background:var(--rune)} .act.ok.shard{background:var(--shard)} .act.ok.gold{background:var(--gold)} .act.ok.heal{background:var(--heal)} .act.ok.gem{background:var(--gem)}
+.act:disabled{cursor:not-allowed}
 
 .quest{background:var(--stone);border-radius:8px;padding:10px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center}
 .quest .qt{font-weight:800}
@@ -129,6 +149,14 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
 .qbar{grid-column:1/2;height:6px;background:var(--wall);border-radius:3px;overflow:hidden}
 .qbar i{display:block;height:100%;background:var(--heal);width:0}
 .quest .buy{grid-row:1/3;grid-column:2}
+
+.dung{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--stone);border-radius:8px;padding:10px}
+.dung img{width:40px;height:40px;image-rendering:pixelated}
+.keys{font-family:var(--pixel);font-size:14px;color:var(--gold)}
+.ranks{display:flex;flex-wrap:wrap;gap:4px}
+.rk{font-family:var(--pixel);font-size:12px;padding:3px 8px;border-radius:999px;border:1px solid var(--edge);color:var(--mute)}
+.rk.on{background:var(--heal);border-color:var(--heal);color:var(--stone)}
+.rk.next{border-color:var(--heal);color:var(--heal)}
 
 .bookgrid{display:grid;grid-template-columns:minmax(0,1fr) repeat(4,26px);gap:4px 6px;align-items:center;font-size:13px}
 .bookgrid .bh{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;text-align:center}
@@ -140,6 +168,7 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
 .beast img{width:28px;height:28px;image-rendering:pixelated}
 .beast b{display:block;font-size:13px}
 .beast .done{color:var(--heal)}
+.beast .unseen{opacity:.35}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font-size:12px;background:var(--stone);border:1px solid var(--edge);border-radius:999px;padding:4px 10px;color:var(--text)}
@@ -147,20 +176,20 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
 .chip.unknown{color:var(--mute);border-style:dashed}
 .chip.got{border-color:var(--gold)}
 .chip.got::before{content:"★ ";color:var(--gold)}
-.retire{background:var(--stone);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px}
-.retire p{margin:0;font-size:13px;color:var(--mute)}
 .bigbtn{font:inherit;font-weight:800;background:var(--heal);color:var(--stone);border:0;border-radius:8px;padding:10px 14px;cursor:pointer}
 .bigbtn:disabled{background:var(--edge);color:var(--mute);cursor:not-allowed}
 .lifestats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .lifestats div{background:var(--stone);border-radius:6px;padding:6px 8px;min-width:0}
 .lifestats b{display:block;font-family:var(--pixel);font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--mute)}
-#wipe{font:inherit;font-size:12px;color:var(--mute);background:transparent;border:0;text-decoration:underline;cursor:pointer;padding:0}
+.linkbtn{font:inherit;font-size:12px;color:var(--mute);background:transparent;border:0;text-decoration:underline;cursor:pointer;padding:0}
 
-.overlay{position:fixed;inset:0;z-index:20;background:rgba(10,8,16,.78);display:flex;align-items:center;justify-content:center;
+.overlay{position:fixed;inset:0;z-index:20;background:rgba(10,8,16,.8);display:flex;align-items:flex-start;justify-content:center;
   padding-block:24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-y:auto}
-.modal{width:100%;max-width:720px;background:var(--wall);border:1px solid var(--edge);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px;margin:auto}
+.modal{width:100%;max-width:760px;background:var(--wall);border:1px solid var(--edge);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px;margin:auto}
 .modal p{margin:0;color:var(--mute)}
+.modal.dev{border-color:var(--hp)}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .classes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 @media (max-width:620px){.classes{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .cls{font:inherit;text-align:left;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
@@ -168,17 +197,33 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
 .cls img{width:44px;height:44px;image-rendering:pixelated}
 .cls b{font-family:var(--pixel);font-size:18px;font-weight:600}
 .cls span{font-size:13px;color:var(--mute)}
+.setgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (max-width:520px){.setgrid{grid-template-columns:minmax(0,1fr)}}
+.toggle{font:inherit;text-align:left;display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:10px 12px;cursor:pointer}
+.toggle b{font-size:12px;color:var(--mute)}
+.toggle[aria-pressed="true"]{border-color:var(--heal)}
+.toggle[aria-pressed="true"] b{color:var(--heal)}
+textarea{width:100%;box-sizing:border-box;min-height:80px;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:8px;resize:vertical}
+input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}
+.devgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.devgrid button{font:inherit;font-size:13px;font-weight:700;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:8px;cursor:pointer;text-align:left}
+.devgrid button:hover{border-color:var(--hp)}
+.devgrid button[aria-pressed="true"]{border-color:var(--hp);color:var(--hp)}
+#debug{position:absolute;left:8px;bottom:8px;font:12px ui-monospace,Menlo,monospace;color:#9fe3ff;background:rgba(0,0,0,.55);padding:4px 6px;border-radius:4px;pointer-events:none;white-space:pre}
+.arenawrap{position:relative}
 @media (prefers-reduced-motion:reduce){.buy.ok:active{transform:none}}
 </style>
 
 <div class="wrap">
   <header>
-    <div class="brand"><h1>Coin Crawl</h1><span class="tag">Your hero runs and fights. You tap, buy gear and go deeper.</span></div>
+    <div class="brand"><h1>Coin Crawl</h1><span class="rankchip" id="rankChip">Rookie</span><span class="tales" id="talesBox" hidden><b id="tales">0</b> tales</span></div>
     <div class="purse">
-      <span class="tales" id="talesBox" hidden><b id="tales">0</b> tales</span>
-      <span><span class="gem" aria-hidden="true"></span><span id="gems">0</span></span>
-      <span><span class="coin" aria-hidden="true"></span><span id="gold" class="num">0</span><span class="gps" id="gps"></span></span>
+      <span class="cur" title="Gems"><span class="ico gem"></span><span id="gems">0</span></span>
+      <span class="cur" title="Runes: reroll enchants and prefixes"><span class="ico rune"></span><span id="runes">0</span></span>
+      <span class="cur" title="Shards: enhance your weapon"><span class="ico shard"></span><span id="shards">0</span></span>
+      <span class="cur" title="Gold"><span class="ico coin"></span><span id="gold">0</span><span class="gps" id="gps"></span></span>
       <button id="mute" class="pill" type="button" aria-pressed="false">Sound on</button>
+      <button id="openSettings" class="pill" type="button">Settings</button>
     </div>
   </header>
 
@@ -188,11 +233,12 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
         <div><div class="lbl" id="floorNum">Floor 1</div><div id="floorName">Damp Cellar</div></div>
         <div class="floorright"><div class="pips" id="pips" aria-label="Floor progress"></div><button id="farmBtn" class="pill" type="button">Farm here</button></div>
       </div>
-      <canvas id="arena" aria-label="Battle. Tap to hit the nearest monster."></canvas>
+      <div class="arenawrap"><canvas id="arena" aria-label="Battle. Tap to hit the nearest monster."></canvas><div id="debug" hidden></div></div>
       <div class="skillbar" id="skillbar"></div>
-      <p class="hint">Tap the dungeon (or press <kbd>Space</kbd>) to hit. Fast taps build a <b>combo</b>. Keys <kbd>1</kbd>–<kbd>5</kbd> fire skills. Tap chests and treasure goblins before they get away.</p>
+      <p class="hint">Tap (or <kbd>Space</kbd>) to hit. Fast taps build a <b>combo</b>. <kbd>1</kbd>–<kbd>5</kbd> skills, <kbd>B</kbd> boss/farm. Tap chests and treasure goblins before they get away.</p>
       <div class="stats">
         <div class="stat"><span class="lbl">Damage</span><b id="sDmg">3</b></div>
+        <div class="stat"><span class="lbl">DPS</span><b id="sDps">0</b></div>
         <div class="stat"><span class="lbl">Swings/s</span><b id="sSpd">1.00</b></div>
         <div class="stat"><span class="lbl">Health</span><b id="sHp">30</b></div>
         <div class="stat"><span class="lbl">Crit</span><b id="sCrit">5%</b></div>
@@ -206,6 +252,7 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
         <button type="button" role="tab" id="tab-gear" data-tab="gear" aria-selected="true">Gear</button>
         <button type="button" role="tab" id="tab-skills" data-tab="skills" aria-selected="false">Skills</button>
         <button type="button" role="tab" id="tab-allies" data-tab="allies" aria-selected="false">Allies</button>
+        <button type="button" role="tab" id="tab-trials" data-tab="trials" aria-selected="false">Trials</button>
         <button type="button" role="tab" id="tab-quests" data-tab="quests" aria-selected="false">Quests</button>
         <button type="button" role="tab" id="tab-book" data-tab="book" aria-selected="false">Book</button>
         <button type="button" role="tab" id="tab-legacy" data-tab="legacy" aria-selected="false">Legacy</button>
@@ -213,14 +260,26 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
 
       <div class="tabpanel" id="panel-gear" role="tabpanel">
         <div class="cards2"><div class="card" id="clsCard"></div><div class="card" id="weapon"></div></div>
+        <div class="box">
+          <div class="shophead"><h3>Forge</h3><span class="lbl" id="wlvLbl">Weapon +0</span></div>
+          <p id="forgeText"></p>
+          <div class="row"><button class="act shard" id="enhanceBtn" type="button">Enhance</button><button class="act rune" id="reforgeBtn" type="button">Reforge prefix</button></div>
+        </div>
+        <div class="box">
+          <div class="shophead"><h3>Enchants</h3><span class="lbl">Lock lines to keep them</span></div>
+          <div class="list" id="enchList"></div>
+          <div class="row"><button class="act rune" id="rerollBtn" type="button">Reroll enchants</button><span class="hint" id="enchHint"></span></div>
+        </div>
         <div class="shophead">
           <h2>Training</h2>
           <div class="amt" role="group" aria-label="How many to buy">
-            <button type="button" id="amt1" data-amt="1" aria-pressed="true">×1</button>
-            <button type="button" id="amt10" data-amt="10" aria-pressed="false">×10</button>
-            <button type="button" id="amtMax" data-amt="max" aria-pressed="false">Max</button>
+            <button type="button" data-amt="1" aria-pressed="true">×1</button>
+            <button type="button" data-amt="10" aria-pressed="false">×10</button>
+            <button type="button" data-amt="100" aria-pressed="false">×100</button>
+            <button type="button" data-amt="max" aria-pressed="false">Max</button>
           </div>
         </div>
+        <div class="row"><button class="pill" id="autobuyBtn" type="button" aria-pressed="false">Auto-buy: off</button><button class="pill" id="buyCheap" type="button">Buy cheapest</button><span class="hint">Every 25 levels doubles that stat.</span></div>
         <div class="list" id="parts"></div>
       </div>
 
@@ -236,9 +295,24 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
         <div class="list" id="allyList"></div>
       </div>
 
+      <div class="tabpanel" id="panel-trials" role="tabpanel" hidden>
+        <div class="shophead"><h2>Rank trials</h2><span class="lbl" id="rankLbl">Rookie</span></div>
+        <p class="hint">Beat a rank examiner to promote. Every rank is permanent: +30% damage, +30% health, +10% gold. Ranks stay when you retire.</p>
+        <div class="ranks" id="ranks"></div>
+        <div class="box"><p id="trialText"></p><div class="row"><button class="act heal" id="trialBtn" type="button">Start trial</button></div></div>
+        <div class="shophead"><h2>Side dungeons</h2><span class="lbl" id="keyTimer"></span></div>
+        <p class="hint">30-second runs against a huge monster. The more health bars you break (up to 25), the bigger the reward. Each costs a key. Keys refill over time, even while you're away.</p>
+        <div class="list" id="dungList"></div>
+      </div>
+
       <div class="tabpanel" id="panel-quests" role="tabpanel" hidden>
+        <div class="box"><div class="shophead"><h3>Daily chest</h3><span class="lbl" id="dailyLbl"></span></div><p id="dailyText"></p><div class="row"><button class="act heal" id="dailyBtn" type="button">Open daily chest</button></div></div>
         <div class="shophead"><h2>Quests</h2><span class="lbl">Finish for gems</span></div>
+        <div class="row"><button class="pill" id="autoclaimBtn" type="button" aria-pressed="false">Auto-claim: off</button></div>
         <div class="list" id="questList"></div>
+        <div class="shophead"><h2>Weapon summon</h2><span class="lbl" id="sumLbl">Summon level 1</span></div>
+        <p class="hint" id="sumOdds"></p>
+        <div class="list" id="sumList"></div>
         <div class="shophead"><h2>Gem shop</h2><span class="lbl">Gems stay when you retire</span></div>
         <div class="list" id="gemList"></div>
       </div>
@@ -247,7 +321,7 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
         <div class="shophead"><h2>Weapon book</h2><span class="lbl" id="bookCount">0 / 48</span></div>
         <p class="hint" id="bookHint">Every new weapon type and rarity you find is +1% damage forever.</p>
         <div class="bookgrid" id="bookGrid"></div>
-        <div class="shophead"><h2>Bestiary</h2><span class="lbl" id="beastCount">0 / 9 mastered</span></div>
+        <div class="shophead"><h2>Bestiary</h2><span class="lbl" id="beastCount">0 mastered</span></div>
         <p class="hint">Defeat 100 of a monster type to master it: +5% gold forever for each one.</p>
         <div class="beast" id="beast"></div>
       </div>
@@ -255,18 +329,17 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       <div class="tabpanel" id="panel-legacy" role="tabpanel" hidden>
         <div class="shophead"><h2>Relics</h2><span class="lbl" id="relicCount">0 / 14 found</span></div>
         <div class="chips" id="relics"></div>
-        <p class="hint">Bosses sometimes drop relics. Relics stack, and you keep them when you retire.</p>
-        <div class="shophead"><h2>Achievements</h2><span class="lbl" id="achCount">0 / 24</span></div>
+        <div class="shophead"><h2>Achievements</h2><span class="lbl" id="achCount">0</span></div>
         <p class="hint">Each achievement is +3% damage forever.</p>
         <div class="chips" id="achs"></div>
-        <div class="retire">
+        <div class="box">
           <h2>Retire</h2>
-          <p>Reach floor 10 to retire. Your hero tells stories at the tavern and earns <b style="color:var(--heal)">tales</b>: each one is +10% damage and gold forever. Then you pick a class for your next hero. Gold, training, skills, allies, weapon and floor reset. Relics, gems, tales, the book and achievements stay.</p>
+          <p>Reach floor 10 to retire. Your hero earns <b style="color:var(--heal)">tales</b> (+10% damage and gold each, forever), then you pick a class for your next hero. Gold, training, skills, allies, weapon, enchants and floor reset. Ranks, relics, gems, runes, shards, tales, the book and achievements stay.</p>
           <button id="retireBtn" class="bigbtn" type="button" disabled>Reach floor 10 to retire</button>
         </div>
         <h2>Lifetime stats</h2>
         <div class="lifestats" id="lifestats"></div>
-        <div class="foot"><span id="bestLine">Deepest floor: 1</span><button id="wipe" type="button">Erase save</button></div>
+        <div class="foot"><span id="bestLine">Deepest floor: 1</span></div>
       </div>
     </section>
   </div>
@@ -281,6 +354,34 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   </div>
 </div>
 
+<div class="overlay" id="setModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+    <div class="mhead"><h2 id="setTitle">Settings</h2><button class="pill" type="button" data-close="setModal">Close</button></div>
+    <div class="setgrid" id="setGrid"></div>
+    <h3>Save file</h3>
+    <p>Your progress saves in this browser. Copy the code below to back it up or move it to another device, then paste it here to load it.</p>
+    <textarea id="saveText" aria-label="Save code" spellcheck="false"></textarea>
+    <div class="row"><button class="act ok heal" id="exportBtn" type="button">Show and copy my save</button><button class="act ok gold" id="importBtn" type="button">Load pasted save</button><button class="linkbtn" id="wipe" type="button">Erase save</button></div>
+    <p id="saveMsg"></p>
+    <h3>Developer menu</h3>
+    <p>Cheats for testing: free currency, any floor, spawn bosses, game speed. Using it marks your save as a dev save.</p>
+    <div><button class="act ok gem" id="openDev" type="button">Open developer menu</button> <span class="hint">Shortcut: <kbd>`</kbd></span></div>
+  </div>
+</div>
+
+<div class="overlay" id="devModal" hidden>
+  <div class="modal dev" role="dialog" aria-modal="true" aria-labelledby="devTitle">
+    <div class="mhead"><h2 id="devTitle">Developer menu</h2><button class="pill" type="button" data-close="devModal">Close</button></div>
+    <h3>Currency</h3><div class="devgrid" id="devCur"></div>
+    <h3>Progress</h3>
+    <div class="row"><label for="devFloor" class="lbl">Floor</label><input type="number" id="devFloor" min="1" max="999" value="10"><button class="act ok heal" id="devGo" type="button">Go to floor</button></div>
+    <div class="devgrid" id="devProg"></div>
+    <h3>Spawn</h3><div class="devgrid" id="devSpawn"></div>
+    <h3>Loot</h3><div class="devgrid" id="devLoot"></div>
+    <h3>Cheats</h3><div class="devgrid" id="devCheat"></div>
+  </div>
+</div>
+
 <script>
 (() => {
   const $ = s => document.querySelector(s);
@@ -288,13 +389,16 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   const randi = (a, b) => Math.floor(rand(a, b + 1));
   const pick = a => a[(Math.random() * a.length) | 0];
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const wpick = (items, weights) => { let r = Math.random() * weights.reduce((a, b) => a + b, 0); for (let i = 0; i < items.length; i++) { r -= weights[i]; if (r <= 0) return items[i]; } return items[items.length - 1]; };
   const reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const setText = (el, v) => { v = String(v); if (el._t !== v) { el.textContent = v; el._t = v; } };
   const setHTML = (el, v) => { if (el._h !== v) { el.innerHTML = v; el._h = v; } };
 
+  let S; // save, defined below
   function fmt(n) {
     if (!isFinite(n)) return '∞';
     if (n < 1000) return n < 10 && n % 1 ? n.toFixed(1) : String(Math.floor(n));
+    if (S && S.set.numfmt === 'sci') return n.toExponential(2).replace('+', '');
     if (n >= 1e21) return n.toExponential(2).replace('+', '');
     const u = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx'];
     let i = -1;
@@ -302,11 +406,15 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.floor(n)) + u[i];
   }
   const pct = v => Math.round(v * 100) + '%';
+  const pct1 = v => (Math.round(v * 1000) / 10) + '%';
   function hexToRgb(h) { const n = parseInt(h.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
   function mix(a, b, t) { const A = hexToRgb(a), B = hexToRgb(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
   const dur = s => s < 90 ? Math.round(s) + 's' : s < 5400 ? Math.round(s / 60) + 'm' : (s / 3600).toFixed(1) + 'h';
+  const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+  const today = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+  const yesterday = () => { const d = new Date(Date.now() - 864e5); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 
-  /* ================= content ================= */
+  /* ================= sprites ================= */
   const SPR = {
     slime: ['..........', '..........', '....aa....', '...aaaa...', '..aaaaaa..', '.acdaacda.', 'aaaaaaaaaa', 'aaabbbbaaa', 'aaaaaaaaaa', '.bbbbbbbb.'],
     bat: ['..........', 'b........b', 'bb.a..a.bb', 'bbbaaaabbb', 'bbacdacdbb', '.bbaaaabb.', '..b.ee.b..', '...e..e...', '..........', '..........'],
@@ -317,6 +425,21 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     rat: ['..........', '..........', '..a.......', '.aaa......', 'aacaaaaa..', 'aaaaaaaaa.', '.aaaaaaaaa', '..b..b..tt', '........t.', '..........'],
     eyeball: ['...aaaa...', '.aaaaaaaa.', 'aaaccccaaa', 'aaccddccaa', 'aacddddcaa', 'aaccddccaa', 'aaaccccaaa', '.aaaaaaaa.', '...aaaa...', '..b.b.b...'],
     crab: ['..........', 'aa......aa', 'a.a....a.a', '.aa....aa.', '..aaaaaa..', '.acdaacda.', 'aaaaaaaaaa', '.aaaaaaaa.', 'a.a....a.a', '..........'],
+    spider: ['..........', 'a.a....a.a', '.a.aaaa.a.', '..aaaaaa..', 'aaacdcdaaa', '.aaaaaaaa.', 'a.aaaaaa.a', '.a.a..a.a.', 'a..a..a..a', '..........'],
+    frog: ['..........', '..cc..cc..', '.cddccddc.', '.aaaaaaaa.', 'aaaaaaaaaa', 'aabbbbbbaa', 'aaaaaaaaaa', '.aaaaaaaa.', 'aa.a..a.aa', '..........'],
+    imp: ['a........a', 'aa......aa', '.aaaaaaaa.', '.acdaacda.', '.aaaaaaaa.', '..aeeeea..', '...aaaa..t', '..aaaaaa.t', '..aa..aa..', '..a....a..'],
+    golem: ['..aaaaaa..', '.abbbbbba.', '.bcdbbcdb.', '.bbbbbbbb.', 'aabbbbbbaa', 'abbbbbbbba', 'ab.bbbb.ba', 'aa.bbbb.aa', '..bb..bb..', '.aaa..aaa.'],
+    mummy: ['...cccc...', '..cbcccc..', '..cdccdc..', '..ccbccc..', '...cccc...', '.cccbcccc.', 'cc.cccc.cc', '...cbcc...', '...cc.cc..', '..cc..cc..'],
+    yeti: ['..aaaaaa..', '.aaaaaaaa.', '.abbbbbba.', '.abdbbdba.', '.abbeebba.', 'aaaaaaaaaa', 'aaaaaaaaaa', 'a.aaaaaa.a', '..aa..aa..', '.aaa..aaa.'],
+    wisp: ['....aa....', '...aaa....', '..aaaaa...', '.aaccccaa.', 'aaccccccaa', 'acdccccdca', 'accccccca.', '.aaccccaa.', '..aaaaaa..', '...aaaa...'],
+    mimic: ['..........', '.aaaaaaaa.', 'abbcdbcdba', 'aaaaaaaaaa', 'aeaeaeaeae', 'kkkkkkkkkk', 'eaeaeaeaea', 'abbbffbbba', 'abbbbbbbba', 'aaaaaaaaaa'],
+    robot: ['....e.....', '....a.....', '..aaaaaa..', '.abbbbbba.', '.bccbbccb.', '.bbbbbbbb.', '..aaaaaa..', '.aabbbbaa.', '..a....a..', '.aa....aa.'],
+    cactus: ['...aaaa...', '..aaaaaa..', '..acdacd..', 'a.aaaaaa.a', 'a.aabbaa.a', 'aaaaaaaaaa', '..aaaaaa..', '..aaaaaa..', '.eeeeeeee.', '..eeeeee..'],
+    snail: ['..........', '.......d.d', '.......a.a', '...bbbbaa.', '..bbccbbaa', '.bbcbbcbaa', '.bbccccba.', '..bbbbbaa.', 'aaaaaaaaaa', '..........'],
+    penguin: ['...aaaa...', '..aaaaaa..', '..adwwda..', '..awwwwa..', '..aweewa..', '.aawwwwaa.', 'aaawwwwaaa', '.aawwwwaa.', '..aaaaaa..', '..ee..ee..'],
+    ogre: ['...aaaaaa...', '..aaaaaaaa..', '..acdaacda..', '..aaaaaaaa..', '..aeaaaaea..', '...aaaaaa...', '.bbbbbbbbbb.', 'abbbbbbbbbba', 'a.bbbbbbbb.a', '..bbbbbbbb..', '..aaa..aaa..', '.aaaa..aaaa.'],
+    dragon: ['........aa..', '.......aaaa.', 'b.....aacdaa', 'bb...aaaaaee', 'bbb.aaaaa...', 'bbbbaaaa....', '.bbaaaaaa...', '..aaaaaaaa..', '.aaaccccaa..', 'aaa.cccc.a..', 'aa..aa.aa...', 'a...aa..aa..'],
+    lich: ['....eeee....', '...e.ee.e...', '...cccccc...', '..ccdccdcc..', '..cccccccc..', '...cdcdcd...', '..bbbbbbbb.s', '.bbbbbbbbbbs', 'bbbbbbbbbb.s', '.bbbbbbbbb.s', '..bbbbbbbb.s', '.bbb.bb.bbb.'],
     hero: ['...eeee...', '..eeeeee..', '..ecdcde..', '..eeeeee.f', '...gggg..f', '..aaaaaa.f', '.gaaaaaaff', '..aaaaaa..', '..bb..bb..', '..bb..bb..'],
     hero2: ['...eeee...', '..eeeeee..', '..ecdcde..', '..eeeeee.f', '...gggg..f', '..aaaaaa.f', '.gaaaaaaff', '..aaaaaa..', '.bb...bb..', 'bb.....bb.'],
     wizard: ['....a.....', '...aaa....', '..aaeaa.e.', '.aaaaaaas.', '..gdgdg.s.', '..ggggg.s.', '..wwwww.s.', '.bbwwwbbs.', '.bbbbbbbs.', '..bb.bb.s.'],
@@ -342,7 +465,8 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     box: ['........', '.aaaaaa.', 'abbbbbba', 'aaaccaaa', 'abbccbba', 'abbbbbba', 'abbbbbba', '.aaaaaa.'],
     relicbox: ['...aa...', '..abba..', '.abbbba.', 'abbccbba', 'abbccbba', '.abbbba.', '..abba..', '...aa...'],
     hourglass: ['aaaaaaaa', '.bbbbbb.', '..bccb..', '...cc...', '...bb...', '..bccb..', '.bccccb.', 'aaaaaaaa'],
-    potion: ['...aa...', '...bb...', '..bccb..', '.bccccb.', 'bccdccdb', 'bcccccdb', '.bccccb.', '..bbbb..']
+    potion: ['...aa...', '...bb...', '..bccb..', '.bccccb.', 'bccdccdb', 'bcccccdb', '.bccccb.', '..bbbb..'],
+    pouch: ['...aa...', '..a..a..', '.bbbbbb.', 'bbccccbb', 'bccddccb', 'bccddccb', 'bbccccbb', '.bbbbbb.']
   };
   const ICON_PAL = {
     sword: { c: '#e8eefc', b: '#f5b942' }, armor: { a: '#8f9bb8', c: '#c9d2ea' }, boots: { a: '#8a5a3c', b: '#4a3326' },
@@ -350,8 +474,9 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     torch: { e: '#ff8a3d', d: '#ffe066', c: '#9aa3ba', b: '#8a5a3c' }, pet: { a: '#a07be0', b: '#5d3f99', c: '#fff' },
     spin: { a: '#ff7ad9', b: '#ffffff' }, bolt: { a: '#ffe066' }, heal: { a: '#ff5d73', b: '#ffc2cc' },
     rush: { a: '#b07d1f', b: '#f5b942' }, frenzy: { a: '#e8394d', b: '#ff8a3d', c: '#ffe066' },
-    box: { a: '#5b3a26', b: '#a8693e', c: '#b98cff' }, relicbox: { a: '#3b8f84', b: '#62d2c4', c: '#e9fffb' },
-    hourglass: { a: '#8a5a3c', b: '#c9d2ea', c: '#f5b942' }, potion: { a: '#8a5a3c', b: '#c9d2ea', c: '#ff7ad9', d: '#ffd3f1' }
+    box: { a: '#5b3a26', b: '#a8693e', c: '#b98cff' }, box10: { a: '#5b3a26', b: '#f5b942', c: '#b98cff' }, relicbox: { a: '#3b8f84', b: '#62d2c4', c: '#e9fffb' },
+    hourglass: { a: '#8a5a3c', b: '#c9d2ea', c: '#f5b942' }, potion: { a: '#8a5a3c', b: '#c9d2ea', c: '#ff7ad9', d: '#ffd3f1' },
+    runepouch: { a: '#8a5a3c', b: '#4a3b5c', c: '#6fd6ff', d: '#d8f6ff' }, shardpouch: { a: '#8a5a3c', b: '#4a3b5c', c: '#ff9a5a', d: '#ffe0c8' }
   };
   const ALLY_PAL = {
     wizard: { a: '#7d5ad1', e: '#ffe066', s: '#8a5a3c', g: '#f2c9a0', d: '#1a1424', w: '#f1ecff', b: '#4d3591' },
@@ -359,30 +484,67 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     bard: { r: '#3c8a5a', f: '#ff5d73', g: '#f2c9a0', d: '#1a1424', a: '#e08a2c', l: '#a8693e', b: '#3a3048' },
     raccoon: { a: '#8d8d9e', k: '#2a2238', c: '#ffffff', d: '#1a1424', w: '#d9d6e6' }
   };
+
+  /* ================= world content ================= */
   const THEMES = [
-    { name: 'Damp Cellar', kinds: ['slime', 'bat', 'rat'], tint: '#7bd88f', wall: '#1f2a2a' },
-    { name: 'Fungus Halls', kinds: ['mushroom', 'slime'], tint: '#c98bff', wall: '#281f33' },
-    { name: 'Goblin Market', kinds: ['goblin', 'rat'], tint: '#a6d35a', wall: '#2c2418' },
-    { name: 'Sewer Spa', kinds: ['rat', 'slime', 'crab'], tint: '#5fc7b0', wall: '#16262a' },
-    { name: 'Bone Pantry', kinds: ['skeleton', 'bat'], tint: '#e7dcc2', wall: '#26222a' },
-    { name: 'Haunted Library', kinds: ['ghost', 'eyeball'], tint: '#9fb4ff', wall: '#1c1d33' },
-    { name: 'Lava Basement', kinds: ['slime', 'goblin', 'crab'], tint: '#ff7a45', wall: '#311a1a' },
-    { name: 'Crab Disco', kinds: ['crab', 'eyeball'], tint: '#ff7ad9', wall: '#2a1631', disco: true },
-    { name: 'The Void Attic', kinds: ['ghost', 'eyeball', 'skeleton'], tint: '#6fa8ff', wall: '#161a33' }
+    { name: 'Damp Cellar', kinds: ['slime', 'bat', 'rat'], tint: '#7bd88f', wall: '#1f2a2a', fx: 'drip', boss: 'slime' },
+    { name: 'Fungus Halls', kinds: ['mushroom', 'slime', 'snail'], tint: '#c98bff', wall: '#281f33', fx: 'spores', boss: 'mushroom' },
+    { name: 'Goblin Market', kinds: ['goblin', 'rat', 'mimic'], tint: '#a6d35a', wall: '#2c2418', fx: 'dust', boss: 'ogre' },
+    { name: 'Sewer Spa', kinds: ['rat', 'slime', 'crab', 'frog'], tint: '#5fc7b0', wall: '#16262a', fx: 'bubbles', boss: 'crab' },
+    { name: 'Spider Nest', kinds: ['spider', 'bat'], tint: '#b7a6d6', wall: '#1d1a24', fx: 'dust', boss: 'spider' },
+    { name: 'Bone Pantry', kinds: ['skeleton', 'bat', 'mummy'], tint: '#e7dcc2', wall: '#26222a', fx: 'dust', boss: 'lich' },
+    { name: 'Frog Swamp', kinds: ['frog', 'snail', 'mushroom'], tint: '#b5d65a', wall: '#1b2a1c', fx: 'bubbles', boss: 'frog' },
+    { name: 'Haunted Library', kinds: ['ghost', 'eyeball', 'wisp'], tint: '#9fb4ff', wall: '#1c1d33', fx: 'sparkles', boss: 'lich' },
+    { name: 'Desert Tomb', kinds: ['mummy', 'cactus', 'spider'], tint: '#e0b56a', wall: '#2e2416', fx: 'sand', boss: 'mummy' },
+    { name: 'Frozen Freezer', kinds: ['yeti', 'penguin', 'wisp'], tint: '#9fe3ff', wall: '#17243a', fx: 'snow', boss: 'yeti' },
+    { name: 'Lava Basement', kinds: ['slime', 'imp', 'golem'], tint: '#ff7a45', wall: '#311a1a', fx: 'embers', boss: 'dragon' },
+    { name: 'Imp Office', kinds: ['imp', 'mimic', 'goblin'], tint: '#ff6f6f', wall: '#2b1a22', fx: 'embers', boss: 'ogre' },
+    { name: 'Crab Disco', kinds: ['crab', 'eyeball', 'frog'], tint: '#ff7ad9', wall: '#2a1631', fx: 'sparkles', disco: true, boss: 'crab' },
+    { name: 'Robot Factory', kinds: ['robot', 'golem', 'spider'], tint: '#9fc3d6', wall: '#1a2228', fx: 'sparks', boss: 'golem' },
+    { name: 'Cloud Kingdom', kinds: ['wisp', 'penguin', 'bat'], tint: '#cfe3ff', wall: '#2a3350', fx: 'snow', boss: 'dragon' },
+    { name: 'The Void Attic', kinds: ['ghost', 'eyeball', 'skeleton', 'wisp'], tint: '#6fa8ff', wall: '#161a33', fx: 'sparkles', boss: 'lich' }
   ];
-  const KINDS = ['slime', 'bat', 'rat', 'mushroom', 'goblin', 'crab', 'skeleton', 'ghost', 'eyeball'];
-  const CNAME = { slime: 'Slime', bat: 'Bat', goblin: 'Goblin', skeleton: 'Skeleton', mushroom: 'Shroom', ghost: 'Ghost', rat: 'Rat', eyeball: 'Eyeball', crab: 'Crab' };
-  const FLOATY = { bat: 1, ghost: 1, eyeball: 1 };
-  const ADJ = ['Grumpy', 'Soggy', 'Tiny', 'Overconfident', 'Sleepy', 'Tax-Evading', 'Moist', 'Polite', 'Furious', 'Suspicious', 'Dramatic', 'Wobbly', 'Snacking', 'Unemployed', 'Very Loud', 'Shy', 'Sweaty', 'Smug', 'Sarcastic', 'Lost', 'Crunchy', 'Haunted', 'Extremely Online', 'Disco'];
-  const BOSSES = ['Big Steve', 'Lord Wobblebottom', 'The Landlord', 'Duke Dampness', 'Sir Chompsalot', 'Queen Gloop', 'Baron Von Crumbs', 'Auntie Fangs', 'Gary Sr.', 'The Intern', 'Count Crumbleton', 'Mega Brenda', 'Admiral Pinch', 'Professor Ooze', 'The HOA President'];
+  const KINDS = ['slime', 'bat', 'rat', 'mushroom', 'snail', 'goblin', 'mimic', 'crab', 'frog', 'spider', 'skeleton', 'mummy', 'ghost', 'eyeball', 'wisp', 'cactus', 'yeti', 'penguin', 'imp', 'golem', 'robot', 'ogre', 'dragon', 'lich'];
+  const CNAME = { slime: 'Slime', bat: 'Bat', goblin: 'Goblin', skeleton: 'Skeleton', mushroom: 'Shroom', ghost: 'Ghost', rat: 'Rat', eyeball: 'Eyeball', crab: 'Crab', spider: 'Spider', frog: 'Frog', imp: 'Imp', golem: 'Golem', mummy: 'Mummy', yeti: 'Yeti', wisp: 'Wisp', mimic: 'Mimic', robot: 'Robot', cactus: 'Cactus', snail: 'Snail', penguin: 'Penguin', ogre: 'Ogre', dragon: 'Dragon', lich: 'Lich' };
+  const BIG = { ogre: 1, dragon: 1, lich: 1 };
+  const FLOATY = { bat: 1, ghost: 1, eyeball: 1, wisp: 1 };
+  const ADJ = ['Grumpy', 'Soggy', 'Overconfident', 'Sleepy', 'Tax-Evading', 'Moist', 'Polite', 'Furious', 'Suspicious', 'Dramatic', 'Wobbly', 'Snacking', 'Unemployed', 'Very Loud', 'Shy', 'Sweaty', 'Smug', 'Sarcastic', 'Lost', 'Crunchy', 'Extremely Online', 'Retired', 'Bored', 'Caffeinated'];
+  const BOSSES = ['Big Steve', 'Lord Wobblebottom', 'The Landlord', 'Duke Dampness', 'Sir Chompsalot', 'Queen Gloop', 'Baron Von Crumbs', 'Auntie Fangs', 'Gary Sr.', 'The Intern', 'Count Crumbleton', 'Mega Brenda', 'Admiral Pinch', 'Professor Ooze', 'The HOA President', 'Middle Manager Mort', 'Grand Wizard Kevin II', 'Chef Rotten', 'The Tax Man', 'Princess Pebble'];
+  const VARIANTS = {
+    armored: { name: 'Armored', hp: 2.2, dmg: 1, gold: 1.6, text: 'extra tough' },
+    speedy: { name: 'Speedy', hp: 0.9, dmg: 1, gold: 1.3, text: 'attacks fast' },
+    giant: { name: 'Giant', hp: 2.6, dmg: 1.5, gold: 2.5, scale: 1.3, text: 'huge' },
+    tiny: { name: 'Tiny', hp: 0.45, dmg: 0.6, gold: 0.8, scale: 0.7, text: 'tiny' },
+    vampire: { name: 'Vampire', hp: 1.2, dmg: 1.1, gold: 1.6, text: 'heals when it hits you' },
+    explosive: { name: 'Explosive', hp: 1, dmg: 1, gold: 1.5, text: 'explodes when it dies' },
+    ghostly: { name: 'Ghostly', hp: 1, dmg: 1, gold: 1.6, text: 'dodges 30% of swings' }
+  };
+  const BOSS_MECH = {
+    enrage: 'Enrages at half health',
+    shield: 'Raises a shield now and then',
+    summon: 'Calls in minions',
+    regen: 'Slowly heals'
+  };
+
   const RARITY = [
-    { n: 'Common', c: '#c9cfe0', m: [1.0, 1.4], w: 60, pre: ['Rusty', 'Bent', 'Damp', 'Borrowed', 'Slightly Used'] },
-    { n: 'Rare', c: '#6fb7ff', m: [1.6, 2.2], w: 28, pre: ['Shiny', 'Sharp', 'Polished', 'Reliable'] },
-    { n: 'Epic', c: '#c98bff', m: [2.6, 3.6], w: 10, pre: ['Blazing', 'Haunted', 'Thundering', 'Enchanted'] },
-    { n: 'Legendary', c: '#f5b942', m: [5, 7], w: 2, pre: ['Ancient', 'Cosmic', "Grandmaster's", 'Mythic'] }
+    { n: 'Common', c: '#c9cfe0', m: [1.0, 1.4], w: 60 },
+    { n: 'Rare', c: '#6fb7ff', m: [1.6, 2.2], w: 28 },
+    { n: 'Epic', c: '#c98bff', m: [2.6, 3.6], w: 10 },
+    { n: 'Legendary', c: '#f5b942', m: [5, 7], w: 2 }
   ];
+  const PREFIXES = [['Rusty', 0.85, 10], ['Bent', 0.9, 12], ['Damp', 0.92, 12], ['Borrowed', 0.95, 12], ['Plain', 1, 14], ['Shiny', 1.05, 10], ['Sharp', 1.1, 8], ['Polished', 1.12, 6], ['Blazing', 1.18, 4], ['Haunted', 1.2, 4], ['Thundering', 1.22, 3], ['Enchanted', 1.25, 2.5], ['Ancient', 1.3, 1.5], ['Cosmic', 1.35, 1], ["Grandmaster's", 1.42, 0.6], ['Mythic', 1.5, 0.3]];
   const WBASE = ['Butter Knife', 'Sword', 'Spoon', 'Baguette', 'Pool Noodle', 'Axe', 'Umbrella', 'Fish', 'Spatula', 'Greatsword', 'Rolling Pin', 'Mop'];
-  const WSUF = ['of Mild Peril', 'of Snacking', 'of the Bat', 'of Regret', 'of Doom (Probably)', 'of Tuesday', 'of the Landlord', 'of Vibes', 'of the Sewer'];
+  const WSUF = ['of Mild Peril', 'of Snacking', 'of the Bat', 'of Regret', 'of Doom (Probably)', 'of Tuesday', 'of the Landlord', 'of Vibes', 'of the Sewer', 'of Extra Cheese'];
+  const ENCH_STATS = [
+    { id: 'dmg', name: 'Damage', r: [5, 10] }, { id: 'crit', name: 'Crit chance', r: [1, 2.5] }, { id: 'critm', name: 'Crit damage', r: [10, 25] },
+    { id: 'gold', name: 'Gold', r: [5, 12] }, { id: 'spd', name: 'Swing speed', r: [3, 7] }, { id: 'tap', name: 'Tap damage', r: [8, 20] },
+    { id: 'hp', name: 'Health', r: [6, 14] }, { id: 'skill', name: 'Skill damage', r: [8, 20] }, { id: 'boss', name: 'Boss damage', r: [8, 18] },
+    { id: 'leech', name: 'Lifesteal', r: [0.3, 1] }
+  ];
+  const ENCH_TIERS = [
+    { n: 'Common', m: 1, w: 55, c: '#c9cfe0' }, { n: 'Rare', m: 1.8, w: 28, c: '#6fb7ff' }, { n: 'Epic', m: 3, w: 12, c: '#c98bff' },
+    { n: 'Legendary', m: 5, w: 4, c: '#f5b942' }, { n: 'Mythic', m: 8, w: 1, c: '#ff5d73' }
+  ];
   const RELICS = [
     { id: 'spoon', name: "Grandma's Wooden Spoon", fx: 'gold', v: 0.10, text: '+10% gold' },
     { id: 'rock', name: 'Suspiciously Warm Rock', fx: 'hp', v: 0.10, text: '+10% health' },
@@ -400,10 +562,10 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     { id: 'map', name: 'Map Drawn in Crayon', fx: 'chest', v: 0.50, text: '+50% chest chance' }
   ];
   const PARTS = [
-    { id: 'sword', name: 'Sword Practice', base: 8, r: 1.15, fx: (s, n) => `Hits for ${fmt(s.dmg)} <span class="up">→ ${fmt(n.dmg)}</span>` },
-    { id: 'armor', name: 'Armor', base: 12, r: 1.16, fx: (s, n) => `${fmt(s.maxHp)} health <span class="up">→ ${fmt(n.maxHp)}</span>` },
+    { id: 'sword', name: 'Sword Practice', base: 8, r: 1.14, fx: (s, n) => `Hits for ${fmt(s.dmg)} <span class="up">→ ${fmt(n.dmg)}</span>` },
+    { id: 'armor', name: 'Armor', base: 12, r: 1.15, fx: (s, n) => `${fmt(s.maxHp)} health <span class="up">→ ${fmt(n.maxHp)}</span>` },
     { id: 'boots', name: 'Boots', base: 30, r: 1.24, fx: (s, n) => `${(1 / s.atkInt).toFixed(2)} swings/s <span class="up">→ ${(1 / n.atkInt).toFixed(2)}</span>` },
-    { id: 'ring', name: 'Lucky Ring', base: 50, r: 1.21, fx: (s, n) => `${pct(s.crit)} crit, ×${s.ringGold.toFixed(2)} gold <span class="up">→ ${pct(n.crit)}, ×${n.ringGold.toFixed(2)}</span>` },
+    { id: 'ring', name: 'Lucky Ring', base: 50, r: 1.21, fx: (s, n) => `${pct1(s.crit)} crit, ×${s.ringGold.toFixed(2)} gold <span class="up">→ ${pct1(n.crit)}, ×${n.ringGold.toFixed(2)}</span>` },
     { id: 'gaunt', name: 'Gauntlets', base: 15, r: 1.15, fx: (s, n) => `Taps hit for ${fmt(s.tap)} <span class="up">→ ${fmt(n.tap)}</span>` },
     { id: 'torch', name: 'Combo Torch', base: 60, r: 1.35, fx: (s, n) => `Combo up to ×${s.comboMax.toFixed(2)} <span class="up">→ ×${n.comboMax.toFixed(2)}</span>` },
     { id: 'pet', name: 'Pet Bat', base: 120, r: 1.2, fx: (s, n) => s.petRate ? `Bites ${s.petRate.toFixed(1)}/s for you <span class="up">→ ${n.petRate.toFixed(1)}/s</span>` : `Hire a bat that taps for you <span class="up">→ ${n.petRate.toFixed(1)}/s</span>` }
@@ -431,6 +593,16 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     berserker: { name: 'Berserker', text: '+40% damage, but 20% less health', tunic: '#d1495b' },
     monk: { name: 'Monk', text: 'Taps hit 60% harder, +20 combo cap, combo lasts longer', tunic: '#e08a2c' }
   };
+  const RANKS = [
+    { n: 'Rookie', need: 0 }, { n: 'Copper', need: 5 }, { n: 'Bronze', need: 10 }, { n: 'Iron', need: 15 }, { n: 'Steel', need: 20 }, { n: 'Silver', need: 30 },
+    { n: 'Gold', need: 40 }, { n: 'Platinum', need: 55 }, { n: 'Mythril', need: 70 }, { n: 'Adamant', need: 90 }, { n: 'Starforged', need: 110 }, { n: 'Cosmic', need: 135 }, { n: 'Legend', need: 165 }
+  ];
+  const DUNGEONS = [
+    { id: 'vault', name: 'Gold Vault', kind: 'mimic', tint: '#f5b942', cur: 'gold', text: 'A greedy mimic full of gold. Every bar you break pays a pile of gold.' },
+    { id: 'mine', name: 'Rune Mine', kind: 'golem', tint: '#6fd6ff', cur: 'runes', text: 'A rune golem. Every bar you break drops runes for enchants and reforging.' },
+    { id: 'forge', name: 'Shard Forge', kind: 'robot', tint: '#ff9a5a', cur: 'shards', text: 'A haywire forge robot. Every bar you break drops shards for weapon enhancing.' }
+  ];
+  const KEY_MS = 20 * 60 * 1000;
   const QT = {
     kill: { text: n => `Defeat ${n} monsters`, n: () => 40, gems: 3 },
     boss: { text: n => `Beat ${n} bosses`, n: () => 2, gems: 4 },
@@ -438,14 +610,19 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     combo: { text: n => `Reach a ${n} combo`, n: () => 25 + 5 * randi(0, 5), gems: 3, max: true },
     skill: { text: n => `Cast ${n} skills`, n: () => 15, gems: 3, need: () => S.maxFloor >= 3 },
     elite: { text: n => `Defeat ${n} shiny monster${n > 1 ? 's' : ''}`, n: () => randi(1, 2), gems: 5 },
+    variant: { text: n => `Defeat ${n} special monsters (giant, armored and so on)`, n: () => 15, gems: 3 },
     taps: { text: n => `Tap ${n} times`, n: () => 250, gems: 2 },
-    gold: { text: n => `Earn ${fmt(n)} gold`, n: () => Math.ceil(400 * Math.pow(1.28, S.floor - 1)), gems: 3 },
-    goblin: { text: () => 'Catch a treasure goblin', n: () => 1, gems: 6 }
+    gold: { text: n => `Earn ${fmt(n)} gold`, n: () => Math.ceil(400 * goldM(S.floor)), gems: 3 },
+    goblin: { text: () => 'Catch a treasure goblin', n: () => 1, gems: 6 },
+    dungeon: { text: n => `Run ${n} side dungeon${n > 1 ? 's' : ''}`, n: () => 1, gems: 4, need: () => S.deepest >= 5 },
+    ench: { text: n => `Reroll enchants ${n} times`, n: () => 3, gems: 3, need: () => S.runes >= 10 }
   };
   const GEMSHOP = [
-    { id: 'wbox', icon: 'box', name: 'Mystery Weapon Box', cost: 10, text: 'A weapon from your deepest floor, with much better odds' },
     { id: 'party', icon: 'potion', name: 'Party Potion', cost: 8, text: '20 seconds of Gold Fever and Frenzy at once' },
     { id: 'warp', icon: 'hourglass', name: 'Time Warp', cost: 15, text: 'Get 30 minutes of gold right now' },
+    { id: 'rpouch', icon: 'pouch', pal: 'runepouch', name: 'Rune Pouch', cost: 6, text: '+25 runes' },
+    { id: 'spouch', icon: 'pouch', pal: 'shardpouch', name: 'Shard Pouch', cost: 6, text: '+30 shards' },
+    { id: 'keys', icon: 'box', pal: 'box10', name: 'Dungeon Key Ring', cost: 12, text: 'Refill every dungeon key' },
     { id: 'rbox', icon: 'relicbox', name: 'Relic Box', cost: 25, text: 'One random relic' }
   ];
   const ACHS = [
@@ -453,6 +630,7 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     ['f25', 'Basement Dweller', 'Reach floor 25', () => S.deepest >= 25],
     ['f50', 'Mole Person', 'Reach floor 50', () => S.deepest >= 50],
     ['f100', 'Center of the Earth', 'Reach floor 100', () => S.deepest >= 100],
+    ['f200', 'Other Side of the Earth', 'Reach floor 200', () => S.deepest >= 200],
     ['c50', 'Button Masher', 'Reach a 50 combo', () => S.life.bestCombo >= 50],
     ['c100', 'Finger Workout', 'Reach a 100 combo', () => S.life.bestCombo >= 100],
     ['c200', 'Carpal Tunnel', 'Reach a 200 combo', () => S.life.bestCombo >= 200],
@@ -464,15 +642,24 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     ['ally', 'Party of Five', 'Hire all four allies', () => ALLIES.every(a => S.allies[a.id] > 0)],
     ['g1m', 'Millionaire', 'Earn 1M gold in total', () => S.life.goldEarned >= 1e6],
     ['g1b', 'Dragon Hoard', 'Earn 1B gold in total', () => S.life.goldEarned >= 1e9],
+    ['g1t', 'Economy Breaker', 'Earn 1T gold in total', () => S.life.goldEarned >= 1e12],
     ['ch25', 'Chest Hunter', 'Open 25 chests', () => S.life.chests >= 25],
     ['gob5', 'Goblin Catcher', 'Catch 5 treasure goblins', () => S.life.goblins >= 5],
     ['el10', 'Shiny Hunter', 'Defeat 10 shiny monsters', () => S.life.elites >= 10],
+    ['var100', 'Variety Pack', 'Defeat 100 special monsters', () => S.life.variants >= 100],
     ['k1k', 'Exterminator', 'Defeat 1,000 monsters', () => S.life.kills >= 1000],
     ['k10k', 'Dungeon Janitor', 'Defeat 10,000 monsters', () => S.life.kills >= 10000],
     ['b24', 'Collector', 'Fill 24 spots in the weapon book', () => bookCount() >= 24],
     ['b48', 'Completionist', 'Fill the whole weapon book', () => bookCount() >= 48],
+    ['beast12', 'Zookeeper', 'Master 12 monster types', () => beastsMastered() >= 12],
     ['q10', 'Busy Bee', 'Claim 10 quests', () => S.life.quests >= 10],
-    ['dead10', 'Professional Napper', 'Faint 10 times', () => S.life.deaths >= 10]
+    ['dead10', 'Professional Napper', 'Faint 10 times', () => S.life.deaths >= 10],
+    ['rank3', 'Promoted', 'Reach Iron rank', () => S.rank >= 3],
+    ['rank8', 'Top Brass', 'Reach Mythril rank', () => S.rank >= 8],
+    ['dung10', 'Dungeon Regular', 'Finish 10 side dungeons', () => S.life.dungeons >= 10],
+    ['myth', 'Mythic Touch', 'Roll a Mythic enchant', () => S.life.mythic >= 1],
+    ['wlv10', 'Plus Ten', 'Enhance your weapon to +10', () => S.wlv >= 10],
+    ['daily7', 'Creature of Habit', 'Open the daily chest 7 days in a row', () => S.daily.streak >= 7]
   ];
 
   /* ================= save ================= */
@@ -480,59 +667,73 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   const freshLv = () => ({ sword: 0, armor: 0, boots: 0, ring: 0, gaunt: 0, torch: 0, pet: 0 });
   const freshSk = () => ({ spin: 1, bolt: 1, heal: 1, rush: 1, frenzy: 1 });
   const freshAllies = () => ({ knight: 0, wizard: 0, bard: 0, raccoon: 0 });
-  const freshLife = () => ({ kills: 0, bosses: 0, chests: 0, taps: 0, bestCombo: 0, goldEarned: 0, skills: 0, time: 0, goblins: 0, elites: 0, deaths: 0, legendaries: 0, quests: 0, beasts: {} });
+  const freshLife = () => ({ kills: 0, bosses: 0, chests: 0, taps: 0, bestCombo: 0, goldEarned: 0, skills: 0, time: 0, goblins: 0, elites: 0, variants: 0, deaths: 0, legendaries: 0, quests: 0, dungeons: 0, enchants: 0, mythic: 0, trials: 0, beasts: {} });
+  const freshSet = () => ({ numfmt: 'short', shake: true, nums: true, autobuy: false, autoclaim: false, autoboss: false, particles: true });
   const fresh = () => ({
-    gold: 0, gems: 0, floor: 1, kill: 0, maxFloor: 1, deepest: 1, tales: 0, runs: 0, cls: 'peasant',
-    lv: freshLv(), sk: freshSk(), allies: freshAllies(), weapon: null, relics: {}, book: {}, ach: {}, life: freshLife(), quests: [],
-    muted: false, amt: '1', auto: true, farm: false, tab: 'gear', gps: 0, lastSeen: 0
+    gold: 0, gems: 0, runes: 0, shards: 0, floor: 1, kill: 0, maxFloor: 1, deepest: 1, tales: 0, runs: 0, cls: 'peasant', rank: 0,
+    lv: freshLv(), sk: freshSk(), allies: freshAllies(), weapon: null, wlv: 0, ench: [null, null, null], locks: [false, false, false],
+    relics: {}, book: {}, ach: {}, life: freshLife(), quests: [], keys: { vault: 3, mine: 3, forge: 3 }, keyT: Date.now(),
+    summon: { lv: 1, xp: 0 }, daily: { last: '', streak: 0 }, set: freshSet(),
+    amt: '1', auto: true, farm: false, tab: 'gear', gps: 0, lastSeen: 0, muted: false, dev: false
   });
-  let S = fresh();
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (raw) {
-      const o = JSON.parse(raw);
-      S = Object.assign(fresh(), o);
-      S.lv = Object.assign(freshLv(), o.lv || {}); S.sk = Object.assign(freshSk(), o.sk || {});
-      S.allies = Object.assign(freshAllies(), o.allies || {}); S.life = Object.assign(freshLife(), o.life || {});
-      S.life.beasts = S.life.beasts || {}; S.relics = o.relics || {}; S.book = o.book || {}; S.ach = o.ach || {};
-      S.quests = Array.isArray(o.quests) ? o.quests.filter(q => QT[q.type]) : [];
-      if (!CLASSES[S.cls]) S.cls = 'peasant';
-    }
-  } catch (e) {}
+  function migrate(o) {
+    const s = Object.assign(fresh(), o);
+    s.lv = Object.assign(freshLv(), o.lv || {}); s.sk = Object.assign(freshSk(), o.sk || {});
+    s.allies = Object.assign(freshAllies(), o.allies || {}); s.life = Object.assign(freshLife(), o.life || {});
+    s.life.beasts = s.life.beasts || {}; s.relics = o.relics || {}; s.book = o.book || {}; s.ach = o.ach || {};
+    s.set = Object.assign(freshSet(), o.set || {}); s.keys = Object.assign({ vault: 3, mine: 3, forge: 3 }, o.keys || {});
+    s.summon = Object.assign({ lv: 1, xp: 0 }, o.summon || {}); s.daily = Object.assign({ last: '', streak: 0 }, o.daily || {});
+    s.ench = Array.isArray(o.ench) && o.ench.length === 3 ? o.ench : [null, null, null];
+    s.locks = Array.isArray(o.locks) && o.locks.length === 3 ? o.locks : [false, false, false];
+    s.quests = Array.isArray(o.quests) ? o.quests.filter(q => q && QT[q.type]) : [];
+    if (!CLASSES[s.cls]) s.cls = 'peasant';
+    if (s.weapon && !s.weapon.pm) { s.weapon.pm = 1; s.weapon.pre = s.weapon.name.split(' ')[0]; }
+    return s;
+  }
+  S = fresh();
+  try { const raw = localStorage.getItem(KEY); if (raw) S = migrate(JSON.parse(raw)); } catch (e) {}
   function save() { S.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
-  /* ================= stats ================= */
+  /* ================= balance + stats ================= */
+  const hpM = f => 12 * Math.pow(1.36, f - 1);
+  const dmgM = f => 2 * Math.pow(1.28, f - 1);
+  const goldM = f => 3 * Math.pow(1.25, f - 1);
   const relicKinds = () => RELICS.filter(r => S.relics[r.id]).length;
   const bookCount = () => Object.keys(S.book).length;
   const achCount = () => Object.keys(S.ach).length;
   const beastsMastered = () => KINDS.filter(k => (S.life.beasts[k] || 0) >= 100).length;
+  const enchLines = () => 1 + (S.deepest >= 15 ? 1 : 0) + (S.deepest >= 30 ? 1 : 0);
   function rel(fx) { let m = 1; for (const r of RELICS) if (r.fx === fx && S.relics[r.id]) m += r.v * S.relics[r.id]; return m; }
+  function ench(id) { let v = 0; S.ench.forEach((e, i) => { if (e && i < enchLines() && e.s === id) v += e.v; }); return v / 100; }
+  const weaponPower = w => w ? w.power * (w.pm || 1) : 1;
   function stats(lv, al) {
     al = al || S.allies;
-    const C = S.cls;
+    const C = S.cls, rk = S.rank;
     const tale = 1 + 0.1 * S.tales;
-    const wpn = S.weapon ? S.weapon.power : 1;
-    const perm = (1 + 0.03 * achCount()) * (1 + 0.01 * bookCount());
-    const dmg = 3 * (1 + 0.6 * lv.sword) * Math.pow(1.05, lv.sword) * tale * rel('dmg') * wpn * perm * (C === 'berserker' ? 1.4 : 1);
-    const maxHp = 30 * (1 + 0.5 * lv.armor) * Math.pow(1.05, lv.armor) * rel('hp') * (C === 'knight' ? 1.3 : C === 'berserker' ? 0.8 : 1);
+    const wpn = weaponPower(S.weapon) * (1 + 0.12 * S.wlv);
+    const perm = (1 + 0.03 * achCount()) * (1 + 0.01 * bookCount()) * Math.pow(1.3, rk);
+    const mile = L => Math.pow(2, Math.floor(L / 25));
+    const dmg = 3 * (1 + 0.6 * lv.sword) * Math.pow(1.05, lv.sword) * mile(lv.sword) * tale * rel('dmg') * wpn * perm * (C === 'berserker' ? 1.4 : 1) * (1 + ench('dmg'));
+    const maxHp = 30 * (1 + 0.5 * lv.armor) * Math.pow(1.05, lv.armor) * mile(lv.armor) * rel('hp') * Math.pow(1.3, rk) * (C === 'knight' ? 1.3 : C === 'berserker' ? 0.8 : 1) * (1 + ench('hp'));
     return {
       dmg, maxHp,
       regen: (maxHp * 0.02 + 0.5 * lv.armor) * rel('regen'),
-      atkInt: Math.max(0.12, 1 / ((1 + 0.08 * lv.boots) * rel('spd') * (1 + 0.05 * al.bard))),
-      crit: Math.min(0.6, 0.05 + 0.02 * lv.ring) + (C === 'rogue' ? 0.1 : 0),
-      critMult: 2 * rel('critm'),
+      atkInt: Math.max(0.1, 1 / ((1 + 0.08 * lv.boots) * rel('spd') * (1 + 0.05 * al.bard) * (1 + ench('spd')))),
+      crit: Math.min(0.9, Math.min(0.6, 0.05 + 0.02 * lv.ring) + (C === 'rogue' ? 0.1 : 0) + ench('crit')),
+      critMult: 2 * rel('critm') + ench('critm'),
       ringGold: 1 + 0.08 * lv.ring,
-      goldMult: (1 + 0.08 * lv.ring) * tale * rel('gold') * (C === 'rogue' ? 1.25 : 1) * (1 + 0.06 * al.bard) * (1 + 0.05 * beastsMastered()),
-      tap: dmg * (0.35 + 0.15 * lv.gaunt) * rel('tap') * (C === 'monk' ? 1.6 : 1),
+      goldMult: (1 + 0.08 * lv.ring) * tale * rel('gold') * (C === 'rogue' ? 1.25 : 1) * (1 + 0.06 * al.bard) * (1 + 0.05 * beastsMastered()) * Math.pow(1.1, rk) * (1 + ench('gold')),
+      tap: dmg * (0.35 + 0.15 * lv.gaunt) * mile(lv.gaunt) * rel('tap') * (C === 'monk' ? 1.6 : 1) * (1 + ench('tap')),
       comboCap: 20 + 10 * lv.torch + (C === 'monk' ? 20 : 0),
       comboMax: 1 + 0.025 * (20 + 10 * lv.torch + (C === 'monk' ? 20 : 0)),
       hold: (0.8 + 0.1 * lv.torch) * rel('hold') * (C === 'monk' ? 1.3 : 1),
       petRate: 0.8 * lv.pet * rel('pet'),
-      boss: rel('boss'),
+      boss: rel('boss') + ench('boss'),
       chest: 0.05 * rel('chest') + 0.015 * al.raccoon,
       taken: (1 - block(al.knight)) * (C === 'knight' ? 0.85 : 1),
-      skillMult: C === 'mage' ? 1.5 : 1,
-      cdMult: C === 'mage' ? 0.75 : 1
+      skillMult: (C === 'mage' ? 1.5 : 1) * (1 + ench('skill')),
+      cdMult: C === 'mage' ? 0.75 : 1,
+      leech: ench('leech')
     };
   }
   let st = stats(S.lv);
@@ -564,14 +765,17 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   const RUN = 170;
   const hero = { hp: st.maxHp, atkT: 0.4, lunge: 0, flash: 0, wx: 0, running: false };
   let enemies = [], fainted = 0, combo = 0, comboHold = 0, petT = 0, chest = null, shake = 0, banner = null, t = 0;
-  let floats = [], parts = [], slashes = [], fx = [], notes = [];
+  let floats = [], parts = [], slashes = [], fx = [], notes = [], ambient = [];
   const skT = { spin: 0, bolt: 0, heal: 0, rush: 0, frenzy: 0 };
   const allyT = { knight: 0.5, wizard: 1 }, allyLunge = { knight: 0, wizard: 0 };
   let feverT = 0, frenzyT = 0, feverVal = 2, frenzyVal = 1.8, income = 0;
   let goblin = null, goblinT = rand(40, 75);
+  let mode = 'main', run = null, farmLoops = 0;
+  const dev = { god: false, onehit: false, speed: 1, debug: false };
+  const dpsLog = [];
 
   const theme = f => THEMES[Math.floor((f - 1) / 5) % THEMES.length];
-  const themeName = f => { const c = Math.floor((f - 1) / (5 * THEMES.length)); return theme(f).name + (c ? ' ' + ['II', 'III', 'IV', 'V'][Math.min(c - 1, 3)] + (c > 4 ? '+' : '') : ''); };
+  const themeName = f => { const c = Math.floor((f - 1) / (5 * THEMES.length)); return theme(f).name + (c ? ' ' + ['II', 'III', 'IV', 'V', 'VI'][Math.min(c - 1, 4)] + (c > 5 ? '+' : '') : ''); };
   const hiredList = () => ALLIES.filter(a => S.allies[a.id] > 0);
   const heroSX = () => W * 0.18 + hiredList().length * PX * 7.5;
   const groundY = () => H - 46;
@@ -582,33 +786,52 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   const inRange = e => e && e.wx <= meleeX() + 4;
   const onScreen = e => e && sx(e.wx) < W - 10;
 
-  function makeEnemy(boss, wx) {
-    const f = S.floor, th = theme(f), kind = pick(th.kinds);
-    const elite = !boss && Math.random() < 0.06;
-    const hp = 10 * Math.pow(1.33, f - 1) * (boss ? 7 : elite ? 4 : 1);
+  function makeEnemy(opt) {
+    const f = S.floor, th = theme(f);
+    const boss = !!opt.boss, minion = !!opt.minion;
+    let kind = opt.kind || pick(th.kinds);
+    if (boss && !opt.kind) kind = f % 5 === 0 ? th.boss : pick(th.kinds);
+    const vChance = Math.min(0.5, 0.08 + f * 0.006);
+    const variant = !boss && !minion && Math.random() < vChance ? pick(Object.keys(VARIANTS)) : null;
+    const elite = !boss && !minion && Math.random() < 0.05;
+    const V = variant ? VARIANTS[variant] : { hp: 1, dmg: 1, gold: 1 };
+    const hp = hpM(f) * (boss ? 8 : elite ? 4 : minion ? 0.6 : 1) * V.hp;
+    const mechs = [];
+    if (boss && f >= 5) { const keys = Object.keys(BOSS_MECH); mechs.push(pick(keys)); if (f >= 40) { const k2 = pick(keys.filter(k => k !== mechs[0])); mechs.push(k2); } }
+    const name = boss ? `${pick(BOSSES)} the ${CNAME[kind]}` : `${elite ? 'Shiny ' : ''}${variant ? V.name : pick(ADJ)} ${CNAME[kind]}`;
     return {
-      kind, boss, elite, hp, max: hp, wx,
-      name: boss ? `${pick(BOSSES)} the ${CNAME[kind]}` : `${elite ? 'Shiny ' : ''}${pick(ADJ)} ${CNAME[kind]}`,
-      dmg: 2 * Math.pow(1.26, f - 1) * (boss ? 1.8 : elite ? 1.4 : 1), int: boss ? 1.3 : 1.5, atkT: 0.9,
-      gold: 3 * Math.pow(1.28, f - 1) * (boss ? 10 : elite ? 8 : 1),
-      tint: elite ? '#ffd76a' : th.tint, flash: 0, dead: false, deadT: 0, lunge: 0, ph: Math.random() * 6.28,
-      timer: boss ? 30 : 0
+      kind, boss, elite, variant, minion, hp, max: hp, wx: opt.wx, name, mechs,
+      dmg: dmgM(f) * (boss ? 1.8 : elite ? 1.4 : minion ? 0.6 : 1) * V.dmg, int: boss ? 1.3 : variant === 'speedy' ? 0.85 : 1.5, atkT: 0.9,
+      gold: goldM(f) * (boss ? 10 : elite ? 8 : minion ? 0.3 : 1) * V.gold,
+      tint: elite ? '#ffd76a' : variant === 'vampire' ? mix(th.tint, '#d1203a', 0.5) : variant === 'armored' ? mix(th.tint, '#8f9bb8', 0.55) : th.tint,
+      scale: (boss ? (BIG[kind] ? 1.3 : 1.45) : 1) * (V.scale || 1),
+      flash: 0, dead: false, deadT: 0, lunge: 0, ph: Math.random() * 6.28,
+      timer: boss ? 30 : 0, shT: 4, shield: 0, sumT: 4, enraged: false
     };
   }
   function spawnWave() {
-    if (S.farm && S.kill >= 9) S.kill = 0;
+    if (S.farm && S.kill >= 9) {
+      S.kill = 0; farmLoops++;
+      if (S.set.autoboss && farmLoops >= 3) { farmLoops = 0; S.farm = false; S.kill = 9; log('Auto boss: trying the boss again.', 'c'); }
+    }
     const boss = S.kill >= 9;
     const n = boss ? 1 : 3 - (S.kill % 3);
     const start = hero.wx + Math.max(W - heroSX() + PX * 10, PX * 30);
-    for (let i = 0; i < n; i++) enemies.push(makeEnemy(boss, start + i * PX * 13));
-    if (boss) { banner = { text: 'BOSS', sub: `${enemies[enemies.length - 1].name} · 30 seconds`, life: 1.8 }; tone(110, 80, 0.5, 'sawtooth', 0.05); }
+    for (let i = 0; i < n; i++) enemies.push(makeEnemy({ boss, wx: start + i * PX * 13 }));
+    if (boss) {
+      const b = enemies[enemies.length - 1];
+      banner = { text: 'BOSS', sub: `${b.name}${b.mechs.length ? ' · ' + b.mechs.map(m => BOSS_MECH[m]).join(', ') : ''}`, life: 2 };
+      tone(110, 80, 0.5, 'sawtooth', 0.05);
+    }
     buildPips();
   }
 
-  function addFloat(wx, y, text, color, size = 16) { floats.push({ wx: wx + rand(-10, 10), y, text, color, size, life: 1, vy: -40 }); }
+  function addFloat(wx, y, text, color, size = 16, force) { if (!S.set.nums && !force) return; floats.push({ wx: wx + rand(-10, 10), y, text, color, size, life: 1, vy: -40 }); if (floats.length > 60) floats.shift(); }
   function burst(wx, y, color, n, sp) {
+    if (!S.set.particles) n = Math.ceil(n / 4);
     n = reduceMotion ? Math.ceil(n / 3) : n;
     for (let i = 0; i < n; i++) { const a = Math.random() * 6.28, v = rand(0.3, 1) * sp, l = rand(0.4, 0.8); parts.push({ wx, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 60, life: l, max: l, color, size: rand(2, 4) }); }
+    if (parts.length > 400) parts.splice(0, parts.length - 400);
   }
   function log(html, cls = '') {
     const li = document.createElement('li'); li.innerHTML = html; if (cls) li.className = cls;
@@ -616,19 +839,28 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   }
   const comboMult = () => 1 + 0.025 * Math.floor(combo);
   const goldNow = () => st.goldMult * (feverT > 0 ? feverVal : 1);
-  const baseGold = () => 3 * Math.pow(1.28, S.floor - 1);
+  const baseGold = () => goldM(S.floor);
   function earn(g) { S.gold += g; income += g; S.life.goldEarned += g; questEvent('gold', g); }
   function addGems(n, why) { S.gems += n; log(`+${n} gem${n > 1 ? 's' : ''} ${why}.`, 'p'); tone(1175, 1760, 0.15, 'sine', 0.05); }
+  const shakeIt = v => { if (S.set.shake && !reduceMotion) shake = Math.max(shake, v); };
 
   const SRC_COL = { tap: '#ff7ad9', pet: '#c7a6ff', skill: '#62d2c4', ally: '#ff9a5a', auto: '#f1ecff' };
   function hit(e, base, src) {
     if (!e || e.dead || fainted) return;
+    const gy = groundY();
+    if (e.variant === 'ghostly' && (src === 'auto' || src === 'pet' || src === 'ally') && Math.random() < 0.3) { addFloat(e.wx, gy - PX * 11, 'MISS', '#a99fc2', 14); return; }
     const crit = Math.random() < st.crit;
-    const amt = base * (crit ? st.critMult : 1) * comboMult() * (e.boss ? st.boss : 1);
-    e.hp -= amt; e.flash = 0.12;
-    if (!reduceMotion) shake = Math.max(shake, crit ? 5 : src === 'skill' ? 4 : 2);
-    addFloat(e.wx, groundY() - PX * (e.boss ? 15 : 11), (crit ? 'CRIT ' : '') + fmt(amt), crit ? '#ffe066' : SRC_COL[src], crit ? 22 : src === 'pet' || src === 'ally' ? 14 : src === 'skill' ? 20 : 16);
+    let amt = base * (crit ? st.critMult : 1) * comboMult() * (e.boss || e.special ? st.boss : 1);
+    if (e.shield > 0) amt *= 0.1;
+    if (dev.onehit) amt = e.hp + 1;
+    e.hp -= amt; e.flash = e.special ? 0.04 : 0.12;
+    dpsLog.push([t, amt]);
+    if (st.leech && src !== 'pet') hero.hp = Math.min(st.maxHp, hero.hp + Math.min(amt * st.leech, st.maxHp * 0.05));
+    shakeIt(crit ? 5 : src === 'skill' ? 4 : 2);
+    addFloat(e.wx, gy - PX * (e.boss ? 15 : 11), (e.shield > 0 ? 'BLOCKED ' : crit ? 'CRIT ' : '') + fmt(amt), crit ? '#ffe066' : SRC_COL[src], crit ? 22 : src === 'pet' || src === 'ally' ? 14 : src === 'skill' ? 20 : 16);
     sndHit(crit);
+    if (e.boss && e.mechs.includes('enrage') && !e.enraged && e.hp < e.max * 0.5) { e.enraged = true; e.int *= 0.55; e.dmg *= 1.3; addFloat(e.wx, gy - PX * 18, 'ENRAGED!', '#ff5d73', 20, true); tone(90, 60, 0.4, 'sawtooth', 0.05); }
+    if (e.special) { specialHit(e); return; }
     if (e.hp <= 0) kill(e);
   }
 
@@ -644,6 +876,15 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     S.life.kills++; S.life.beasts[e.kind] = (S.life.beasts[e.kind] || 0) + 1;
     if (S.life.beasts[e.kind] === 100) { recalc(); log(`Mastered <b>${CNAME[e.kind]}s</b> in the bestiary: +5% gold forever.`, 't'); markTab('book'); }
     questEvent('kill', 1);
+    if (e.variant) { S.life.variants++; questEvent('variant', 1); }
+    if (e.variant === 'explosive' && !fainted) {
+      const d = st.maxHp * 0.15 * st.taken;
+      if (!dev.god) hero.hp -= d;
+      burst(e.wx, y - PX * 4, '#ff8a3d', 30, 260); shakeIt(8);
+      addFloat(hero.wx, y - PX * 13, 'BOOM -' + fmt(d), '#ff8a3d', 18, true);
+      tone(120, 40, 0.35, 'sawtooth', 0.06);
+      if (hero.hp <= 0) { faint(`An <b>${e.name}</b> blew you up. Back to the start of floor ${S.floor}.`); return; }
+    }
     const rac = S.allies.raccoon;
     if (rac && Math.random() < 0.2) {
       const sg = e.gold * goldNow() * (1 + 0.3 * rac);
@@ -653,22 +894,28 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       S.life.elites++; questEvent('elite', 1);
       log(`Beat a <b style="color:#ffd76a">${e.name}</b>! Big gold.`, 'g');
       if (Math.random() < 0.3) addGems(1, 'from a shiny monster');
+      if (Math.random() < 0.5) { const r = randi(2, 5); S.runes += r; log(`+${r} runes from the shiny monster.`, 'u'); }
     }
+    if (e.minion) { buildPips(); return; }
     if (e.boss) {
       S.life.bosses++; questEvent('boss', 1);
       log(`Beat <b>${e.name}</b>! On to floor ${S.floor + 1}.`, 'g');
       jingle();
-      const unlockedBefore = SKILLS.filter(s => S.maxFloor >= s.unlock).length + ALLIES.filter(a => S.maxFloor >= a.unlock).length;
-      S.floor++; S.kill = 0;
-      S.maxFloor = Math.max(S.maxFloor, S.floor); S.deepest = Math.max(S.deepest, S.floor);
+      enemies.forEach(m => { if (m.minion && !m.dead) { m.dead = true; m.deadT = 0; } });
+      S.floor++; S.kill = 0; farmLoops = 0;
+      S.maxFloor = Math.max(S.maxFloor, S.floor);
+      const newDeep = S.floor > S.deepest;
+      S.deepest = Math.max(S.deepest, S.floor);
       banner = { text: `FLOOR ${S.floor}`, sub: themeName(S.floor), life: 1.8 };
       if (Math.random() < 0.6) lootWeapon(S.floor, null);
       if (Math.random() < 0.4 || S.floor % 5 === 1) dropRelic();
       if (Math.random() < 0.15) addGems(1, 'from the boss');
-      for (const s of SKILLS) if (S.maxFloor === s.unlock && S.maxFloor > 1) { log(`New skill: <b>${s.name}</b>! ${s.fx(S.sk[s.id])}.`, 'c'); banner = { text: 'NEW SKILL', sub: s.name, life: 2.2 }; markTab('skills'); }
+      const sh = randi(1, 3); S.shards += sh;
+      if (S.floor % 5 === 1) { const r = randi(3, 6); S.runes += r; log(`+${r} runes and +${sh} shards for clearing the area.`, 'u'); }
+      for (const s of SKILLS) if (S.maxFloor === s.unlock) { log(`New skill: <b>${s.name}</b>! ${s.fx(S.sk[s.id])}.`, 'c'); banner = { text: 'NEW SKILL', sub: s.name, life: 2.2 }; markTab('skills'); buildSkillbar(); }
       for (const a of ALLIES) if (S.maxFloor === a.unlock) { log(`<b>${a.name}</b> wants to join you. Hire them in Allies.`, 'c'); banner = { text: 'ALLY AVAILABLE', sub: a.name, life: 2.2 }; markTab('allies'); }
-      const after = SKILLS.filter(s => S.maxFloor >= s.unlock).length + ALLIES.filter(a => S.maxFloor >= a.unlock).length;
-      if (after !== unlockedBefore) buildSkillbar();
+      if (newDeep && (S.deepest === 15 || S.deepest === 30)) { log('A new enchant line opened up on your weapon.', 'u'); markTab('gear'); }
+      if (newDeep && RANKS[S.rank + 1] && S.deepest === RANKS[S.rank + 1].need) { log(`The <b>${RANKS[S.rank + 1].n}</b> rank trial is open. Check Trials.`, 't'); markTab('trials'); }
       save();
     } else {
       S.kill++;
@@ -681,34 +928,38 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     buildPips();
   }
 
+  /* ================= loot ================= */
+  function rollPrefix() { const p = wpick(PREFIXES, PREFIXES.map(x => x[2])); return { pre: p[0], pm: p[1] }; }
+  function weaponName(w) { return `${w.pre} ${w.base}${w.suf ? ' ' + w.suf : ''}`; }
   function rollWeapon(f, weights) {
-    weights = weights || RARITY.map(r => r.w);
-    let r = Math.random() * weights.reduce((a, b) => a + b, 0), i = 0;
-    while (i < RARITY.length - 1 && r > weights[i]) { r -= weights[i]; i++; }
-    const R = RARITY[i], base = pick(WBASE);
+    const i = RARITY.indexOf(wpick(RARITY, weights || RARITY.map(r => r.w)));
+    const R = RARITY[i], base = pick(WBASE), p = rollPrefix();
     const power = Math.round(rand(R.m[0], R.m[1]) * (1 + 0.06 * (f - 1)) * 100) / 100;
-    return { name: `${pick(R.pre)} ${base}${Math.random() < 0.4 ? ' ' + pick(WSUF) : ''}`, base, rar: i, power };
+    const w = { base, rar: i, power, pre: p.pre, pm: p.pm, suf: Math.random() < 0.4 ? pick(WSUF) : '' };
+    w.name = weaponName(w);
+    return w;
   }
-  function lootWeapon(f, weights) {
+  function lootWeapon(f, weights, quiet) {
     const w = rollWeapon(f, weights), R = RARITY[w.rar];
     const key = w.base + '|' + w.rar;
     let note = '';
     if (!S.book[key]) { S.book[key] = 1; note = ' <i style="color:var(--heal)">New in the book: +1% damage.</i>'; markTab('book'); }
     if (w.rar === 3) S.life.legendaries++;
-    const label = `<b style="color:${R.c}">${w.name}</b> (${R.n}, ×${w.power.toFixed(2)})`;
-    if (!S.weapon || w.power > S.weapon.power) {
-      S.weapon = w; recalc();
-      log(`Found ${label}. Equipped!${note}`, 't');
-      if (w.rar >= 2) banner = { text: R.n.toUpperCase() + '!', sub: w.name, life: 2.4 };
+    const label = `<b style="color:${R.c}">${w.name}</b> (${R.n}, ×${weaponPower(w).toFixed(2)})`;
+    let equipped = false;
+    if (!S.weapon || weaponPower(w) > weaponPower(S.weapon)) {
+      S.weapon = w; equipped = true; recalc();
+      if (!quiet) log(`Found ${label}. Equipped!${note}`, 't');
+      if (w.rar >= 2 && !quiet) banner = { text: R.n.toUpperCase() + '!', sub: w.name, life: 2.4 };
       tone(659, 1319, 0.25, 'triangle', 0.05, 0.2);
     } else {
       recalc();
-      const g = 15 * baseGold() * goldNow();
-      earn(g);
-      log(`Found ${label}. Yours is better, sold it for ${fmt(g)} gold.${note}`);
+      const g = 15 * baseGold() * goldNow(), sh = 1 + w.rar * 2;
+      earn(g); S.shards += sh;
+      if (!quiet) log(`Found ${label}. Yours is better, salvaged it for ${fmt(g)} gold and ${sh} shards.${note}`);
     }
+    return { w, equipped };
   }
-
   function dropRelic() {
     const r = pick(RELICS);
     const had = S.relics[r.id] || 0;
@@ -720,27 +971,165 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     markTab('legacy');
   }
 
+  /* ================= forge: enchants, enhance, reforge ================= */
+  function rollEnch() {
+    const s = pick(ENCH_STATS), ti = ENCH_TIERS.indexOf(wpick(ENCH_TIERS, ENCH_TIERS.map(x => x.w)));
+    const v = Math.round(rand(s.r[0], s.r[1]) * ENCH_TIERS[ti].m * 10) / 10;
+    return { s: s.id, t: ti, v };
+  }
+  const enchCost = () => 5 + 3 * enchLines() + 6 * S.locks.filter((l, i) => l && i < enchLines()).length;
+  function rerollEnch() {
+    audio();
+    const c = enchCost();
+    if (S.runes < c || S.locks.slice(0, enchLines()).every(Boolean)) return;
+    S.runes -= c;
+    let best = -1;
+    for (let i = 0; i < enchLines(); i++) {
+      if (S.locks[i] && S.ench[i]) continue;
+      S.ench[i] = rollEnch();
+      best = Math.max(best, S.ench[i].t);
+      if (S.ench[i].t === 4) S.life.mythic++;
+    }
+    S.life.enchants++; questEvent('ench', 1);
+    if (best >= 3) { log(`Rolled a <b style="color:${ENCH_TIERS[best].c}">${ENCH_TIERS[best].n}</b> enchant!`, 'u'); jingle(); } else tone(700, 1100, 0.12, 'triangle', 0.05);
+    recalc(); save();
+  }
+  const enhCost = () => Math.ceil(5 * Math.pow(1.25, S.wlv));
+  const enhChance = () => Math.max(0.25, 1 - S.wlv * 0.05);
+  function enhance() {
+    audio();
+    const c = enhCost();
+    if (S.shards < c) return;
+    S.shards -= c;
+    if (Math.random() < enhChance()) { S.wlv++; log(`Weapon enhanced to <b>+${S.wlv}</b>! (+${S.wlv * 12}% weapon power)`, 't'); tone(880, 1760, 0.15, 'triangle', 0.06); shakeIt(4); }
+    else { log('The hammer slipped. Enhance failed, but nothing broke.', 'r'); tone(200, 120, 0.2, 'square', 0.04); }
+    recalc(); save();
+  }
+  const reforgeCost = () => 8;
+  function reforge() {
+    audio();
+    if (!S.weapon || S.runes < reforgeCost()) return;
+    S.runes -= reforgeCost();
+    const p = rollPrefix(), old = S.weapon.pre;
+    S.weapon.pre = p.pre; S.weapon.pm = p.pm; S.weapon.name = weaponName(S.weapon);
+    log(`Reforged: <b>${old}</b> → <b>${p.pre}</b> (×${p.pm.toFixed(2)} power).`, 'u');
+    tone(500, 900, 0.12, 'triangle', 0.05);
+    recalc(); save();
+  }
+
+  /* ================= summon ================= */
+  const sumNeed = lv => 10 + (lv - 1) * 15;
+  function sumWeights() { const L = S.summon.lv - 1; return [Math.max(5, 40 - 4 * L), 40, 15 + 2.2 * L, 5 + 1.1 * L]; }
+  function summon(n) {
+    audio();
+    const cost = n === 10 ? 90 : 10;
+    if (S.gems < cost) return;
+    S.gems -= cost;
+    let bestR = -1, eq = null;
+    for (let i = 0; i < n; i++) {
+      const weights = sumWeights();
+      const res = lootWeapon(S.maxFloor, n === 10 && i === 9 && bestR < 2 ? [0, 0, 1, weights[3] / weights[2]] : weights, true);
+      bestR = Math.max(bestR, res.w.rar);
+      if (res.equipped) eq = res.w;
+      S.summon.xp++;
+      if (S.summon.xp >= sumNeed(S.summon.lv)) { S.summon.xp -= sumNeed(S.summon.lv); S.summon.lv++; log(`Summon level <b>${S.summon.lv}</b>! Better odds from now on.`, 'p'); }
+    }
+    log(`Summoned ${n} weapon${n > 1 ? 's' : ''}. Best: <b style="color:${RARITY[bestR].c}">${RARITY[bestR].n}</b>.${eq ? ` Equipped <b>${eq.name}</b>.` : ' Salvaged the rest.'}`, 'p');
+    if (bestR >= 2) banner = { text: RARITY[bestR].n.toUpperCase() + '!', sub: eq ? eq.name : 'from the summon', life: 2 };
+    jingle(); save();
+  }
+
+  /* ================= runs: dungeons + trials ================= */
+  function regenKeys() {
+    const now = Date.now();
+    if (DUNGEONS.every(d => S.keys[d.id] >= 3)) { S.keyT = now; return; }
+    while (now - S.keyT >= KEY_MS) { S.keyT += KEY_MS; for (const d of DUNGEONS) if (S.keys[d.id] < 3) S.keys[d.id]++; }
+  }
+  function startRun(type) {
+    audio();
+    if (mode !== 'main' || fainted) return;
+    const df = Math.max(1, S.deepest);
+    if (type === 'trial') {
+      const next = RANKS[S.rank + 1];
+      if (!next || S.deepest < next.need) return;
+      const e = makeEnemy({ boss: true, kind: pick(['ogre', 'dragon', 'lich', 'golem']), wx: hero.wx + PX * 30 });
+      e.name = `${next.n} Examiner`; e.special = 'trial'; e.mechs = [];
+      e.hp = e.max = hpM(next.need) * 14; e.dmg = dmgM(next.need) * 1.6; e.timer = 40; e.gold = 0;
+      run = { type, t: 40, rank: S.rank + 1, tier: 0 };
+      enemies = [e];
+      banner = { text: 'RANK TRIAL', sub: `Beat the ${next.n} Examiner in 40 seconds`, life: 2.2 };
+    } else {
+      const D = DUNGEONS.find(d => d.id === type);
+      if (S.keys[type] <= 0) return;
+      S.keys[type]--;
+      const e = makeEnemy({ boss: true, kind: D.kind, wx: hero.wx + PX * 30 });
+      e.name = D.name + ' Guardian'; e.special = type; e.mechs = []; e.tint = D.tint;
+      e.base = hpM(df) * 3; e.hp = e.max = e.base; e.dmg = dmgM(df) * 0.7; e.timer = 30; e.gold = 0; e.tier = 0;
+      run = { type, t: 30, tier: 0, got: 0 };
+      enemies = [e];
+      banner = { text: D.name.toUpperCase(), sub: 'Break as many health bars as you can in 30 seconds', life: 2 };
+    }
+    mode = 'run'; chest = null; hero.hp = st.maxHp; combo = 0;
+    tone(220, 440, 0.3, 'triangle', 0.05);
+    $('#tab-trials').click();
+  }
+  function specialHit(e) {
+    if (e.hp > 0) return;
+    if (e.special === 'trial') { endRun(true); return; }
+    while (e.hp <= 0) {
+      const over = -e.hp;
+      run.tier++; e.tier = run.tier;
+      const df = Math.max(1, S.deepest);
+      if (e.special === 'vault') { const g = 25 * goldM(df) * st.goldMult * Math.pow(1.3, run.tier - 1); earn(g); run.got += g; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${fmt(g)} gold`, '#f5b942', 18, true); }
+      if (e.special === 'mine') { const r = 2 + run.tier; S.runes += r; run.got += r; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${r} runes`, '#6fd6ff', 18, true); }
+      if (e.special === 'forge') { const r = 3 + run.tier; S.shards += r; run.got += r; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${r} shards`, '#ff9a5a', 18, true); }
+      e.max = e.base * Math.pow(1.8, run.tier); e.hp = e.max - over;
+      if (run.tier >= 25) { addFloat(e.wx, groundY() - PX * 22, 'MAXED OUT!', '#62d2c4', 20, true); endRun(true); return; }
+      burst(e.wx, groundY() - PX * 6, e.tint, 20, 200); tone(660 + run.tier * 40, 990, 0.12, 'triangle', 0.05);
+    }
+  }
+  function endRun(win) {
+    if (!run) return;
+    const r = run;
+    if (r.type === 'trial') {
+      S.life.trials++;
+      if (win) { S.rank = r.rank; recalc(); log(`Promoted to <b>${RANKS[S.rank].n}</b>! +30% damage, +30% health, +10% gold forever.`, 't'); banner = { text: 'PROMOTED', sub: RANKS[S.rank].n + ' rank', life: 2.6 }; jingle(); tone(1046, 2093, 0.4, 'sine', 0.05, 0.3); }
+      else log('Trial failed. Train up and try again, it is free.', 'r');
+    } else {
+      S.life.dungeons++; questEvent('dungeon', 1);
+      const D = DUNGEONS.find(d => d.id === r.type);
+      log(`${D.name} done: broke <b>${r.tier}</b> bars for <b>${fmt(r.got)} ${D.cur}</b>.`, D.cur === 'gold' ? 'g' : 'u');
+      banner = { text: `${r.tier} BARS`, sub: `+${fmt(r.got)} ${D.cur}`, life: 2 };
+      jingle();
+    }
+    run = null; mode = 'main'; enemies = []; hero.hp = st.maxHp; buildPips(); save();
+  }
+
   function faint(why) {
+    if (dev.god) { hero.hp = st.maxHp; return; }
+    if (mode === 'run') { hero.hp = 1; endRun(false); log('You got knocked out of the run.', 'r'); return; }
     hero.hp = 0; fainted = 2.2;
     S.life.deaths++;
     log(why, 'r');
     tone(300, 70, 0.6, 'sawtooth', 0.05);
     const wasBoss = enemies.some(e => e.boss && !e.dead);
     S.kill = 0; enemies = []; chest = null; combo = 0;
-    if (wasBoss && !S.farm) { S.farm = true; log(`Farming floor ${S.floor} for now. Press <b>Fight boss</b> when you're stronger.`); }
+    if (wasBoss && !S.farm) { S.farm = true; farmLoops = 0; log(`Farming floor ${S.floor} for now. Press <b>Fight boss</b> when you're stronger${S.set.autoboss ? ', or wait for auto boss' : ''}.`); }
     buildPips(); save();
   }
   function monAttack(e) {
     e.lunge = 1;
     const d = e.dmg * st.taken;
-    hero.hp -= d; hero.flash = 0.12;
+    if (!dev.god) hero.hp -= d;
+    hero.flash = 0.12;
     addFloat(hero.wx, groundY() - PX * 11, '-' + fmt(d), '#ff5d73', 15);
+    if (e.variant === 'vampire') { e.hp = Math.min(e.max, e.hp + d * 2); addFloat(e.wx, groundY() - PX * 13, '+heal', '#ff5d73', 12); }
     if (S.allies.knight) allyLunge.knight = 0.6;
     if (hero.hp <= 0) faint(`You fainted to <b>${e.name}</b>. Back to the start of floor ${S.floor}.`);
   }
 
   /* ================= skills ================= */
-  const unlocked = s => S.maxFloor >= s.unlock;
+  const unlocked = s => S.maxFloor >= s.unlock || S.deepest >= s.unlock;
   function castSkill(id, manual) {
     const s = SKILLS.find(k => k.id === id);
     if (!unlocked(s) || skT[id] > 0 || fainted) return false;
@@ -783,7 +1172,7 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     }
   }
 
-  /* ================= quests & achievements ================= */
+  /* ================= quests, achievements, daily ================= */
   function newQuest() {
     const have = S.quests.map(q => q.type);
     const types = Object.keys(QT).filter(k => !have.includes(k) && (!QT[k].need || QT[k].need()));
@@ -795,7 +1184,7 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     for (const q of S.quests) {
       if (q.type !== type || q.done) continue;
       q.prog = QT[type].max ? Math.max(q.prog, amt) : q.prog + amt;
-      if (q.prog >= q.n) { q.prog = q.n; q.done = true; log(`Quest done: <b>${QT[type].text(q.n)}</b>. Claim it in Quests.`, 'p'); markTab('quests'); tone(880, 1760, 0.2, 'sine', 0.05); }
+      if (q.prog >= q.n) { q.prog = q.n; q.done = true; log(`Quest done: <b>${QT[type].text(q.n)}</b>.${S.set.autoclaim ? '' : ' Claim it in Quests.'}`, 'p'); markTab('quests'); tone(880, 1760, 0.2, 'sine', 0.05); }
     }
   }
   function claimQuest(i) {
@@ -804,9 +1193,8 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     S.gems += q.gems; S.life.quests++;
     log(`Claimed <b>+${q.gems} gems</b>.`, 'p');
     tone(1175, 1760, 0.15, 'sine', 0.05); tone(1568, 2349, 0.15, 'sine', 0.04, 0.08);
-    S.quests.splice(i, 1, null);
-    S.quests = S.quests.filter(Boolean);
-    const nq = newQuest(); S.quests.splice(i, 0, nq);
+    S.quests.splice(i, 1);
+    S.quests.splice(i, 0, newQuest());
     save();
   }
   function checkAch() {
@@ -817,13 +1205,25 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     }
     if (got) { recalc(); save(); }
   }
+  const dailyReady = () => S.daily.last !== today();
+  const dailyStreakNext = () => S.daily.last === yesterday() ? S.daily.streak + 1 : 1;
+  function dailyReward(st) { return { gems: 5 + Math.min(st, 7) * 2, runes: 10 + Math.min(st, 7) * 3, shards: 10 + Math.min(st, 7) * 3 }; }
+  function claimDaily() {
+    audio();
+    if (!dailyReady()) return;
+    const sk = dailyStreakNext(), r = dailyReward(sk);
+    S.daily = { last: today(), streak: sk };
+    S.gems += r.gems; S.runes += r.runes; S.shards += r.shards;
+    log(`Daily chest (day ${sk} streak): <b>+${r.gems} gems, +${r.runes} runes, +${r.shards} shards</b>.`, 'p');
+    banner = { text: 'DAILY CHEST', sub: `Day ${sk} streak`, life: 2 };
+    jingle(); save();
+  }
 
   function buyGem(item) {
     audio();
     if (S.gems < item.cost) return;
     S.gems -= item.cost;
-    if (item.id === 'wbox') { log('Opened a <b>Mystery Weapon Box</b>.', 'p'); lootWeapon(S.maxFloor, [30, 45, 20, 5]); }
-    else if (item.id === 'rbox') dropRelic();
+    if (item.id === 'rbox') dropRelic();
     else if (item.id === 'warp') {
       const g = Math.max(S.gps, baseGold() * goldNow() * 0.6) * 1800;
       earn(g); log(`Time Warp: skipped 30 minutes and got <b>${fmt(g)} gold</b>.`, 'g');
@@ -834,7 +1234,9 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       log('Party Potion! Gold Fever and Frenzy for 20 seconds.', 'c');
       banner = { text: 'PARTY TIME', sub: '20 seconds of everything', life: 2 };
       jingle();
-    }
+    } else if (item.id === 'rpouch') { S.runes += 25; log('+25 runes.', 'u'); }
+    else if (item.id === 'spouch') { S.shards += 30; log('+30 shards.', 'u'); }
+    else if (item.id === 'keys') { for (const d of DUNGEONS) S.keys[d.id] = 3; log('All dungeon keys refilled.', 'u'); }
     recalc(); save();
   }
 
@@ -844,38 +1246,9 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     const gy = groundY();
     if (chest) {
       const cx = sx(chest.wx);
-      if (Math.abs(x - cx) < PX * 7 && y > gy - PX * 12 && y < gy + 12) {
-        const g = chest.gold * goldNow();
-        earn(g); S.life.chests++; questEvent('chest', 1);
-        addFloat(chest.wx, gy - PX * 9, `+${fmt(g)} gold!`, '#f5b942', 22);
-        burst(chest.wx, gy - PX * 4, '#f5b942', 26, 200);
-        log(`Opened a chest: <b>+${fmt(g)} gold</b>.`, 'g');
-        tone(988, 1976, 0.2, 'triangle', 0.06); tone(1318, 2637, 0.2, 'triangle', 0.04, 0.08);
-        if (Math.random() < 0.4) lootWeapon(S.floor, null);
-        if (Math.random() < 0.1) addGems(1, 'in the chest');
-        chest = null; return;
-      }
+      if (Math.abs(x - cx) < PX * 7 && y > gy - PX * 12 && y < gy + 12) { openChest(1); return; }
     }
-    if (goblin && Math.abs(x - goblin.x) < PX * 6 && Math.abs(y - goblin.y + PX * 4) < PX * 7) {
-      goblin.hits--; goblin.flash = 0.1;
-      slashes.push({ x, y, a: rand(-0.8, 0.8), life: 0.25 });
-      tone(1200 + goblin.hits * 50, 900, 0.05, 'square', 0.04);
-      const cg = baseGold() * goldNow();
-      earn(cg);
-      floats.push({ wx: hero.wx + (goblin.x - heroSX()), y: goblin.y - PX * 10, text: '+' + fmt(cg), color: '#f5b942', size: 14, life: 0.8, vy: -60 });
-      if (goblin.hits <= 0) {
-        const g = 40 * baseGold() * goldNow();
-        earn(g); S.life.goblins++; questEvent('goblin', 1);
-        const gw = hero.wx + (goblin.x - heroSX());
-        burst(gw, goblin.y - PX * 4, '#f5b942', 40, 260);
-        log(`Caught the treasure goblin! <b>+${fmt(g)} gold</b>.`, 'g');
-        banner = { text: 'GOBLIN CAUGHT', sub: `+${fmt(g)} gold`, life: 2 };
-        jingle();
-        addGems(randi(1, 3), 'from the goblin\'s pockets');
-        goblin = null;
-      }
-      return;
-    }
+    if (goblin && Math.abs(x - goblin.x) < PX * 6 && Math.abs(y - goblin.y + PX * 4) < PX * 7) { hitGoblin(x, y); return; }
     const f = front();
     S.life.taps++; questEvent('taps', 1);
     if (!f || fainted || !onScreen(f)) return;
@@ -889,9 +1262,42 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     slashes.push({ x, y, a: rand(-0.8, 0.8), life: 0.25 });
     hit(f, st.tap, 'tap');
   }
+  function openChest(share) {
+    const gy = groundY();
+    const g = chest.gold * goldNow() * share;
+    earn(g); S.life.chests++; questEvent('chest', 1);
+    addFloat(chest.wx, gy - PX * 9, `+${fmt(g)} gold!`, '#f5b942', 22, true);
+    burst(chest.wx, gy - PX * 4, '#f5b942', 26, 200);
+    log(share < 1 ? `The raccoon grabbed the chest for you: <b>+${fmt(g)} gold</b>.` : `Opened a chest: <b>+${fmt(g)} gold</b>.`, 'g');
+    tone(988, 1976, 0.2, 'triangle', 0.06); tone(1318, 2637, 0.2, 'triangle', 0.04, 0.08);
+    if (share >= 1 && Math.random() < 0.4) lootWeapon(S.floor, null);
+    if (share >= 1 && Math.random() < 0.1) addGems(1, 'in the chest');
+    if (Math.random() < 0.3) { const r = randi(1, 3); S.runes += r; }
+    chest = null;
+  }
+  function hitGoblin(x, y) {
+    goblin.hits--; goblin.flash = 0.1;
+    slashes.push({ x, y, a: rand(-0.8, 0.8), life: 0.25 });
+    tone(1200 + goblin.hits * 50, 900, 0.05, 'square', 0.04);
+    const cg = baseGold() * goldNow();
+    earn(cg);
+    floats.push({ wx: hero.wx + (goblin.x - heroSX()), y: goblin.y - PX * 10, text: '+' + fmt(cg), color: '#f5b942', size: 14, life: 0.8, vy: -60 });
+    if (goblin.hits <= 0) {
+      const g = 40 * baseGold() * goldNow();
+      earn(g); S.life.goblins++; questEvent('goblin', 1);
+      burst(hero.wx + (goblin.x - heroSX()), goblin.y - PX * 4, '#f5b942', 40, 260);
+      log(`Caught the treasure goblin! <b>+${fmt(g)} gold</b>.`, 'g');
+      banner = { text: 'GOBLIN CAUGHT', sub: `+${fmt(g)} gold`, life: 2 };
+      jingle();
+      addGems(randi(1, 3), 'from the goblin\'s pockets');
+      S.runes += 3; S.shards += 3;
+      goblin = null;
+    }
+  }
+  function spawnGoblin() { goblin = { x: W + 30, y: H * 0.47, hits: 8, flash: 0, vx: -(W + 80) / 7 }; log('A <b>treasure goblin</b> is running past! Tap it 8 times!', 'g'); tone(880, 440, 0.3, 'square', 0.04); }
 
   /* ================= update ================= */
-  let gpsT = 0, achT = 0;
+  let gpsT = 0, slowT = 0, autoT = 0;
   function update(dt) {
     t += dt; S.life.time += dt;
     hero.lunge = Math.max(0, hero.lunge - dt * 6);
@@ -907,11 +1313,12 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       hero.running = false;
       if (fainted <= 0) { fainted = 0; hero.hp = st.maxHp; }
     } else {
-      if (!alive().length && enemies.every(e => e.deadT > 0.3)) { enemies = []; spawnWave(); }
+      if (mode === 'main' && !alive().length && enemies.every(e => e.deadT > 0.3)) { enemies = []; spawnWave(); }
       const list = alive();
       list.forEach((e, i) => {
         const target = meleeX() + i * PX * 13;
-        if (e.wx > target) e.wx -= Math.min(70 * dt, e.wx - target);
+        const sp = e.variant === 'speedy' ? 140 : 70;
+        if (e.wx > target) e.wx -= Math.min(sp * dt, e.wx - target);
       });
       let f = list[0];
       hero.running = !f || !inRange(f);
@@ -919,23 +1326,33 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       const atkInt = st.atkInt / (frenzyT > 0 ? frenzyVal : 1);
       if (f && inRange(f)) {
         hero.atkT -= dt;
-        while (hero.atkT <= 0 && f && !f.dead) { hero.atkT += atkInt; hero.lunge = 1; hit(f, st.dmg, 'auto'); }
+        while (hero.atkT <= 0 && f && !f.dead && enemies.includes(f)) { hero.atkT += atkInt; hero.lunge = 1; hit(f, st.dmg, 'auto'); }
+        f = front();
         if (f && !f.dead && !fainted) {
           if (f.boss) {
             f.timer -= dt;
+            if (run) run.t = f.timer;
+            if (f.mechs.includes('regen')) f.hp = Math.min(f.max, f.hp + f.max * 0.012 * dt);
+            if (f.mechs.includes('shield')) { f.shT -= dt; if (f.shT <= 0) { f.shield = 2; f.shT = 7; addFloat(f.wx, groundY() - PX * 18, 'SHIELD UP', '#6fd6ff', 16, true); } }
+            if (f.shield > 0) f.shield -= dt;
+            if (f.mechs.includes('summon')) { f.sumT -= dt; if (f.sumT <= 0) { f.sumT = 6; if (alive().filter(m => m.minion).length < 2) { const m = makeEnemy({ minion: true, wx: f.wx }); m.name = 'Minion ' + CNAME[m.kind]; enemies.unshift(m); f.wx += PX * 13; addFloat(f.wx, groundY() - PX * 18, 'MINION!', '#ff7ad9', 16, true); } } }
             if (f.timer <= 0) {
-              log(`<b>${f.name}</b> got bored and left. Farming floor ${S.floor}. Press <b>Fight boss</b> to try again.`, 'r');
-              S.farm = true; S.kill = 0; enemies = []; buildPips(); f = null;
+              if (run) { if (run.type === 'trial') endRun(false); else endRun(true); f = null; }
+              else {
+                log(`<b>${f.name}</b> got bored and left. Farming floor ${S.floor}. Press <b>Fight boss</b> to try again.`, 'r');
+                S.farm = true; S.kill = 0; farmLoops = 0; enemies = []; buildPips(); f = null;
+              }
             }
           }
-          if (f) { f.atkT -= dt; if (f.atkT <= 0) { f.atkT += f.int; monAttack(f); } }
+          if (f && !fainted && inRange(f)) { f.atkT -= dt; if (f.atkT <= 0) { f.atkT += f.int; monAttack(f); } }
         }
       } else hero.atkT = Math.min(hero.atkT, 0.15);
       f = front();
       if (f && !fainted) {
-        if (st.petRate && onScreen(f)) { petT += dt * st.petRate; while (petT >= 1 && f && !f.dead) { petT -= 1; hit(f, st.tap, 'pet'); } }
+        if (st.petRate && onScreen(f)) { petT += dt * st.petRate; while (petT >= 1 && f && !f.dead) { petT -= 1; hit(f, st.tap, 'pet'); f = front(); } }
+        f = front();
         const kL = S.allies.knight, wL = S.allies.wizard;
-        if (kL) { allyT.knight -= dt; if (allyT.knight <= 0 && inRange(f)) { allyT.knight = 1.2; allyLunge.knight = 1; hit(f, st.dmg * 0.3 * kL, 'ally'); } }
+        if (kL && f) { allyT.knight -= dt; if (allyT.knight <= 0 && inRange(f)) { allyT.knight = 1.2; allyLunge.knight = 1; hit(f, st.dmg * 0.3 * kL, 'ally'); } }
         f = front();
         if (wL && f) {
           allyT.wizard -= dt;
@@ -951,13 +1368,9 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       }
       autoSkills();
     }
-    // treasure goblin
-    goblinT -= dt;
-    if (!goblin && goblinT <= 0 && !fainted) {
-      goblin = { x: W + 30, y: H * 0.47, hits: 8, flash: 0, vx: -(W + 80) / 7 };
-      goblinT = rand(70, 130);
-      log('A <b>treasure goblin</b> is running past! Tap it 8 times!', 'g');
-      tone(880, 440, 0.3, 'square', 0.04);
+    if (mode === 'main') {
+      goblinT -= dt;
+      if (!goblin && goblinT <= 0 && !fainted) { spawnGoblin(); goblinT = rand(70, 130); }
     }
     if (goblin) {
       goblin.x += goblin.vx * dt; goblin.flash = Math.max(0, goblin.flash - dt);
@@ -966,7 +1379,12 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     for (const e of enemies) { e.flash = Math.max(0, e.flash - dt); e.lunge = Math.max(0, e.lunge - dt * 5); if (e.dead) e.deadT += dt; }
     if (!fainted) hero.hp = Math.min(st.maxHp, hero.hp + st.regen * dt);
     if (comboHold > 0) comboHold -= dt; else combo = Math.max(0, combo - 18 * dt);
-    if (chest) { chest.life -= dt; if (chest.life <= 0 || sx(chest.wx) < -40) { chest = null; log('The chest wandered off. It had legs.'); } }
+    if (chest) {
+      chest.life -= dt;
+      if (chest.life <= 0 || sx(chest.wx) < -40) {
+        if (S.allies.raccoon) openChest(0.5); else { chest = null; log('The chest wandered off. It had legs.'); }
+      }
+    }
     if (banner) { banner.life -= dt; if (banner.life <= 0) banner = null; }
     if (S.allies.bard && Math.random() < dt * 1.5) notes.push({ x: allySX('bard'), y: groundY() - PX * 9, life: 1.2, ch: pick(['♪', '♫']) });
     for (const n of notes) { n.y -= 30 * dt; n.x += Math.sin(t * 4 + n.y) * 0.4; n.life -= dt; }
@@ -979,18 +1397,50 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     slashes = slashes.filter(s => s.life > 0);
     for (const f of fx) f.life -= dt;
     fx = fx.filter(f => f.life > 0);
+    updateAmbient(dt);
     gpsT += dt;
     if (gpsT >= 1) { S.gps = S.gps * 0.97 + (income / gpsT) * 0.03; income = 0; gpsT = 0; }
-    achT += dt;
-    if (achT >= 1) { achT = 0; checkAch(); }
+    slowT += dt;
+    if (slowT >= 1) { slowT = 0; checkAch(); regenKeys(); if (S.set.autoclaim) S.quests.forEach((q, i) => { if (q.done) claimQuest(i); }); }
+    autoT += dt;
+    if (S.set.autobuy && autoT >= 0.5) { autoT = 0; buyCheapest(true); }
+    while (dpsLog.length && dpsLog[0][0] < t - 5) dpsLog.shift();
   }
+
+  /* ---------- ambient particles per area ---------- */
+  function updateAmbient(dt) {
+    const type = mode === 'run' ? 'sparkles' : theme(S.floor).fx;
+    const want = S.set.particles && !reduceMotion ? 28 : 0;
+    while (ambient.length < want) ambient.push(newAmb(type, true));
+    if (ambient.length > want) ambient.length = want;
+    for (let i = 0; i < ambient.length; i++) {
+      const a = ambient[i];
+      if (a.type !== type) { ambient[i] = newAmb(type, true); continue; }
+      a.x += (a.vx - (hero.running ? RUN * 0.3 : 0)) * dt; a.y += a.vy * dt; a.life -= dt;
+      if (a.life <= 0 || a.y > H || a.y < -10 || a.x < -10 || a.x > W + 10) ambient[i] = newAmb(type, false);
+    }
+  }
+  function newAmb(type, anywhere) {
+    const x = rand(0, W + 40), y = anywhere ? rand(0, H - 40) : (type === 'embers' || type === 'bubbles' || type === 'spores' ? H - 40 : -5);
+    const A = { type, x, y, vx: 0, vy: 0, life: rand(3, 8), s: rand(1.5, 3) };
+    if (type === 'snow') { A.vx = rand(-15, 5); A.vy = rand(20, 45); }
+    else if (type === 'embers') { A.vx = rand(-10, 10); A.vy = rand(-40, -20); A.y = anywhere ? A.y : H - 40; }
+    else if (type === 'bubbles') { A.vx = rand(-5, 5); A.vy = rand(-30, -15); A.s = rand(2, 5); }
+    else if (type === 'spores') { A.vx = rand(-8, 8); A.vy = rand(-15, -5); }
+    else if (type === 'sand') { A.vx = rand(-90, -50); A.vy = rand(-5, 5); A.y = rand(0, H - 40); A.x = anywhere ? A.x : W + 5; }
+    else if (type === 'drip') { A.vx = 0; A.vy = rand(80, 140); A.s = 2; }
+    else if (type === 'sparks') { A.vx = rand(-40, 40); A.vy = rand(20, 80); A.s = 2; }
+    else if (type === 'sparkles') { A.vx = rand(-6, 6); A.vy = rand(-6, 6); }
+    else { A.vx = rand(-8, 8); A.vy = rand(-4, 4); }
+    return A;
+  }
+  const AMB_COL = { snow: 'rgba(240,248,255,.8)', embers: 'rgba(255,138,61,.85)', bubbles: 'rgba(160,240,230,.45)', spores: 'rgba(201,139,255,.6)', sand: 'rgba(224,181,106,.55)', drip: 'rgba(123,216,143,.5)', sparks: 'rgba(255,224,102,.9)', sparkles: 'rgba(255,255,255,.7)', dust: 'rgba(255,255,255,.18)' };
 
   /* ================= draw ================= */
   const ALLY_ORDER = ['knight', 'wizard', 'bard', 'raccoon'];
   function allySX(id) {
     const hired = ALLY_ORDER.filter(a => S.allies[a] > 0);
-    const i = hired.indexOf(id);
-    return heroSX() - PX * 8 - i * PX * 7.5;
+    return heroSX() - PX * 8 - hired.indexOf(id) * PX * 7.5;
   }
   function sprite(rows, cx, by, px, pal, flash, flip) {
     const h = rows.length, w = rows[0].length, x0 = cx - (w * px) / 2, y0 = by - h * px;
@@ -1002,17 +1452,29 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     }
   }
   function monPal(m) {
-    const d = '#1a1424', tint = m.tint;
+    const d = '#1a1424', tint = m.tint, dk = mix(tint, '#000000', 0.45);
+    const P = { a: tint, b: dk, c: '#ffffff', d, e: '#ffffff', w: '#f1ecff', t: '#ff9fb0', k: '#3a0f1a', f: '#f5b942', s: '#8a5a3c' };
     switch (m.kind) {
-      case 'skeleton': return { c: m.elite ? '#ffe59a' : '#ece4cc', d };
-      case 'mushroom': return { a: tint, b: mix(tint, '#000000', 0.45), c: '#efe3cf', d, e: '#ffffff' };
-      case 'goblin': return { a: tint, b: '#5b4636', c: '#ffffff', d, e: '#fff6d0' };
-      case 'bat': return { a: tint, b: mix(tint, '#000000', 0.5), c: '#ffffff', d, e: '#ffffff' };
-      case 'ghost': return { a: mix(tint, '#ffffff', 0.5), d };
-      case 'rat': return { a: tint, b: mix(tint, '#000000', 0.5), c: '#ff5d73', t: '#ff9fb0' };
-      case 'eyeball': return { a: m.elite ? '#fff3c4' : '#efe8f5', b: mix(tint, '#000000', 0.3), c: tint, d };
-      case 'crab': return { a: tint, c: '#ffffff', d };
-      default: return { a: tint, b: mix(tint, '#000000', 0.4), c: '#ffffff', d };
+      case 'skeleton': return { c: m.elite ? '#ffe59a' : mix('#ece4cc', tint, 0.15), d };
+      case 'mushroom': return Object.assign(P, { c: '#efe3cf' });
+      case 'goblin': return Object.assign(P, { b: '#5b4636', e: '#fff6d0' });
+      case 'ghost': return Object.assign(P, { a: mix(tint, '#ffffff', 0.5) });
+      case 'rat': return Object.assign(P, { b: mix(tint, '#000000', 0.5), c: '#ff5d73' });
+      case 'eyeball': return Object.assign(P, { a: m.elite ? '#fff3c4' : '#efe8f5', b: mix(tint, '#000000', 0.3), c: tint });
+      case 'mummy': return { c: mix('#e8dcc0', tint, 0.15), b: '#a89878', d };
+      case 'golem': return Object.assign(P, { a: mix(tint, '#000000', 0.5), b: tint, c: '#ffe066' });
+      case 'yeti': return Object.assign(P, { a: mix('#f1ecff', tint, 0.2), b: mix(tint, '#5b4a7a', 0.4), e: d });
+      case 'wisp': return Object.assign(P, { c: mix(tint, '#ffffff', 0.6) });
+      case 'mimic': return Object.assign(P, { a: '#5b3a26', b: m.special ? tint : '#a8693e' });
+      case 'robot': return Object.assign(P, { a: '#8a93a8', b: tint, c: '#62d2c4', e: '#ff5d73' });
+      case 'cactus': return Object.assign(P, { a: mix(tint, '#5fbf5a', 0.6), b: d, e: '#c46a3c' });
+      case 'snail': return Object.assign(P, { b: '#c4864a', c: '#f5d29a' });
+      case 'penguin': return Object.assign(P, { a: mix('#2a2a3a', tint, 0.2), e: '#f5b942' });
+      case 'imp': return Object.assign(P, { t: dk });
+      case 'ogre': return Object.assign(P, { b: '#6b4a2f', e: '#fff6d0' });
+      case 'dragon': return Object.assign(P, { c: '#ffe9a8', e: '#ff8a3d' });
+      case 'lich': return { c: '#ece4cc', d: '#62d2c4', e: '#f5b942', b: mix('#3b2a5c', tint, 0.25), s: '#8a5a3c' };
+      default: return P;
     }
   }
   function bar(x, y, w, frac, color, label) {
@@ -1027,10 +1489,11 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
 
   function draw() {
     const th = theme(S.floor), gy = groundY(), off = hero.wx;
+    const wall = mode === 'run' ? '#1a1530' : th.wall;
     ctx.save();
     if (shake) ctx.translate(rand(-shake, shake), rand(-shake, shake));
-    ctx.fillStyle = th.wall; ctx.fillRect(-10, -10, W + 20, H + 20);
-    if (th.disco) {
+    ctx.fillStyle = wall; ctx.fillRect(-10, -10, W + 20, H + 20);
+    if (th.disco && mode === 'main') {
       for (let i = 0; i < 6; i++) {
         const hx = ((i * 157 + t * 60) % (W + 200)) - 100;
         ctx.fillStyle = `hsla(${(t * 90 + i * 60) % 360},90%,60%,.10)`;
@@ -1041,22 +1504,28 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     const bw = 44, bh = 22, boff = (off * 0.6) % bw;
     for (let y = 0, row = 0; y < H - 40; y += bh, row++) for (let x = -bw - boff + (row % 2) * bw / 2; x < W + bw; x += bw) ctx.fillRect(x + 1, y + 1, bw - 3, bh - 3);
     const tsp = 360, toff = (off * 0.6) % tsp;
+    const flameA = th.fx === 'snow' ? '#9fe3ff' : '#ff8a3d', flameB = th.fx === 'snow' ? '#e9fbff' : '#ffe066', glow = th.fx === 'snow' ? '159,227,255' : '255,170,70';
     for (let tx = -toff + 80; tx < W + 100; tx += tsp) {
       const fl = 0.8 + 0.2 * Math.sin(t * 13 + tx * 0.01) + 0.1 * Math.sin(t * 29);
       const g = ctx.createRadialGradient(tx, 50, 2, tx, 50, 90 * fl);
-      g.addColorStop(0, 'rgba(255,170,70,.35)'); g.addColorStop(1, 'rgba(255,170,70,0)');
+      g.addColorStop(0, `rgba(${glow},.35)`); g.addColorStop(1, `rgba(${glow},0)`);
       ctx.fillStyle = g; ctx.fillRect(tx - 100, -50, 200, 200);
       ctx.fillStyle = '#6b4a33'; ctx.fillRect(tx - 3, 54, 6, 22);
-      ctx.fillStyle = '#ff8a3d'; ctx.fillRect(tx - 5, 42 - fl * 3, 10, 12 + fl * 3);
-      ctx.fillStyle = '#ffe066'; ctx.fillRect(tx - 2, 46 - fl * 2, 4, 7);
+      ctx.fillStyle = flameA; ctx.fillRect(tx - 5, 42 - fl * 3, 10, 12 + fl * 3);
+      ctx.fillStyle = flameB; ctx.fillRect(tx - 2, 46 - fl * 2, 4, 7);
     }
     ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(-10, H - 40, W + 20, 50);
     ctx.fillStyle = 'rgba(255,255,255,.05)';
     const foff = off % 32;
     for (let x = -foff; x < W; x += 32) ctx.fillRect(x, H - 40, 30, 3);
+    for (const a of ambient) {
+      ctx.fillStyle = AMB_COL[a.type] || AMB_COL.dust;
+      if (a.type === 'bubbles') { ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(a.x, a.y, a.s, 0, 6.28); ctx.stroke(); }
+      else if (a.type === 'drip') ctx.fillRect(a.x, a.y, 1.5, 5);
+      else ctx.fillRect(a.x, a.y, a.s, a.s);
+    }
     if (feverT > 0) { ctx.fillStyle = `rgba(245,185,66,${0.06 + 0.03 * Math.sin(t * 8)})`; ctx.fillRect(0, 0, W, H); }
 
-    // chest
     if (chest) {
       const cx = sx(chest.wx);
       const blink = chest.life < 1.5 && Math.floor(t * 8) % 2;
@@ -1066,7 +1535,6 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       ctx.fillText('TAP!', cx, gy - PX * 10 - jump);
     }
 
-    // allies
     const walkBob = k => hero.running ? Math.abs(Math.sin(t * 14 + k)) * 3 : Math.sin(t * 3 + k) * 1.2;
     ALLY_ORDER.forEach((id, k) => {
       if (!S.allies[id] || fainted) return;
@@ -1079,7 +1547,6 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     for (const n of notes) { ctx.globalAlpha = clamp(n.life, 0, 1); ctx.fillStyle = '#ffe066'; ctx.fillText(n.ch, n.x, n.y); }
     ctx.globalAlpha = 1;
 
-    // hero
     const hx0 = heroSX();
     const wcol = S.weapon ? RARITY[S.weapon.rar].c : '#e8eefc';
     const tunic = CLASSES[S.cls].tunic;
@@ -1088,6 +1555,8 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       const hx = hx0 + hero.lunge * 22 - (f && f.lunge ? f.lunge * 4 : 0);
       ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(hx0, gy + 2, PX * 4, PX * 0.8, 0, 0, 6.28); ctx.fill();
       if (frenzyT > 0) { ctx.fillStyle = `rgba(232,57,77,${0.25 + 0.1 * Math.sin(t * 20)})`; ctx.beginPath(); ctx.arc(hx, gy - PX * 5, PX * 7, 0, 6.28); ctx.fill(); }
+      if (S.wlv >= 5) { ctx.fillStyle = `rgba(255,154,90,${0.12 + 0.06 * Math.sin(t * 6)})`; ctx.beginPath(); ctx.arc(hx + PX * 4, gy - PX * 6, PX * 3, 0, 6.28); ctx.fill(); }
+      if (dev.god) { ctx.strokeStyle = 'rgba(255,224,102,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(hx, gy - PX * 5, PX * 7, 0, 6.28); ctx.stroke(); }
       const rows = hero.running && Math.floor(t * 10) % 2 ? SPR.hero2 : SPR.hero;
       sprite(rows, hx, gy - walkBob(0), PX, { a: tunic, b: '#4a3b5c', c: '#62d2c4', d: '#1a1424', e: '#c9cfe0', f: wcol, g: '#f2c9a0' }, hero.flash > 0);
     } else {
@@ -1099,19 +1568,20 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     }
     bar(hx0, gy - PX * 10 - 14, PX * 10, hero.hp / st.maxHp, hero.hp / st.maxHp < 0.3 ? '#ff5d73' : '#62d2c4', 'You');
 
-    // enemies
     let labeled = false;
     const fr = front();
     for (let i = enemies.length - 1; i >= 0; i--) {
       const e = enemies[i], ex = sx(e.wx);
-      if (ex > W + 80) continue;
-      const sc = e.boss ? 1.45 : 1;
+      if (ex > W + 120) continue;
+      const rows = SPR[e.kind], sh = rows.length;
+      const sc = e.scale;
       const px = PX * sc * (e.dead ? Math.max(0, 1 - e.deadT * 3) : 1);
       const walking = !e.dead && !inRange(e);
       const fl = FLOATY[e.kind];
-      const bob = fl ? Math.sin(t * (e.kind === 'bat' ? 8 : 3) + e.ph) * 4 : walking ? Math.abs(Math.sin(t * 9 + e.ph)) * 4 : Math.sin(t * 3 + e.ph) * 1.5;
+      const bob = fl ? Math.sin(t * (e.kind === 'bat' ? 8 : 3) + e.ph) * 4 : walking ? Math.abs(Math.sin(t * (e.variant === 'speedy' ? 16 : 9) + e.ph)) * 4 : Math.sin(t * 3 + e.ph) * 1.5;
       const lift = fl ? PX * 3 : 0;
       const exx = ex - e.lunge * 18;
+      const topY = gy - lift - bob - sh * px;
       ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.beginPath(); ctx.ellipse(ex, gy + 2, PX * 4 * sc, PX * 0.8, 0, 0, 6.28); ctx.fill();
       if (e.elite && !e.dead) {
         const g = ctx.createRadialGradient(ex, gy - lift - PX * 5, 2, ex, gy - lift - PX * 5, PX * 9);
@@ -1119,31 +1589,36 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
         ctx.fillStyle = g; ctx.fillRect(ex - PX * 10, gy - lift - PX * 15, PX * 20, PX * 20);
         if (Math.random() < 0.3) parts.push({ wx: e.wx + rand(-PX * 5, PX * 5), y: gy - lift - rand(0, PX * 10), vx: 0, vy: -30, life: 0.5, max: 0.5, color: '#fff3c4', size: 2 });
       }
-      if (e.kind === 'ghost') ctx.globalAlpha = 0.8;
+      if (e.variant === 'speedy' && walking) { ctx.fillStyle = 'rgba(255,255,255,.35)'; for (let k = 0; k < 3; k++) ctx.fillRect(ex + PX * 6 + k * 6, topY + PX * (3 + k * 2), 12, 2); }
+      if (e.kind === 'ghost' || e.variant === 'ghostly') ctx.globalAlpha = e.variant === 'ghostly' ? 0.5 : 0.8;
+      const flashOn = e.flash > 0 || (e.variant === 'explosive' && e.hp < e.max * 0.4 && Math.floor(t * 10) % 2);
       if (px > 0.3) {
-        sprite(SPR[e.kind], exx, gy - lift - bob, px, monPal(e), e.flash > 0, true);
-        if (e.boss) {
-          const cy = gy - lift - bob - 10 * px - px * 2.2;
+        sprite(rows, exx, gy - lift - bob, px, flashOn && e.variant === 'explosive' && !(e.flash > 0) ? Object.assign({}, monPal(e), { a: '#ff8a3d' }) : monPal(e), e.flash > 0, true);
+        if (e.boss && !BIG[e.kind] && !e.special) {
+          const cy = topY - px * 2.2;
           ctx.fillStyle = '#f5b942';
           ctx.fillRect(exx - px * 3, cy + px, px * 6, px * 1.2);
           for (const k of [-3, -0.5, 2]) ctx.fillRect(exx + k * px, cy - px * 0.4, px, px * 1.6);
         }
+        if (e.variant === 'armored') { ctx.fillStyle = '#c9d2ea'; ctx.fillRect(exx - px * 3, topY + px * 0.2, px * 6, px * 1.2); }
       }
       ctx.globalAlpha = 1;
+      if (e.shield > 0 && !e.dead) { ctx.strokeStyle = `rgba(111,214,255,${0.5 + 0.3 * Math.sin(t * 20)})`; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(ex, gy - sh * px / 2 - lift, sh * px * 0.7, 0, 6.28); ctx.stroke(); }
+      if (e.enraged && !e.dead) { ctx.fillStyle = 'rgba(255,60,80,.15)'; ctx.beginPath(); ctx.arc(ex, gy - sh * px / 2 - lift, sh * px * 0.7, 0, 6.28); ctx.fill(); }
       if (!e.dead) {
-        const top = gy - lift - PX * 10 * sc - (e.boss ? PX * 3 : 0) - 14;
+        const top = topY - (e.boss && !BIG[e.kind] ? PX * 3 : 0) - 14;
         const isFront = e === fr;
-        bar(ex, top, Math.min(W * 0.3, PX * 10 * sc + 10), e.hp / e.max, e.boss ? '#ff5d73' : e.elite ? '#ffd76a' : '#f5b942', isFront && !labeled ? e.name : '');
+        const barW = e.special ? Math.min(W * 0.45, 180) : Math.min(W * 0.3, PX * 10 * sc + 10);
+        bar(ex, top, barW, e.hp / e.max, e.special ? '#6fd6ff' : e.boss ? '#ff5d73' : e.elite ? '#ffd76a' : e.variant ? '#ff9a5a' : '#f5b942', isFront && !labeled ? e.name + (e.special && run && run.type !== 'trial' ? ` · bar ${run.tier + 1}` : '') : '');
         if (e.boss && inRange(e)) {
           ctx.font = '700 14px "Pixelify Sans", monospace'; ctx.textAlign = 'center';
           ctx.fillStyle = e.timer < 8 ? '#ff5d73' : '#f1ecff';
-          ctx.fillText(`0:${String(Math.max(0, Math.ceil(e.timer))).padStart(2, '0')}`, clamp(ex, 30, W - 30), top - 22);
+          ctx.fillText(mmss(Math.max(0, Math.ceil(e.timer))), clamp(ex, 30, W - 30), top - 22);
         }
         if (isFront) labeled = true;
       }
     }
 
-    // treasure goblin
     if (goblin) {
       const bob = Math.abs(Math.sin(t * 16)) * 5;
       sprite(SPR.tgoblin, goblin.x, goblin.y - bob, PX * 0.85, { a: '#a6d35a', b: '#6b4a2f', c: '#ffffff', d: '#1a1424', e: '#f5b942' }, goblin.flash > 0, false);
@@ -1151,7 +1626,6 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       ctx.fillText(`TAP ×${goblin.hits}`, clamp(goblin.x, 30, W - 30), goblin.y - PX * 10);
     }
 
-    // effects
     for (const f of fx) {
       if (f.type === 'spin') {
         const k = 1 - f.life / 0.45;
@@ -1201,15 +1675,19 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     }
     ctx.textAlign = 'right'; ctx.font = '600 13px "Pixelify Sans", monospace';
     let by = 24;
+    if (run) { ctx.fillStyle = '#6fd6ff'; ctx.fillText(run.type === 'trial' ? `RANK TRIAL ${mmss(Math.max(0, run.t))}` : `${DUNGEONS.find(d => d.id === run.type).name.toUpperCase()} ${mmss(Math.max(0, run.t))} · ${run.tier} bars`, W - 12, by); by += 18; }
     if (feverT > 0) { ctx.fillStyle = '#f5b942'; ctx.fillText(`GOLD FEVER ${Math.ceil(feverT)}s`, W - 12, by); by += 18; }
     if (frenzyT > 0) { ctx.fillStyle = '#ff5d73'; ctx.fillText(`FRENZY ${Math.ceil(frenzyT)}s`, W - 12, by); by += 18; }
-    if (S.farm) { ctx.fillStyle = '#a99fc2'; ctx.fillText('FARMING', W - 12, by); }
+    if (S.farm && mode === 'main') { ctx.fillStyle = '#a99fc2'; ctx.fillText(S.set.autoboss ? `FARMING · auto boss in ${3 - farmLoops} loops` : 'FARMING', W - 12, by); by += 18; }
+    if (dev.speed > 1) { ctx.fillStyle = '#ff5d73'; ctx.fillText(`DEV SPEED ×${dev.speed}`, W - 12, by); }
     if (banner) {
       const a = clamp(banner.life * 2, 0, 1);
       ctx.globalAlpha = a; ctx.textAlign = 'center';
       ctx.fillStyle = 'rgba(10,8,16,.6)'; ctx.fillRect(0, H * 0.3 - 30, W, 58);
       ctx.font = '700 26px "Pixelify Sans", monospace'; ctx.fillStyle = '#f5b942'; ctx.fillText(banner.text, W / 2, H * 0.3);
-      ctx.font = '600 14px "Nunito", sans-serif'; ctx.fillStyle = '#f1ecff'; ctx.fillText(banner.sub, W / 2, H * 0.3 + 20);
+      ctx.font = '600 14px "Nunito", sans-serif'; ctx.fillStyle = '#f1ecff';
+      let sub = banner.sub; while (ctx.measureText(sub).width > W - 24 && sub.length > 10) sub = sub.slice(0, -2);
+      ctx.fillText(sub === banner.sub ? sub : sub + '…', W / 2, H * 0.3 + 20);
       ctx.globalAlpha = 1;
     }
   }
@@ -1248,18 +1726,32 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   const costOf = (base, r, L, n) => base * Math.pow(r, L) * (Math.pow(r, n) - 1) / (r - 1);
   const maxBuy = (base, r, L) => Math.max(0, Math.floor(Math.log(S.gold * (r - 1) / (base * Math.pow(r, L)) + 1) / Math.log(r)));
   const amountFor = p => S.amt === 'max' ? Math.max(1, maxBuy(p.base, p.r, S.lv[p.id])) : +S.amt;
+  function buyPart(p, n) {
+    const cost = costOf(p.base, p.r, S.lv[p.id], n);
+    if (S.gold < cost) return false;
+    const oldMax = st.maxHp;
+    S.gold -= cost; S.lv[p.id] += n; recalc();
+    if (st.maxHp > oldMax) hero.hp += st.maxHp - oldMax;
+    return true;
+  }
+  function buyCheapest(silent) {
+    let bought = 0;
+    for (let k = 0; k < 40; k++) {
+      let best = null, bc = Infinity;
+      for (const p of PARTS) { const c = costOf(p.base, p.r, S.lv[p.id], 1); if (c < bc) { bc = c; best = p; } }
+      if (!best || !buyPart(best, 1)) break;
+      bought++;
+    }
+    if (bought && !silent) tone(523, 784, 0.1, 'triangle', 0.05);
+    return bought;
+  }
 
-  const partRows = {}, skRows = {}, allyRows = {}, gemRows = {}, questEls = [];
+  const partRows = {}, skRows = {}, allyRows = {}, gemRows = {}, sumRows = {}, dungRows = {}, questEls = [], enchEls = [];
+  const skillCost = s => s.base * Math.pow(s.r, S.sk[s.id] - 1);
+  const allyCost = a => a.base * Math.pow(a.r, S.allies[a.id]);
+  const LIFE = [['kills', 'Monsters'], ['bosses', 'Bosses'], ['elites', 'Shiny ones'], ['variants', 'Special ones'], ['chests', 'Chests'], ['goblins', 'Goblins'], ['taps', 'Taps'], ['bestCombo', 'Best combo'], ['skills', 'Skills cast'], ['deaths', 'Naps taken'], ['dungeons', 'Dungeon runs'], ['trials', 'Trials'], ['enchants', 'Rerolls'], ['goldEarned', 'Gold earned'], ['quests', 'Quests'], ['time', 'Time played']];
   function buildLists() {
-    for (const p of PARTS) partRows[p.id] = makeRow($('#parts'), iconURL(p.id), () => {
-      audio();
-      const n = amountFor(p), cost = costOf(p.base, p.r, S.lv[p.id], n);
-      if (S.gold < cost) return;
-      const oldMax = st.maxHp;
-      S.gold -= cost; S.lv[p.id] += n; recalc();
-      if (st.maxHp > oldMax) hero.hp += st.maxHp - oldMax;
-      tone(523, 784, 0.1, 'triangle', 0.05); save();
-    });
+    for (const p of PARTS) partRows[p.id] = makeRow($('#parts'), iconURL(p.id), () => { audio(); if (buyPart(p, amountFor(p))) { tone(523, 784, 0.1, 'triangle', 0.05); save(); } });
     for (const s of SKILLS) skRows[s.id] = makeRow($('#skillList'), iconURL(s.id), () => {
       audio();
       const c = skillCost(s);
@@ -1269,13 +1761,23 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     for (const a of ALLIES) allyRows[a.id] = makeRow($('#allyList'), spriteURL(SPR[a.id], ALLY_PAL[a.id], 4), () => {
       audio();
       const c = allyCost(a);
-      if (S.maxFloor < a.unlock || S.gold < c) return;
+      if (S.deepest < a.unlock || S.gold < c) return;
       const first = !S.allies[a.id];
       S.gold -= c; S.allies[a.id]++; recalc();
       if (first) { log(`<b>${a.name}</b> joined your party!`, 'c'); jingle(); } else tone(659, 988, 0.12, 'triangle', 0.05);
       save();
     });
-    for (const g of GEMSHOP) gemRows[g.id] = makeRow($('#gemList'), iconURL(g.icon), () => buyGem(g), 'gemb');
+    for (const g of GEMSHOP) gemRows[g.id] = makeRow($('#gemList'), iconURL(g.icon, g.pal && ICON_PAL[g.pal]), () => buyGem(g), 'gemb');
+    sumRows.one = makeRow($('#sumList'), iconURL('box'), () => summon(1), 'gemb');
+    sumRows.ten = makeRow($('#sumList'), iconURL('box', ICON_PAL.box10), () => summon(10), 'gemb');
+    for (const d of DUNGEONS) {
+      const el = document.createElement('div'); el.className = 'dung';
+      el.innerHTML = `<img alt="" src="${spriteURL(SPR[d.kind], monPal({ kind: d.kind, tint: d.tint, special: true }), 4)}"><div style="min-width:0"><div class="pname">${d.name} <span class="keys"></span></div><div class="pfx">${d.text}</div></div><button class="buy" type="button"><span class="bn">Enter</span><span class="bc"></span></button>`;
+      $('#dungList').appendChild(el);
+      const r = { keys: el.querySelector('.keys'), btn: el.querySelector('.buy'), bc: el.querySelector('.bc') };
+      r.btn.addEventListener('click', () => startRun(d.id));
+      dungRows[d.id] = r;
+    }
     const qb = $('#questList');
     for (let i = 0; i < 3; i++) {
       const el = document.createElement('div'); el.className = 'quest';
@@ -1285,23 +1787,46 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       q.btn.addEventListener('click', () => { audio(); claimQuest(i); });
       questEls.push(q);
     }
-    const lb = $('#lifestats');
-    lb.innerHTML = LIFE.map(([k, l]) => `<div><span class="lbl">${l}</span><b id="life-${k}">0</b></div>`).join('');
+    for (let i = 0; i < 3; i++) {
+      const el = document.createElement('div'); el.className = 'ench';
+      el.innerHTML = `<div><div class="tn"></div><div class="ev"></div></div><button class="lock" type="button" aria-pressed="false">Lock</button>`;
+      $('#enchList').appendChild(el);
+      const r = { el, tn: el.querySelector('.tn'), ev: el.querySelector('.ev'), lock: el.querySelector('.lock') };
+      r.lock.addEventListener('click', () => { if (i >= enchLines() || !S.ench[i]) return; S.locks[i] = !S.locks[i]; save(); renderGear(); });
+      enchEls.push(r);
+    }
+    $('#lifestats').innerHTML = LIFE.map(([k, l]) => `<div><span class="lbl">${l}</span><b id="life-${k}">0</b></div>`).join('');
   }
-  const skillCost = s => s.base * Math.pow(s.r, S.sk[s.id] - 1);
-  const allyCost = a => a.base * Math.pow(a.r, S.allies[a.id]);
-  const LIFE = [['kills', 'Monsters'], ['bosses', 'Bosses'], ['elites', 'Shiny ones'], ['chests', 'Chests'], ['goblins', 'Goblins'], ['taps', 'Taps'], ['bestCombo', 'Best combo'], ['skills', 'Skills cast'], ['deaths', 'Naps taken'], ['goldEarned', 'Gold earned'], ['quests', 'Quests'], ['time', 'Time played']];
 
   function renderGear() {
     for (const p of PARTS) {
       const L = S.lv[p.id], n = amountFor(p), cost = costOf(p.base, p.r, L, n);
-      setRow(partRows[p.id], { name: p.name, lv: 'Lv ' + L, fx: p.fx(st, stats(Object.assign({}, S.lv, { [p.id]: L + n }))), bn: 'Buy ×' + n, bc: fmt(Math.ceil(cost)) + 'g', ok: S.gold >= cost });
+      const nextMile = (Math.floor(L / 25) + 1) * 25;
+      setRow(partRows[p.id], { name: p.name, lv: 'Lv ' + L + (['sword', 'armor', 'gaunt'].includes(p.id) ? ` · ×2 at ${nextMile}` : ''), fx: p.fx(st, stats(Object.assign({}, S.lv, { [p.id]: L + n }))), bn: 'Buy ×' + n, bc: fmt(Math.ceil(cost)) + 'g', ok: S.gold >= cost });
     }
     const w = S.weapon, R = w ? RARITY[w.rar] : null, wc = $('#weapon');
     wc.style.setProperty('--rc', R ? R.c : '');
-    setHTML(wc, `<img alt="" src="${iconURL('sword', { c: R ? R.c : '#e8eefc', b: '#f5b942' })}"><div style="min-width:0"><div class="lbl">Weapon</div><div class="wn">${w ? w.name : 'Plain Stick'}</div><div class="wr">${w ? `${R.n} · ×${w.power.toFixed(2)} damage` : '×1.00 damage. Bosses and chests drop better ones.'}</div></div>`);
+    setHTML(wc, `<img alt="" src="${iconURL('sword', { c: R ? R.c : '#e8eefc', b: '#f5b942' })}"><div style="min-width:0"><div class="lbl">Weapon${S.wlv ? ' +' + S.wlv : ''}</div><div class="wn">${w ? w.name : 'Plain Stick'}</div><div class="wr">${w ? `${R.n} · ×${w.power.toFixed(2)} base × ${(w.pm || 1).toFixed(2)} prefix × ${(1 + 0.12 * S.wlv).toFixed(2)} forge` : '×1.00 damage. Bosses, chests and summons drop better ones.'}</div></div>`);
     const C = CLASSES[S.cls];
-    setHTML($('#clsCard'), `<img alt="" src="${heroIcon(S.cls)}"><div style="min-width:0"><div class="lbl">Class</div><div class="wn">${C.name}</div><div class="wr">${C.text}</div></div>`);
+    setHTML($('#clsCard'), `<img alt="" src="${heroIcon(S.cls)}"><div style="min-width:0"><div class="lbl">Class · ${RANKS[S.rank].n} rank</div><div class="wn">${C.name}</div><div class="wr">${C.text}</div></div>`);
+    setText($('#wlvLbl'), `Weapon +${S.wlv}`);
+    setText($('#forgeText'), `Enhance: +12% weapon power per level. Next costs ${enhCost()} shards, ${pct(enhChance())} success. Reforge rolls a new prefix (from Rusty ×0.85 to Mythic ×1.50) for ${reforgeCost()} runes.${w ? ` Current prefix: ${w.pre} ×${(w.pm || 1).toFixed(2)}.` : ''}`);
+    const eb = $('#enhanceBtn'), rb = $('#reforgeBtn'), xb = $('#rerollBtn');
+    eb.textContent = `Enhance (${enhCost()} shards)`; eb.classList.toggle('ok', S.shards >= enhCost());
+    rb.textContent = `Reforge prefix (${reforgeCost()} runes)`; rb.classList.toggle('ok', !!w && S.runes >= reforgeCost());
+    const lines = enchLines(), allLocked = S.locks.slice(0, lines).every((l, i) => l && S.ench[i]);
+    xb.textContent = `Reroll enchants (${enchCost()} runes)`; xb.classList.toggle('ok', S.runes >= enchCost() && !allLocked);
+    setText($('#enchHint'), lines < 3 ? `Line ${lines + 1} opens at floor ${lines === 1 ? 15 : 30}.` : 'Each lock adds 6 runes to the cost.');
+    enchEls.forEach((r, i) => {
+      const e = S.ench[i], open = i < lines;
+      r.el.classList.toggle('off', !open);
+      if (!open) { setText(r.tn, 'Locked line'); setText(r.ev, `Reach floor ${i === 1 ? 15 : 30}`); r.el.style.removeProperty('--tc'); }
+      else if (!e) { setText(r.tn, 'Empty'); setText(r.ev, 'Reroll to add an enchant'); r.el.style.removeProperty('--tc'); }
+      else { const T = ENCH_TIERS[e.t], s = ENCH_STATS.find(x => x.id === e.s); setText(r.tn, T.n); setText(r.ev, `+${e.v}% ${s.name}`); r.el.style.setProperty('--tc', T.c); }
+      r.lock.setAttribute('aria-pressed', String(!!S.locks[i] && open && !!e));
+      setText(r.lock, S.locks[i] && open && e ? 'Locked' : 'Lock');
+    });
+    const ab = $('#autobuyBtn'); setText(ab, S.set.autobuy ? 'Auto-buy: on' : 'Auto-buy: off'); ab.setAttribute('aria-pressed', String(S.set.autobuy));
   }
   const heroIconCache = {};
   function heroIcon(cls) {
@@ -1320,13 +1845,34 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   }
   function renderAllies() {
     for (const a of ALLIES) {
-      const L = S.allies[a.id], open = S.maxFloor >= a.unlock, cost = allyCost(a);
+      const L = S.allies[a.id], open = S.deepest >= a.unlock, cost = allyCost(a);
       setRow(allyRows[a.id], {
         name: a.name, lv: L ? 'Lv ' + L : open ? 'Not hired' : 'Locked', dim: !open,
         fx: !open ? `Reach floor ${a.unlock} to meet them. ${ALLY_BLURB[a.id]}.` : L ? `${a.fx(L)}. <span class="up">Next: ${a.fx(L + 1).toLowerCase()}</span>` : `${ALLY_BLURB[a.id]}. <span class="up">${a.fx(1)}</span>`,
         bn: !open ? 'Floor ' + a.unlock : L ? 'Level up' : 'Hire', bc: open ? fmt(Math.ceil(cost)) + 'g' : '—', ok: open && S.gold >= cost
       });
     }
+  }
+  function renderTrials() {
+    setHTML($('#ranks'), RANKS.map((r, i) => `<span class="rk${i <= S.rank ? ' on' : i === S.rank + 1 ? ' next' : ''}" title="Needs floor ${r.need}">${r.n}</span>`).join(''));
+    setText($('#rankLbl'), `${RANKS[S.rank].n} · ×${Math.pow(1.3, S.rank).toFixed(2)} damage`);
+    const next = RANKS[S.rank + 1], tb = $('#trialText'), btn = $('#trialBtn');
+    if (!next) { setText(tb, 'You hold the highest rank. Legend.'); btn.disabled = true; btn.classList.remove('ok'); }
+    else {
+      const ready = S.deepest >= next.need;
+      setText(tb, ready ? `The ${next.n} Examiner is waiting. You have 40 seconds to beat it. It's free, and you can retry as often as you like.` : `Reach floor ${next.need} to unlock the ${next.n} trial (deepest so far: ${S.deepest}).`);
+      btn.disabled = !ready || mode !== 'main' || fainted > 0; btn.classList.toggle('ok', !btn.disabled);
+      setText(btn, mode === 'run' ? 'Run in progress' : `Start ${next.n} trial`);
+    }
+    for (const d of DUNGEONS) {
+      const r = dungRows[d.id], k = S.keys[d.id];
+      setText(r.keys, `· ${k}/3 keys`);
+      const ok = k > 0 && mode === 'main' && !fainted && S.deepest >= 5;
+      r.btn.classList.toggle('ok', ok); r.btn.setAttribute('aria-disabled', String(!ok));
+      setText(r.bc, S.deepest < 5 ? 'Floor 5' : mode === 'run' ? 'Busy' : `${k} key${k === 1 ? '' : 's'}`);
+    }
+    const full = DUNGEONS.every(d => S.keys[d.id] >= 3);
+    setText($('#keyTimer'), full ? 'Keys full' : `Next key in ${mmss(Math.max(0, (KEY_MS - (Date.now() - S.keyT)) / 1000))}`);
   }
   function renderQuests() {
     fillQuests();
@@ -1339,38 +1885,46 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       e.btn.classList.toggle('ok', q.done); e.btn.setAttribute('aria-disabled', String(!q.done));
     });
     for (const g of GEMSHOP) setRow(gemRows[g.id], { name: g.name, lv: '', fx: g.text, bn: 'Buy', bc: g.cost + ' gems', ok: S.gems >= g.cost });
+    const w = sumWeights(), tot = w.reduce((a, b) => a + b, 0);
+    setText($('#sumLbl'), `Summon level ${S.summon.lv} · ${S.summon.xp}/${sumNeed(S.summon.lv)}`);
+    setText($('#sumOdds'), `Weapons from floor ${S.maxFloor}. Odds: ` + RARITY.map((r, i) => `${r.n} ${pct1(w[i] / tot)}`).join(', ') + '. Each summon raises your summon level, which improves the odds.');
+    setRow(sumRows.one, { name: 'Summon ×1', lv: '', fx: 'One weapon. Better ones equip themselves, the rest get salvaged.', bn: 'Summon', bc: '10 gems', ok: S.gems >= 10 });
+    setRow(sumRows.ten, { name: 'Summon ×10', lv: '', fx: 'Ten weapons for the price of nine. At least one Epic or better guaranteed.', bn: 'Summon', bc: '90 gems', ok: S.gems >= 90 });
+    const ab = $('#autoclaimBtn'); setText(ab, S.set.autoclaim ? 'Auto-claim: on' : 'Auto-claim: off'); ab.setAttribute('aria-pressed', String(S.set.autoclaim));
+    const ready = dailyReady(), sk = ready ? dailyStreakNext() : S.daily.streak, r = dailyReward(ready ? sk : sk + 1);
+    setText($('#dailyLbl'), `Streak: ${S.daily.streak} day${S.daily.streak === 1 ? '' : 's'}`);
+    setText($('#dailyText'), ready ? `Today's chest (day ${sk}): ${r.gems} gems, ${r.runes} runes, ${r.shards} shards. Come back every day to grow the streak, up to day 7.` : `Opened today. Tomorrow's chest: ${r.gems} gems, ${r.runes} runes, ${r.shards} shards.`);
+    const db = $('#dailyBtn'); db.disabled = !ready; db.classList.toggle('ok', ready); setText(db, ready ? 'Open daily chest' : 'Come back tomorrow');
   }
   function renderBook() {
     let html = '<span class="lbl">Weapon</span>' + RARITY.map(r => `<span class="bh" style="color:${r.c}">${r.n.slice(0, 3)}</span>`).join('');
-    for (const b of WBASE) {
-      html += `<span>${b}</span>` + RARITY.map((r, i) => `<span class="cell${S.book[b + '|' + i] ? ' on' : ''}" style="--rc:${r.c}" title="${r.n} ${b}${S.book[b + '|' + i] ? '' : ' (not found yet)'}"></span>`).join('');
-    }
+    for (const b of WBASE) html += `<span>${b}</span>` + RARITY.map((r, i) => `<span class="cell${S.book[b + '|' + i] ? ' on' : ''}" style="--rc:${r.c}" title="${r.n} ${b}${S.book[b + '|' + i] ? '' : ' (not found yet)'}"></span>`).join('');
     setHTML($('#bookGrid'), html);
     setText($('#bookCount'), `${bookCount()} / 48`);
     setText($('#bookHint'), `Every new weapon type and rarity you find is +1% damage forever. Book bonus now: +${bookCount()}% damage.`);
     setHTML($('#beast'), KINDS.map(k => {
       const n = S.life.beasts[k] || 0;
-      return `<div><img alt="" src="${beastIcon(k)}"><span><b>${CNAME[k]}</b><span class="${n >= 100 ? 'done' : ''}">${n >= 100 ? 'Mastered · ' + fmt(n) : n + ' / 100'}</span></span></div>`;
+      return `<div class="${n ? '' : 'unseen'}"><img alt="" src="${beastIcon(k)}"><span><b>${n ? CNAME[k] : '???'}</b><span class="${n >= 100 ? 'done' : ''}">${n >= 100 ? 'Mastered · ' + fmt(n) : n + ' / 100'}</span></span></div>`;
     }).join(''));
     setText($('#beastCount'), `${beastsMastered()} / ${KINDS.length} mastered`);
   }
   const beastCache = {};
   function beastIcon(k) {
-    if (!beastCache[k]) { const th = THEMES.find(t => t.kinds.includes(k)); beastCache[k] = spriteURL(SPR[k], monPal({ kind: k, tint: th.tint }), 3); }
+    if (!beastCache[k]) { const th = THEMES.find(t => t.kinds.includes(k) || t.boss === k) || THEMES[0]; beastCache[k] = spriteURL(SPR[k], monPal({ kind: k, tint: th.tint }), 3); }
     return beastCache[k];
   }
   function renderLegacy() {
     setHTML($('#relics'), RELICS.map(r => { const n = S.relics[r.id] || 0; return n ? `<span class="chip" title="${r.text}">${r.name}${n > 1 ? ` <i>×${n}</i>` : ''} · <i>${r.text}</i></span>` : '<span class="chip unknown">???</span>'; }).join(''));
     setText($('#relicCount'), `${relicKinds()} / ${RELICS.length} found`);
     setHTML($('#achs'), ACHS.map(([id, name, text]) => `<span class="chip${S.ach[id] ? ' got' : ' unknown'}" title="${text}">${S.ach[id] ? name : name + ': ' + text}</span>`).join(''));
-    setText($('#achCount'), `${achCount()} / ${ACHS.length}`);
+    setText($('#achCount'), `${achCount()} / ${ACHS.length} · +${achCount() * 3}% damage`);
     for (const [k] of LIFE) setText($('#life-' + k), k === 'time' ? dur(S.life.time) : fmt(S.life[k]));
-    setText($('#bestLine'), `Deepest floor: ${S.deepest}` + (S.runs ? ` · Retired ${S.runs}×` : ''));
+    setText($('#bestLine'), `Deepest floor: ${S.deepest}` + (S.runs ? ` · Retired ${S.runs}×` : '') + (S.dev ? ' · dev save' : ''));
     const gain = talesFor(S.maxFloor), btn = $('#retireBtn');
-    btn.disabled = gain <= 0;
+    btn.disabled = gain <= 0 || mode !== 'main';
     setText(btn, gain <= 0 ? `Reach floor 10 to retire (now ${S.maxFloor})` : `Retire for +${gain} tales`);
   }
-  const RENDER = { gear: renderGear, skills: renderSkills, allies: renderAllies, quests: renderQuests, book: renderBook, legacy: renderLegacy };
+  const RENDER = { gear: renderGear, skills: renderSkills, allies: renderAllies, trials: renderTrials, quests: renderQuests, book: renderBook, legacy: renderLegacy };
 
   const skBtns = {};
   function buildSkillbar() {
@@ -1409,19 +1963,22 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
       s.className = 'pip' + (i === 9 ? ' boss' : '') + (i % 3 === 0 && i > 0 ? ' gap' : '') + (i < S.kill ? ' done' : i === S.kill ? ' now' : '');
       box.appendChild(s);
     }
-    setText($('#floorNum'), `Floor ${S.floor} · ` + (S.kill >= 9 ? 'Boss fight' : S.farm ? `Farming · wave ${Math.floor(S.kill / 3) + 1}` : `Wave ${Math.floor(S.kill / 3) + 1} of 3`));
-    setText($('#floorName'), themeName(S.floor));
+    setText($('#floorNum'), mode === 'run' ? (run && run.type === 'trial' ? 'Rank trial' : 'Side dungeon') : `Floor ${S.floor} · ` + (S.kill >= 9 ? 'Boss fight' : S.farm ? `Farming · wave ${Math.floor(S.kill / 3) + 1}` : `Wave ${Math.floor(S.kill / 3) + 1} of 3`));
+    setText($('#floorName'), mode === 'run' && run ? (run.type === 'trial' ? `${RANKS[run.rank].n} Examiner` : DUNGEONS.find(d => d.id === run.type).name) : themeName(S.floor));
     const fb = $('#farmBtn');
     setText(fb, S.farm ? 'Fight boss' : 'Farm here');
     fb.classList.toggle('hot', S.farm);
+    fb.disabled = mode !== 'main';
     fb.title = S.farm ? 'Stop farming and fight the boss now' : 'Skip the boss and keep fighting waves on this floor';
   }
-  $('#farmBtn').addEventListener('click', () => {
+  function toggleFarm() {
     audio();
-    if (S.farm) { S.farm = false; if (!fainted) { S.kill = 9; enemies = enemies.filter(e => e.dead); } log(`Going for the boss of floor ${S.floor}!`, 'c'); }
-    else { S.farm = true; log(`Farming floor ${S.floor}. The boss will wait.`); }
+    if (mode !== 'main') return;
+    if (S.farm) { S.farm = false; farmLoops = 0; if (!fainted) { S.kill = 9; enemies = enemies.filter(e => e.dead); } log(`Going for the boss of floor ${S.floor}!`, 'c'); }
+    else { S.farm = true; farmLoops = 0; log(`Farming floor ${S.floor}. The boss will wait.`); }
     buildPips(); save();
-  });
+  }
+  $('#farmBtn').addEventListener('click', toggleFarm);
   function showTab(id) {
     S.tab = id;
     for (const b of document.querySelectorAll('.tabs button')) {
@@ -1439,26 +1996,29 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   }
   for (const b of document.querySelectorAll('.tabs button')) b.addEventListener('click', () => { showTab(b.dataset.tab); save(); });
 
-  const talesFor = f => f < 10 ? 0 : Math.floor(Math.pow(f / 5, 1.6));
+  const talesFor = f => f < 10 ? 0 : Math.floor(Math.pow(f / 5, 2));
   function renderHud() {
     setText($('#gold'), fmt(Math.floor(S.gold)));
-    setText($('#gems'), fmt(S.gems));
+    setText($('#gems'), fmt(S.gems)); setText($('#runes'), fmt(S.runes)); setText($('#shards'), fmt(S.shards));
     setText($('#gps'), S.gps > 0.05 ? `${fmt(S.gps)}/s` : '');
     $('#talesBox').hidden = !S.tales;
     setText($('#tales'), S.tales);
+    setText($('#rankChip'), RANKS[S.rank].n + (S.dev ? ' · dev' : ''));
     setText($('#sDmg'), fmt(st.dmg * comboMult()));
+    setText($('#sDps'), fmt(dpsLog.reduce((a, b) => a + b[1], 0) / 5));
     setText($('#sSpd'), (1 / (st.atkInt / (frenzyT > 0 ? frenzyVal : 1))).toFixed(2));
     setText($('#sHp'), fmt(Math.ceil(hero.hp)) + '/' + fmt(st.maxHp));
-    setText($('#sCrit'), pct(st.crit));
+    setText($('#sCrit'), pct1(st.crit));
     setText($('#sTap'), fmt(st.tap * comboMult()));
     renderSkillbar();
     RENDER[S.tab]();
+    if (dev.debug) { $('#debug').hidden = false; setText($('#debug'), `fps ${fps.toFixed(0)}  enemies ${enemies.length}  parts ${parts.length}\nmode ${mode}  floor ${S.floor}  kill ${S.kill}  hpM ${fmt(hpM(S.floor))}\ngps ${fmt(S.gps)}  speed ×${dev.speed}`); } else $('#debug').hidden = true;
   }
 
   /* ---------- retire + classes ---------- */
   function openRetire() {
     const gain = talesFor(S.maxFloor);
-    if (gain <= 0) return;
+    if (gain <= 0 || mode !== 'main') return;
     setText($('#clsSub'), `Your hero retires with +${gain} tales (${S.tales + gain} total, +${(S.tales + gain) * 10}% damage and gold). Who goes down the stairs next?`);
     $('#classes').innerHTML = Object.entries(CLASSES).map(([id, c]) => `<button type="button" class="cls" data-cls="${id}"><img alt="" src="${heroIcon(id)}"><b>${c.name}</b><span>${c.text}</span></button>`).join('');
     $('#classModal').hidden = false;
@@ -1469,7 +2029,7 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
     const gain = talesFor(S.maxFloor);
     if (gain <= 0) return;
     const cls = b.dataset.cls;
-    const keep = { tales: S.tales + gain, runs: S.runs + 1, relics: S.relics, deepest: S.deepest, gems: S.gems, book: S.book, ach: S.ach, life: S.life, quests: S.quests, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, cls };
+    const keep = { tales: S.tales + gain, runs: S.runs + 1, rank: S.rank, relics: S.relics, deepest: S.deepest, gems: S.gems, runes: S.runes, shards: S.shards, book: S.book, ach: S.ach, life: S.life, quests: S.quests, keys: S.keys, keyT: S.keyT, summon: S.summon, daily: S.daily, set: S.set, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls };
     resetRun(keep);
     $('#classModal').hidden = true;
     log(`Retired! +${gain} tales. A new <b>${CLASSES[cls].name}</b> enters the Damp Cellar.`, 't');
@@ -1480,32 +2040,153 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   $('#retireBtn').addEventListener('click', () => { audio(); openRetire(); });
   function resetRun(keep) {
     S = Object.assign(fresh(), keep);
-    recalc(); hero.hp = st.maxHp; hero.wx = 0; enemies = []; chest = null; combo = 0; fainted = 0; feverT = 0; frenzyT = 0; goblin = null;
+    recalc(); hero.hp = st.maxHp; hero.wx = 0; enemies = []; chest = null; combo = 0; fainted = 0; feverT = 0; frenzyT = 0; goblin = null; mode = 'main'; run = null;
     for (const k in skT) skT[k] = 0;
   }
+
+  /* ---------- settings ---------- */
+  const SETTINGS = [
+    ['autobuy', 'Auto-buy training', 'Buys the cheapest training upgrade twice a second'],
+    ['autoclaim', 'Auto-claim quests', 'Finished quests pay out by themselves'],
+    ['autoboss', 'Auto retry boss', 'While farming, tries the boss again every 3 loops'],
+    ['shake', 'Screen shake', 'Shake on big hits'],
+    ['nums', 'Damage numbers', 'Floating numbers over monsters'],
+    ['particles', 'Particles', 'Sparkles, snow, embers and bursts'],
+    ['numfmt', 'Number style', 'Short (1.2M) or scientific (1.2e6)']
+  ];
+  function renderSettings() {
+    $('#setGrid').innerHTML = SETTINGS.map(([k, n, d]) => {
+      const on = k === 'numfmt' ? S.set.numfmt === 'sci' : !!S.set[k];
+      return `<button type="button" class="toggle" data-set="${k}" aria-pressed="${on}"><span><span style="display:block;font-weight:800">${n}</span><span class="hint">${d}</span></span><b>${k === 'numfmt' ? (on ? 'Scientific' : 'Short') : on ? 'On' : 'Off'}</b></button>`;
+    }).join('');
+  }
+  $('#setGrid').addEventListener('click', e => {
+    const b = e.target.closest('[data-set]'); if (!b) return;
+    const k = b.dataset.set;
+    if (k === 'numfmt') S.set.numfmt = S.set.numfmt === 'sci' ? 'short' : 'sci'; else S.set[k] = !S.set[k];
+    save(); renderSettings(); renderHud();
+  });
+  function openModal(id) { $('#' + id).hidden = false; if (id === 'setModal') renderSettings(); if (id === 'devModal') buildDev(); }
+  for (const b of document.querySelectorAll('[data-close]')) b.addEventListener('click', () => { $('#' + b.dataset.close).hidden = true; });
+  for (const m of document.querySelectorAll('.overlay')) m.addEventListener('click', e => { if (e.target === m && m.id !== 'classModal') m.hidden = true; });
+  $('#openSettings').addEventListener('click', () => openModal('setModal'));
+  $('#autobuyBtn').addEventListener('click', () => { S.set.autobuy = !S.set.autobuy; save(); renderGear(); });
+  $('#buyCheap').addEventListener('click', () => { audio(); if (buyCheapest(false)) save(); });
+  $('#autoclaimBtn').addEventListener('click', () => { S.set.autoclaim = !S.set.autoclaim; save(); renderQuests(); });
+  $('#enhanceBtn').addEventListener('click', enhance);
+  $('#reforgeBtn').addEventListener('click', reforge);
+  $('#rerollBtn').addEventListener('click', rerollEnch);
+  $('#trialBtn').addEventListener('click', () => startRun('trial'));
+  $('#dailyBtn').addEventListener('click', claimDaily);
+  const encodeSave = () => btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+  $('#exportBtn').addEventListener('click', () => {
+    save();
+    const code = encodeSave(), ta = $('#saveText');
+    ta.value = code;
+    const done = ok => setText($('#saveMsg'), ok ? 'Copied your save code. Keep it somewhere safe.' : 'Your save code is in the box. Select it and copy it.');
+    try { navigator.clipboard.writeText(code).then(() => done(true), () => { ta.select(); done(false); }); } catch (e) { ta.select(); done(false); }
+  });
+  let importArm = 0;
+  $('#importBtn').addEventListener('click', () => {
+    const raw = $('#saveText').value.trim();
+    if (!raw) { setText($('#saveMsg'), 'Paste a save code into the box first.'); return; }
+    let o;
+    try { o = JSON.parse(decodeURIComponent(escape(atob(raw)))); } catch (e) { setText($('#saveMsg'), "That code didn't work. Check that you copied all of it."); return; }
+    if (importArm < performance.now()) { importArm = performance.now() + 4000; setText($('#saveMsg'), `Found a save on floor ${o.floor || 1}. Press Load again to replace your current game.`); return; }
+    importArm = 0;
+    S = migrate(o); recalc(); hero.hp = st.maxHp; enemies = []; mode = 'main'; run = null; save();
+    setText($('#saveMsg'), 'Save loaded.'); log('Loaded a save.', 't'); refreshAll();
+  });
   let wipeArm = 0;
   $('#wipe').addEventListener('click', () => {
     if (wipeArm < performance.now()) { wipeArm = performance.now() + 3000; $('#wipe').textContent = 'Tap again to erase everything'; setTimeout(() => { $('#wipe').textContent = 'Erase save'; }, 3000); return; }
     resetRun({ tab: S.tab }); save();
     $('#log').innerHTML = ''; log('Fresh start. A new hero enters the Damp Cellar.');
     $('#wipe').textContent = 'Erase save'; wipeArm = 0;
+    $('#setModal').hidden = true;
     refreshAll();
   });
-  function refreshAll() { buildPips(); buildSkillbar(); syncAmt(); syncMute(); showTab(S.tab); renderHud(); }
-  function syncAmt() { for (const b of document.querySelectorAll('.amt button')) b.setAttribute('aria-pressed', String(b.dataset.amt === S.amt)); }
-  for (const b of document.querySelectorAll('.amt button')) b.addEventListener('click', () => { S.amt = b.dataset.amt; syncAmt(); renderGear(); save(); });
-  function syncMute() { $('#mute').textContent = S.muted ? 'Sound off' : 'Sound on'; $('#mute').setAttribute('aria-pressed', String(!S.muted)); }
-  $('#mute').addEventListener('click', () => { audio(); S.muted = !S.muted; syncMute(); save(); if (!S.muted) tone(660, 880, 0.08, 'triangle', 0.05); });
 
+  /* ---------- developer menu ---------- */
+  function devMark() { if (!S.dev) { S.dev = true; log('Developer mode used. This save is now marked as a dev save.', 'r'); } }
+  function goFloor(f) {
+    f = clamp(Math.floor(f) || 1, 1, 999);
+    S.floor = f; S.kill = 0; S.maxFloor = Math.max(S.maxFloor, f); S.deepest = Math.max(S.deepest, f);
+    enemies = []; mode = 'main'; run = null; S.farm = false; buildPips(); buildSkillbar();
+    log(`Dev: jumped to floor ${f}.`, 'r');
+  }
+  const DEV = {
+    devCur: [
+      ['+10 min of gold', () => earn(Math.max(S.gps, goldM(S.floor) * goldNow()) * 600)],
+      ['+1B gold', () => earn(1e9)], ['+1T gold', () => earn(1e12)],
+      ['+100 gems', () => { S.gems += 100; }], ['+100 runes', () => { S.runes += 100; }], ['+100 shards', () => { S.shards += 100; }],
+      ['+25 tales', () => { S.tales += 25; recalc(); }], ['Refill keys', () => { for (const d of DUNGEONS) S.keys[d.id] = 3; }]
+    ],
+    devProg: [
+      ['Floor +10', () => goFloor(S.floor + 10)], ['Floor +50', () => goFloor(S.floor + 50)],
+      ['Unlock all skills', () => { S.maxFloor = Math.max(S.maxFloor, 20); S.deepest = Math.max(S.deepest, 30); buildSkillbar(); }],
+      ['Hire all allies Lv 10', () => { for (const a of ALLIES) S.allies[a.id] = Math.max(10, S.allies[a.id]); S.deepest = Math.max(S.deepest, 16); recalc(); }],
+      ['Training +25 all', () => { for (const p of PARTS) S.lv[p.id] += 25; recalc(); hero.hp = st.maxHp; }],
+      ['Rank up', () => { S.rank = Math.min(RANKS.length - 1, S.rank + 1); recalc(); }],
+      ['Next class (free)', () => { const k = Object.keys(CLASSES); S.cls = k[(k.indexOf(S.cls) + 1) % k.length]; recalc(); }],
+      ['Complete quests', () => { S.quests.forEach(q => { q.prog = q.n; q.done = true; }); }],
+      ['Unlock achievements', () => { for (const [id] of ACHS) S.ach[id] = 1; recalc(); }],
+      ['Fake 1h offline', () => { const g = Math.max(S.gps, goldM(S.floor)) * 3600 * 0.5; earn(g); S.keyT -= 3600e3; regenKeys(); log(`Dev: 1 hour offline, +${fmt(g)} gold.`, 'r'); }],
+      ['Reset cooldowns', () => { for (const k in skT) skT[k] = 0; }]
+    ],
+    devSpawn: [
+      ['Boss now', () => { if (mode !== 'main') return; S.farm = false; S.kill = 9; enemies = []; }],
+      ['Treasure goblin', () => spawnGoblin()],
+      ['Chest', () => { chest = { wx: hero.wx + PX * 14, life: 6, gold: goldM(S.floor) * 12 }; }],
+      ['Shiny wave', () => { if (mode !== 'main') return; enemies = []; const s0 = hero.wx + W; for (let i = 0; i < 3; i++) { const e = makeEnemy({ wx: s0 + i * PX * 13 }); e.elite = true; e.tint = '#ffd76a'; e.gold *= 8; e.hp = e.max = e.hp * 4; e.name = 'Shiny ' + e.name; enemies.push(e); } }],
+      ['Variant wave', () => { if (mode !== 'main') return; enemies = []; const s0 = hero.wx + W; Object.keys(VARIANTS).slice(0, 3).forEach((v, i) => { let e; do { e = makeEnemy({ wx: s0 + i * PX * 13 }); } while (!e.variant); enemies.push(e); }); }],
+      ['Party potion', () => { feverT = 20; frenzyT = 20; }]
+    ],
+    devLoot: [
+      ['Legendary weapon', () => lootWeapon(S.maxFloor, [0, 0, 0, 1])],
+      ['Mythic enchants', () => { for (let i = 0; i < 3; i++) { const s = pick(ENCH_STATS); S.ench[i] = { s: s.id, t: 4, v: Math.round(s.r[1] * 8 * 10) / 10 }; } S.life.mythic++; recalc(); }],
+      ['Every relic +1', () => { for (const r of RELICS) S.relics[r.id] = (S.relics[r.id] || 0) + 1; recalc(); }],
+      ['Fill weapon book', () => { for (const b of WBASE) for (let i = 0; i < 4; i++) S.book[b + '|' + i] = 1; recalc(); }],
+      ['Weapon +5', () => { S.wlv += 5; recalc(); }],
+      ['Master bestiary', () => { for (const k of KINDS) S.life.beasts[k] = Math.max(100, S.life.beasts[k] || 0); recalc(); }]
+    ],
+    devCheat: [
+      ['God mode', () => { dev.god = !dev.god; }, () => dev.god],
+      ['One-hit kills', () => { dev.onehit = !dev.onehit; }, () => dev.onehit],
+      ['Speed ×1', () => { dev.speed = 1; }, () => dev.speed === 1], ['Speed ×2', () => { dev.speed = 2; }, () => dev.speed === 2],
+      ['Speed ×5', () => { dev.speed = 5; }, () => dev.speed === 5], ['Speed ×10', () => { dev.speed = 10; }, () => dev.speed === 10],
+      ['Debug overlay', () => { dev.debug = !dev.debug; }, () => dev.debug],
+      ['Clear dev mark', () => { S.dev = false; }]
+    ]
+  };
+  function buildDev() {
+    for (const [box, items] of Object.entries(DEV)) {
+      $('#' + box).innerHTML = items.map(([n, , on], i) => `<button type="button" data-dev="${box}:${i}"${on ? ` aria-pressed="${on()}"` : ''}>${n}</button>`).join('');
+    }
+    $('#devFloor').value = S.floor;
+  }
+  $('#devModal').addEventListener('click', e => {
+    const b = e.target.closest('[data-dev]'); if (!b) return;
+    const [box, i] = b.dataset.dev.split(':');
+    const item = DEV[box][+i];
+    if (!(box === 'devCheat' && item[0] === 'Clear dev mark')) devMark();
+    item[1](); recalc(); save(); buildDev(); renderHud();
+  });
+  $('#devGo').addEventListener('click', () => { devMark(); goFloor(+$('#devFloor').value); save(); });
+
+  /* ---------- input ---------- */
   cvs.addEventListener('pointerdown', e => {
     e.preventDefault();
     const r = cvs.getBoundingClientRect();
     tap(e.clientX - r.left, e.clientY - r.top);
   });
   window.addEventListener('keydown', e => {
-    if (!$('#classModal').hidden) { if (e.key === 'Escape') $('#classModal').hidden = true; return; }
+    const open = [...document.querySelectorAll('.overlay')].find(m => !m.hidden);
+    if (open) { if (e.key === 'Escape') open.hidden = true; return; }
     if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
+    if (e.key === '`') { openModal('devModal'); return; }
     if (/^Digit[1-5]$/.test(e.code)) { audio(); castSkill(SKILLS[+e.code.slice(5) - 1].id, true); return; }
+    if (e.code === 'KeyB') { toggleFarm(); return; }
     if (e.code !== 'Space' || (e.target && e.target.tagName === 'BUTTON')) return;
     e.preventDefault();
     const f = front();
@@ -1513,9 +2194,14 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   });
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+  function refreshAll() { buildPips(); buildSkillbar(); syncAmt(); syncMute(); showTab(RENDER[S.tab] ? S.tab : 'gear'); renderHud(); }
+  function syncAmt() { for (const b of document.querySelectorAll('.amt button')) b.setAttribute('aria-pressed', String(b.dataset.amt === S.amt)); }
+  for (const b of document.querySelectorAll('.amt button')) b.addEventListener('click', () => { S.amt = b.dataset.amt; syncAmt(); renderGear(); save(); });
+  function syncMute() { $('#mute').textContent = S.muted ? 'Sound off' : 'Sound on'; $('#mute').setAttribute('aria-pressed', String(!S.muted)); }
+  $('#mute').addEventListener('click', () => { audio(); S.muted = !S.muted; syncMute(); save(); if (!S.muted) tone(660, 880, 0.08, 'triangle', 0.05); });
 
   /* ================= boot ================= */
-  buildLists(); resize(); recalc(); hero.hp = st.maxHp; fillQuests();
+  buildLists(); resize(); recalc(); hero.hp = st.maxHp; fillQuests(); regenKeys();
   if (!RENDER[S.tab]) S.tab = 'gear';
   refreshAll();
   let awayMsg = '';
@@ -1530,12 +2216,16 @@ button:focus-visible{outline:2px solid var(--heal);outline-offset:2px}
   }
   if (awayMsg) log(awayMsg, 'g');
   else log(S.floor > 1 || S.gold > 0 ? `Welcome back. Floor ${S.floor}, ${fmt(S.gold)} gold in your pocket.` : 'A brave peasant enters the Damp Cellar. Tap the slimes!');
+  if (dailyReady()) { log('Your daily chest is ready in Quests.', 'p'); markTab('quests'); }
   save();
-  let last = performance.now(), uiT = 0, saveT = 0;
+  let last = performance.now(), uiT = 0, saveT = 0, fps = 60;
   function frame(now) {
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    update(dt); draw();
-    uiT += dt; saveT += dt;
+    const raw = Math.min(0.05, (now - last) / 1000); last = now;
+    fps = fps * 0.95 + (1 / Math.max(raw, 0.001)) * 0.05;
+    let left = raw * dev.speed;
+    while (left > 0) { const step = Math.min(0.05, left); update(step); left -= step; }
+    draw();
+    uiT += raw; saveT += raw;
     if (uiT > 0.15) { uiT = 0; renderHud(); }
     if (saveT > 5) { saveT = 0; save(); }
     requestAnimationFrame(frame);
