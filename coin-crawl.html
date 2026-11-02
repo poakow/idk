@@ -101,9 +101,9 @@ kbd{font-family:var(--pixel);font-size:12px;background:var(--stone);border:1px s
 #log li:first-child{color:var(--text)}
 #log .g{color:var(--gold)} #log .r{color:var(--hp)} #log .t{color:var(--heal)} #log .c{color:var(--combo)} #log .p{color:var(--gem)} #log .u{color:var(--rune)}
 
-.tabs{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:3px;background:var(--stone);border-radius:10px;padding:4px}
+.tabs{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px;background:var(--stone);border-radius:10px;padding:4px}
 @media (max-width:560px){.tabs{grid-template-columns:repeat(5,minmax(0,1fr))}}
-.tabs button{font:inherit;font-family:var(--pixel);font-size:12px;font-weight:600;color:var(--mute);background:transparent;border:0;border-radius:7px;padding:7px 2px 5px;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
+.tabs button{font:inherit;font-family:var(--pixel);font-size:11px;font-weight:600;color:var(--mute);background:transparent;border:0;border-radius:7px;padding:7px 2px 5px;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0}
 .tabs button img{width:22px;height:22px;image-rendering:pixelated;opacity:.65}
 .tabs button:hover{color:var(--text)}
 .tabs button[aria-selected="true"]{background:var(--edge);color:var(--text)}
@@ -228,6 +228,32 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
 .devgrid button[aria-pressed="true"]{border-color:var(--hp);color:var(--hp)}
 #debug{position:absolute;left:8px;bottom:8px;font:12px ui-monospace,Menlo,monospace;color:#9fe3ff;background:rgba(0,0,0,.55);padding:4px 6px;border-radius:4px;pointer-events:none;white-space:pre}
 .arenawrap{position:relative}
+.cats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--stone);border-radius:10px;padding:4px}
+.cats button{font:inherit;font-family:var(--pixel);font-size:14px;font-weight:600;color:var(--mute);background:transparent;border:0;border-radius:7px;padding:7px 4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;position:relative}
+.cats button img{width:22px;height:22px;image-rendering:pixelated}
+.cats button[aria-pressed="true"]{background:var(--edge);color:var(--text)}
+.sumbar{height:6px;background:var(--wall);border-radius:3px;overflow:hidden}.sumbar i{display:block;height:100%;width:0;background:var(--gem)}
+.eqgrid{display:grid;grid-template-columns:76px repeat(4,minmax(0,64px));gap:6px;align-items:center;justify-content:start}
+.eqgrid .gl{font-family:var(--pixel);font-size:13px;font-weight:600}
+.eqc{position:relative;aspect-ratio:1;max-width:100%;background:var(--stone);border:2px solid var(--gc);border-radius:8px;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.eqc img{width:58%;height:58%;image-rendering:pixelated}
+.eqc.unseen{border-style:dashed;border-color:var(--edge)}.eqc.unseen img{filter:brightness(0) opacity(.35)}
+.eqc .cnt{position:absolute;right:3px;bottom:1px;font:700 11px var(--pixel);color:var(--text);text-shadow:0 1px 0 #000}
+.eqc .cnt.m{color:var(--gold)}
+.eqc .lvl{position:absolute;left:3px;top:1px;font:600 10px var(--pixel);color:var(--mute)}
+.eqc .onb{position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:4px;background:var(--heal);color:var(--stone);font:800 9px/14px var(--body);text-align:center}
+.eqc[aria-pressed="true"]{outline:2px solid var(--text);outline-offset:1px}
+.eqd{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:start}
+.eqd .big{width:64px;height:64px;border:2px solid var(--gc);border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--wall)}
+.eqd .big img{width:44px;height:44px;image-rendering:pixelated}
+.eqd .nm{font-weight:800;font-size:16px;color:var(--gc)}
+.eqd .fx{font-size:13px;color:var(--mute)} .eqd .fx b{color:var(--text)}
+.sumres{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:6px}
+.sumres div{position:relative;aspect-ratio:1;border:2px solid var(--gc);border-radius:8px;background:var(--stone);display:flex;align-items:center;justify-content:center;animation:pop .35s ease both}
+.sumres img{width:60%;height:60%;image-rendering:pixelated}
+.sumres .nw{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font:800 9px var(--body);background:var(--combo);color:var(--stone);border-radius:4px;padding:0 4px}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.sumres div{animation:none}}
 .evochain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .evo{background:var(--wall);border:1px solid var(--edge);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;min-width:0}
 .evo img{width:36px;height:36px;image-rendering:pixelated}
@@ -280,6 +306,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     <section class="panel shop" aria-label="Shop">
       <nav class="tabs" role="tablist" aria-label="Menu">
         <button type="button" role="tab" id="tab-train" data-tab="train" aria-selected="true"><span class="tl">Train</span></button>
+        <button type="button" role="tab" id="tab-equip" data-tab="equip" aria-selected="false"><span class="tl">Equip</span></button>
         <button type="button" role="tab" id="tab-forge" data-tab="forge" aria-selected="false"><span class="tl">Forge</span></button>
         <button type="button" role="tab" id="tab-hero" data-tab="hero" aria-selected="false"><span class="tl">Hero</span></button>
         <button type="button" role="tab" id="tab-skills" data-tab="skills" aria-selected="false"><span class="tl">Skills</span></button>
@@ -303,6 +330,21 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
         <div class="row"><button class="pill" id="autobuyBtn" type="button" aria-pressed="false">Auto-buy: off</button><button class="pill" id="buyCheap" type="button">Buy cheapest</button></div>
         <p class="hint"><b>Hold</b> any buy button to keep buying. Every 25 levels doubles the stat. At levels 100, 250, 500 and 1000 a part <b>evolves</b> into something much stronger.</p>
         <div class="list" id="parts"></div>
+      </div>
+
+      <div class="tabpanel" id="panel-equip" role="tabpanel" hidden>
+        <div class="cats" role="group" aria-label="Equipment type" id="eqCats"></div>
+        <div class="box">
+          <div class="shophead"><h3 id="sumTitle">Summon</h3><span class="lbl" id="sumLbl"></span></div>
+          <div class="sumbar"><i id="sumBar"></i></div>
+          <p class="hint" id="sumOdds"></p>
+          <div class="row"><button class="act gem" id="sum1" type="button">×1</button><button class="act gem" id="sum11" type="button">×11</button><button class="act gem" id="sum35" type="button">×35</button></div>
+        </div>
+        <div class="box eqd" id="eqDetail"></div>
+        <div class="shophead"><h3>Collection</h3><div class="row"><button class="pill" id="mergeAll" type="button">Merge all</button><button class="pill" id="equipBest" type="button">Equip best</button><button class="pill" id="autoEq" type="button" aria-pressed="true">Auto-equip: on</button></div></div>
+        <p class="hint" id="eqOwned"></p>
+        <div class="eqgrid" id="eqGrid"></div>
+        <p class="hint">Every piece you've ever found gives its <b>owned</b> effect, even when it isn't equipped and even after merging it away. Merge 5 copies into 1 of the next piece. Level pieces up with shards. Your whole collection stays when you retire.</p>
       </div>
 
       <div class="tabpanel" id="panel-forge" role="tabpanel" hidden>
@@ -366,16 +408,14 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
         <div class="box"><div class="shophead"><h3>Daily chest</h3><span class="lbl" id="dailyLbl"></span></div><p id="dailyText"></p><div class="row"><button class="act heal" id="dailyBtn" type="button">Open daily chest</button></div></div>
         <div class="shophead"><h2>Quests</h2><button class="pill" id="autoclaimBtn" type="button" aria-pressed="false">Auto-claim: off</button></div>
         <div class="list" id="questList"></div>
-        <div class="shophead"><h2>Weapon summon</h2><span class="lbl" id="sumLbl">Summon level 1</span></div>
-        <p class="hint" id="sumOdds"></p>
-        <div class="list" id="sumList"></div>
+        <div class="box"><p>Equipment summons for weapons, armor, accessories and pets live in the <b>Equip</b> tab.</p><div class="row"><button class="act ok gem" type="button" id="goEquip">Go to Equip</button></div></div>
         <div class="shophead"><h2>Gem shop</h2><span class="lbl">Gems stay when you retire</span></div>
         <div class="list" id="gemList"></div>
       </div>
 
       <div class="tabpanel" id="panel-book" role="tabpanel" hidden>
-        <div class="shophead"><h2>Weapon book</h2><span class="lbl" id="bookCount">0 / 48</span></div>
-        <p class="hint" id="bookHint">Every new weapon type and rarity you find is +1% damage forever.</p>
+        <div class="shophead"><h2>Collection</h2><span class="lbl" id="bookCount">0 / 96</span></div>
+        <p class="hint" id="bookHint">Every new piece of equipment you discover is +1% damage forever.</p>
         <div class="bookgrid" id="bookGrid"></div>
         <div class="shophead"><h2>Bestiary</h2><span class="lbl" id="beastCount">0 mastered</span></div>
         <p class="hint">Defeat 100 of a monster type to master it: +5% gold forever for each one.</p>
@@ -385,7 +425,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
       <div class="tabpanel" id="panel-legacy" role="tabpanel" hidden>
         <div class="box">
           <h2>Retire</h2>
-          <p>Reach floor 10 to retire. Your hero earns <b style="color:var(--heal)">tales</b> (+10% damage and gold each, forever), then you pick a class for your next hero. Gold, training, skills, allies, weapon, enchants and floor reset. Ranks, class evolutions, relics, gems, runes, shards, tales, the book and achievements stay.</p>
+          <p>Reach floor 10 to retire. Your hero earns <b style="color:var(--heal)">tales</b> (+10% damage and gold each, forever), then you pick a class for your next hero. Gold, training, skills, allies and floor reset. Your equipment, weapon forge and enchants, ranks, class evolutions, relics, gems, runes, shards, tales, the book and achievements stay.</p>
           <button id="retireBtn" class="bigbtn" type="button" disabled>Reach floor 10 to retire</button>
         </div>
         <div class="shophead"><h2>Relics</h2><span class="lbl" id="relicCount">0 / 14 found</span></div>
@@ -419,6 +459,15 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     <p>Travel to any floor you've reached. Handy for farming an easier floor or a monster type for the bestiary.</p>
     <div class="row"><label for="mapFloor" class="lbl">Floor</label><input type="number" id="mapFloor" min="1" value="1"><button class="act ok heal" id="mapGo" type="button">Travel</button><span class="hint" id="mapHint"></span></div>
     <div class="maplist" id="mapList"></div>
+  </div>
+</div>
+
+<div class="overlay" id="sumModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="sumResTitle">
+    <div class="mhead"><h2 id="sumResTitle">Summon results</h2><button class="pill" type="button" data-close="sumModal">Close</button></div>
+    <p id="sumResText"></p>
+    <div class="sumres" id="sumRes"></div>
+    <div class="row"><button class="act ok gem" id="sumAgain" type="button">Summon again</button><button class="act ok heal" id="sumMerge" type="button">Merge all</button></div>
   </div>
 </div>
 
@@ -541,6 +590,11 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     frenzy: ['...a....', '..aa..a.', '..aaa.a.', '.aabaaa.', '.abbbaa.', 'aabbbbaa', 'aabccbaa', '.aaccaa.'],
     box: ['........', '.aaaaaa.', 'abbbbbba', 'aaaccaaa', 'abbccbba', 'abbbbbba', 'abbbbbba', '.aaaaaa.'],
     relicbox: ['...aa...', '..abba..', '.abbbba.', 'abbccbba', 'abbccbba', '.abbbba.', '..abba..', '...aa...'],
+    axe: ['..aaa...', '.aaaab..', '.aaa.b..', '..a..b..', '.....b..', '.....b..', '.....b..', '.....b..'],
+    spoon: ['....aa..', '...aaaa.', '...aaaa.', '....aa..', '...b....', '..b.....', '.b......', 'b.......'],
+    staff: ['...aa...', '..adda..', '...aa...', '...b....', '...b....', '...b....', '...b....', '...b....'],
+    helm: ['..aaaa..', '.aaaaaa.', 'aaaaaaaa', 'aabaabaa', 'aabaabaa', 'aaaaaaaa', '.a....a.', '........'],
+    amulet: ['a......a', '.a....a.', '..a..a..', '...aa...', '..bccb..', '.bccccb.', '..bccb..', '...bb...'],
     hammer: ['.aaaaaa.', '.abbbba.', '.aaaaaa.', '...cc...', '...cc...', '...cc...', '...cc...', '...cc...'],
     crown: ['........', 'a..a..a.', 'aa.aa.aa', 'aaaaaaaa', 'abaacaab', 'aaaaaaaa', 'aaaaaaaa', '........'],
     scroll: ['.aaaaaa.', 'abbbbbba', '.bccccb.', '.bbbbbb.', '.bcccbb.', '.bbbbbb.', 'abbbbbba', '.aaaaaa.'],
@@ -617,6 +671,31 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
   const PREFIXES = [['Rusty', 0.85, 10], ['Bent', 0.9, 12], ['Damp', 0.92, 12], ['Borrowed', 0.95, 12], ['Plain', 1, 14], ['Shiny', 1.05, 10], ['Sharp', 1.1, 8], ['Polished', 1.12, 6], ['Blazing', 1.18, 4], ['Haunted', 1.2, 4], ['Thundering', 1.22, 3], ['Enchanted', 1.25, 2.5], ['Ancient', 1.3, 1.5], ['Cosmic', 1.35, 1], ["Grandmaster's", 1.42, 0.6], ['Mythic', 1.5, 0.3]];
   const WBASE = ['Butter Knife', 'Sword', 'Spoon', 'Baguette', 'Pool Noodle', 'Axe', 'Umbrella', 'Fish', 'Spatula', 'Greatsword', 'Rolling Pin', 'Mop'];
   const WSUF = ['of Mild Peril', 'of Snacking', 'of the Bat', 'of Regret', 'of Doom (Probably)', 'of Tuesday', 'of the Landlord', 'of Vibes', 'of the Sewer', 'of Extra Cheese'];
+  const GRADES = [{ n: 'Common', c: '#c9cfe0' }, { n: 'Uncommon', c: '#7bd88f' }, { n: 'Rare', c: '#6fb7ff' }, { n: 'Epic', c: '#c98bff' }, { n: 'Legendary', c: '#f5b942' }, { n: 'Mythic', c: '#ff5d73' }];
+  const TIERN = ['IV', 'III', 'II', 'I'];
+  const CATS = ['weapon', 'armor', 'acc', 'pet'];
+  const PET_KINDS = ['slime', 'rat', 'snail', 'bat', 'frog', 'crab', 'penguin', 'mushroom', 'spider', 'ghost', 'wisp', 'cactus', 'imp', 'eyeball', 'robot', 'mimic', 'yeti', 'golem', 'mummy', 'skeleton', 'ogre', 'lich', 'dragon', 'tgoblin'];
+  const lvMul = lv => 1 + 0.15 * (lv - 1);
+  const EQ = {
+    weapon: { name: 'Weapons', one: 'weapon', names: ['Butter Knife', 'Spoon', 'Spatula', 'Mop', 'Rolling Pin', 'Baguette', 'Fish', 'Umbrella', 'Pool Noodle', 'Axe', 'Sword', 'Greatsword', 'Haunted Halberd', 'Thunder Trident', 'Blazing Scimitar', 'Frost Fang', 'Dragonbone Cleaver', 'Sunforged Blade', 'Moonlit Katana', 'Starfall Hammer', 'Cosmic Spork', 'Void Reaver', 'Eternity Edge', 'The Last Baguette'],
+      equip: (i, lv) => Math.pow(1.45, i) * lvMul(lv), owned: (i, lv) => 0.04 * Math.pow(1.3, i) * lvMul(lv),
+      eqText: (i, lv) => `×${fmt2(EQ.weapon.equip(i, lv))} damage`, owText: (i, lv) => `+${pct1(EQ.weapon.owned(i, lv))} damage` },
+    armor: { name: 'Armor', one: 'armor', names: ['Cardboard Box', 'Oven Mitt Vest', 'Leather Jerkin', 'Pot Helmet', 'Chainmail', 'Studded Leather', 'Bronze Plate', "Knight's Tabard", 'Steel Plate', 'Mithril Shirt', 'Guardian Mail', 'Shadow Cloak', 'Dragonhide', 'Crystal Aegis', 'Phoenix Robe', 'Titan Plate', 'Celestial Armor', 'Abyssal Carapace', 'Sun Mantle', 'Moon Mantle', 'Cosmic Onesie', 'Void Plate', 'Eternity Shell', 'Bathrobe of Legends'],
+      equip: (i, lv) => Math.pow(1.45, i) * lvMul(lv), owned: (i, lv) => 0.04 * Math.pow(1.3, i) * lvMul(lv),
+      eqText: (i, lv) => `×${fmt2(EQ.armor.equip(i, lv))} health`, owText: (i, lv) => `+${pct1(EQ.armor.owned(i, lv))} health` },
+    acc: { name: 'Accessories', one: 'accessory', names: ['String Ring', 'Lucky Penny', 'Bottle Cap Medal', 'Four-Leaf Clover', 'Silver Band', 'Ruby Pin', 'Owl Charm', 'Horseshoe', 'Emerald Ring', 'Fang Necklace', "Rabbit's Foot", 'Golden Compass', 'Phoenix Feather', 'Dragon Eye', 'Starstone', 'Hourglass Pendant', 'Crown of Greed', 'Ring of Kings', 'Eye of Midas', 'Infinity Loop', 'Cosmic Bling', 'Void Pearl', 'Heart of Gold', 'Ring of Endless Snacks'],
+      equip: (i, lv) => Math.pow(1.25, i) * lvMul(lv), crit: i => 0.004 * i, owned: (i, lv) => 0.03 * Math.pow(1.25, i) * lvMul(lv),
+      eqText: (i, lv) => `×${fmt2(EQ.acc.equip(i, lv))} gold, +${pct1(EQ.acc.crit(i))} crit`, owText: (i, lv) => `+${pct1(EQ.acc.owned(i, lv))} gold` },
+    pet: { name: 'Pets', one: 'pet', names: ['Pocket Slime', 'House Rat', 'Garden Snail', 'Fruit Bat', 'Tiny Frog', 'Hermit Crab', 'Desk Penguin', 'Lucky Shroom', 'Jumping Spider', 'Friendly Ghost', 'Lantern Wisp', 'Hug Cactus', 'Office Imp', 'Third Eye', 'Butler Bot', 'Pet Mimic', 'Baby Yeti', 'Mini Golem', 'Cuddly Mummy', 'Bone Buddy', 'Ogre Pup', 'Lich Kitten', 'Baby Dragon', 'Golden Goblin'],
+      equip: (i, lv) => 0.4 * Math.pow(1.35, i) * lvMul(lv), owned: (i, lv) => 0.03 * Math.pow(1.25, i) * lvMul(lv),
+      eqText: (i, lv) => `Fights beside you: hits for ${fmt2(EQ.pet.equip(i, lv))}× your damage every 1.2s`, owText: (i, lv) => `+${pct1(EQ.pet.owned(i, lv))} damage` }
+  };
+  const eqMax = i => 10 + 5 * Math.floor(i / 4);
+  const eqLvCost = (i, lv) => Math.ceil((3 + i) * lv * 1.2);
+  const SUM_COST = { 1: 5, 11: 50, 35: 150 };
+  const sumNeedEq = lv => 20 + (lv - 1) * 20;
+  function gradeWeights(L) { L = Math.max(0, L - 1); return [Math.max(5, 55 - 3 * L), 30, 11 + 1.6 * L, 3.5 + 0.9 * L, 0.45 + 0.35 * L, 0.05 + 0.1 * L]; }
+  const freshEq = () => Object.fromEntries(CATS.map(k => [k, { c: Array(24).fill(0), l: Array(24).fill(1), s: Array(24).fill(0), on: -1, sl: 1, sx: 0 }]));
   const ENCH_STATS = [
     { id: 'dmg', name: 'Damage', r: [5, 10] }, { id: 'crit', name: 'Crit chance', r: [1, 2.5] }, { id: 'critm', name: 'Crit damage', r: [10, 25] },
     { id: 'gold', name: 'Gold', r: [5, 12] }, { id: 'spd', name: 'Swing speed', r: [3, 7] }, { id: 'tap', name: 'Tap damage', r: [8, 20] },
@@ -721,6 +800,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     taps: { text: n => `Tap ${n} times`, n: () => 250, gems: 2 },
     gold: { text: n => `Earn ${fmt(n)} gold`, n: () => Math.ceil(400 * goldM(S.floor)), gems: 3 },
     goblin: { text: () => 'Catch a treasure goblin', n: () => 1, gems: 6 },
+    summon: { text: n => `Summon ${n} pieces of equipment`, n: () => 11, gems: 4, need: () => S.gems >= 50 },
     dungeon: { text: n => `Run ${n} side dungeon${n > 1 ? 's' : ''}`, n: () => 1, gems: 4, need: () => S.deepest >= 5 },
     ench: { text: n => `Reroll enchants ${n} times`, n: () => 3, gems: 3, need: () => S.runes >= 10 }
   };
@@ -741,7 +821,10 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     ['c50', 'Button Masher', 'Reach a 50 combo', () => S.life.bestCombo >= 50],
     ['c100', 'Finger Workout', 'Reach a 100 combo', () => S.life.bestCombo >= 100],
     ['c200', 'Carpal Tunnel', 'Reach a 200 combo', () => S.life.bestCombo >= 200],
-    ['leg', 'Shiny Stick', 'Find a Legendary weapon', () => S.life.legendaries >= 1],
+    ['leg', 'Shiny Stick', 'Get a Legendary piece of equipment', () => S.life.legendaries >= 1],
+    ['myth1', 'Mythic Pull', 'Get a Mythic piece of equipment', () => S.life.mythics >= 1],
+    ['merge50', 'Merge Master', 'Merge equipment 50 times', () => S.life.merges >= 50],
+    ['b96', 'Hoarder Supreme', 'Discover all 96 pieces of equipment', () => bookCount() >= 96],
     ['r5', 'Hoarder', 'Find 5 different relics', () => relicKinds() >= 5],
     ['r14', 'Museum Curator', 'Find every relic', () => relicKinds() >= RELICS.length],
     ['ret1', 'Happy Retirement', 'Retire once', () => S.runs >= 1],
@@ -756,8 +839,8 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     ['var100', 'Variety Pack', 'Defeat 100 special monsters', () => S.life.variants >= 100],
     ['k1k', 'Exterminator', 'Defeat 1,000 monsters', () => S.life.kills >= 1000],
     ['k10k', 'Dungeon Janitor', 'Defeat 10,000 monsters', () => S.life.kills >= 10000],
-    ['b24', 'Collector', 'Fill 24 spots in the weapon book', () => bookCount() >= 24],
-    ['b48', 'Completionist', 'Fill the whole weapon book', () => bookCount() >= 48],
+    ['b24', 'Collector', 'Discover 24 pieces of equipment', () => bookCount() >= 24],
+    ['b48', 'Completionist', 'Discover 48 pieces of equipment', () => bookCount() >= 48],
     ['beast12', 'Zookeeper', 'Master 12 monster types', () => beastsMastered() >= 12],
     ['q10', 'Busy Bee', 'Claim 10 quests', () => S.life.quests >= 10],
     ['dead10', 'Professional Napper', 'Faint 10 times', () => S.life.deaths >= 10],
@@ -774,14 +857,14 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
   const freshLv = () => ({ sword: 0, armor: 0, boots: 0, ring: 0, gaunt: 0, torch: 0, pet: 0 });
   const freshSk = () => ({ spin: 1, bolt: 1, heal: 1, rush: 1, frenzy: 1 });
   const freshAllies = () => ({ knight: 0, wizard: 0, bard: 0, raccoon: 0 });
-  const freshLife = () => ({ kills: 0, bosses: 0, chests: 0, taps: 0, bestCombo: 0, goldEarned: 0, skills: 0, time: 0, goblins: 0, elites: 0, variants: 0, deaths: 0, legendaries: 0, quests: 0, dungeons: 0, enchants: 0, mythic: 0, trials: 0, beasts: {} });
-  const freshSet = () => ({ numfmt: 'short', shake: true, nums: true, autobuy: false, autoclaim: false, autoboss: false, particles: true, skip: true, pin: true });
+  const freshLife = () => ({ merges: 0, summons: 0, mythics: 0, kills: 0, bosses: 0, chests: 0, taps: 0, bestCombo: 0, goldEarned: 0, skills: 0, time: 0, goblins: 0, elites: 0, variants: 0, deaths: 0, legendaries: 0, quests: 0, dungeons: 0, enchants: 0, mythic: 0, trials: 0, beasts: {} });
+  const freshSet = () => ({ numfmt: 'short', shake: true, nums: true, autobuy: false, autoclaim: false, autoboss: false, particles: true, skip: true, pin: true, autoeq: true });
   const fresh = () => ({
     gold: 0, gems: 0, runes: 0, shards: 0, floor: 1, kill: 0, maxFloor: 1, deepest: 1, tales: 0, runs: 0, cls: 'peasant', rank: 0,
     lv: freshLv(), sk: freshSk(), allies: freshAllies(), weapon: null, wlv: 0, ench: [null, null, null], locks: [false, false, false],
     relics: {}, book: {}, ach: {}, life: freshLife(), quests: [], keys: { vault: 3, mine: 3, forge: 3 }, keyT: Date.now(),
     summon: { lv: 1, xp: 0 }, daily: { last: '', streak: 0 }, set: freshSet(),
-    amt: '1', auto: true, farm: false, bossReady: false, evo: {}, pevo: {}, tab: 'train', gps: 0, lastSeen: 0, muted: false, dev: false
+    amt: '1', auto: true, farm: false, bossReady: false, evo: {}, pevo: {}, eq: freshEq(), prefix: { pre: 'Plain', pm: 1 }, tab: 'train', gps: 0, lastSeen: 0, muted: false, dev: false
   });
   function migrate(o) {
     const s = Object.assign(fresh(), o);
@@ -795,6 +878,17 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     s.quests = Array.isArray(o.quests) ? o.quests.filter(q => q && QT[q.type]) : [];
     if (!CLASSES[s.cls]) s.cls = 'peasant';
     s.evo = o.evo || {}; s.pevo = o.pevo || {};
+    s.eq = freshEq();
+    if (o.eq) { for (const k of CATS) if (o.eq[k]) Object.assign(s.eq[k], o.eq[k]); }
+    else {
+      const Wq = s.eq.weapon, map = [0, 2, 3, 4];
+      for (const key of Object.keys(o.book || {})) { const [base, r] = key.split('|'); const i = Math.min(23, map[+r] * 4 + Math.max(0, WBASE.indexOf(base)) % 4); Wq.c[i]++; Wq.s[i] = 1; }
+      if (o.weapon && o.weapon.rar !== undefined) { const i = map[o.weapon.rar] * 4 + 3; Wq.c[i]++; Wq.s[i] = 1; }
+      Wq.on = Wq.s.lastIndexOf(1);
+      if (o.summon && o.summon.lv) Wq.sl = o.summon.lv;
+    }
+    s.prefix = o.prefix || (o.weapon && o.weapon.pm ? { pre: o.weapon.pre || 'Plain', pm: o.weapon.pm } : { pre: 'Plain', pm: 1 });
+    s.book = {}; s.weapon = null;
     if (s.tab === 'gear') s.tab = 'train';
     if (s.weapon && !s.weapon.pm) { s.weapon.pm = 1; s.weapon.pre = s.weapon.name.split(' ')[0]; }
     return s;
@@ -808,7 +902,11 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
   const dmgM = f => 2 * Math.pow(1.28, f - 1);
   const goldM = f => 3 * Math.pow(1.25, f - 1);
   const relicKinds = () => RELICS.filter(r => S.relics[r.id]).length;
-  const bookCount = () => Object.keys(S.book).length;
+  const bookCount = () => CATS.reduce((a, k) => a + S.eq[k].s.reduce((x, y) => x + (y ? 1 : 0), 0), 0);
+  const fmt2 = v => v < 100 ? v.toFixed(2) : fmt(v);
+  function ownedSum(cat) { const E = S.eq[cat], D = EQ[cat]; let v = 0; for (let i = 0; i < 24; i++) if (E.s[i]) v += D.owned(i, E.l[i]); return v; }
+  const eqOn = cat => S.eq[cat].on;
+  const eqEquip = cat => { const E = S.eq[cat]; return E.on >= 0 ? EQ[cat].equip(E.on, E.l[E.on]) : (cat === 'pet' ? 0 : 1); };
   const achCount = () => Object.keys(S.ach).length;
   const beastsMastered = () => KINDS.filter(k => (S.life.beasts[k] || 0) >= 100).length;
   const enchLines = () => 1 + (S.deepest >= 15 ? 1 : 0) + (S.deepest >= 30 ? 1 : 0);
@@ -819,7 +917,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     al = al || S.allies;
     const C = S.cls, T = clsTier(C), rk = S.rank;
     const tale = 1 + 0.1 * S.tales;
-    const wpn = weaponPower(S.weapon) * (1 + 0.12 * S.wlv);
+    const wpn = eqEquip('weapon') * (S.prefix.pm || 1) * (1 + 0.12 * S.wlv) * (1 + ownedSum('weapon') + ownedSum('pet'));
     const perm = (1 + 0.03 * achCount()) * (1 + 0.01 * bookCount()) * Math.pow(1.3, rk);
     const mile = L => Math.pow(2, Math.floor(L / 25));
     const pe = id => ptier(id);
@@ -827,16 +925,16 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     const cDmg = (C === 'berserker' ? [1.4, 1.8, 2.4][T] : 1) * folk;
     const cHp = (C === 'knight' ? [1.3, 1.6, 2.0][T] : C === 'berserker' ? [0.8, 0.85, 0.9][T] : 1) * folk;
     const dmg = 3 * (1 + 0.6 * lv.sword) * Math.pow(1.05, lv.sword) * mile(lv.sword) * Math.pow(3, pe('sword')) * tale * rel('dmg') * wpn * perm * cDmg * (1 + ench('dmg'));
-    const maxHp = 30 * (1 + 0.5 * lv.armor) * Math.pow(1.05, lv.armor) * mile(lv.armor) * Math.pow(3, pe('armor')) * rel('hp') * Math.pow(1.3, rk) * cHp * (1 + ench('hp'));
+    const maxHp = 30 * (1 + 0.5 * lv.armor) * Math.pow(1.05, lv.armor) * mile(lv.armor) * Math.pow(3, pe('armor')) * rel('hp') * Math.pow(1.3, rk) * cHp * (1 + ench('hp')) * eqEquip('armor') * (1 + ownedSum('armor'));
     const combo = 20 + 10 * lv.torch + 20 * pe('torch') + (C === 'monk' ? [20, 40, 60][T] : 0);
     return {
       dmg, maxHp,
       regen: (maxHp * 0.02 + 0.5 * lv.armor) * rel('regen') * (C === 'knight' && T === 2 ? 2 : 1),
       atkInt: Math.max(0.1, 1 / ((1 + 0.08 * lv.boots) * (1 + 0.25 * pe('boots')) * rel('spd') * (1 + 0.05 * al.bard) * (1 + ench('spd')))),
-      crit: Math.min(0.9, Math.min(0.6, 0.05 + 0.02 * lv.ring) + 0.05 * pe('ring') + (C === 'rogue' ? [0.1, 0.15, 0.2][T] : 0) + ench('crit')),
+      crit: Math.min(0.9, Math.min(0.6, 0.05 + 0.02 * lv.ring) + 0.05 * pe('ring') + (C === 'rogue' ? [0.1, 0.15, 0.2][T] : 0) + ench('crit') + (eqOn('acc') >= 0 ? EQ.acc.crit(eqOn('acc')) : 0)),
       critMult: 2 * rel('critm') + ench('critm') + (C === 'rogue' && T === 2 ? 1 : 0),
       ringGold: (1 + 0.08 * lv.ring) * Math.pow(1.5, pe('ring')),
-      goldMult: (1 + 0.08 * lv.ring) * Math.pow(1.5, pe('ring')) * tale * rel('gold') * (C === 'rogue' ? [1.25, 1.5, 2][T] : 1) * folk * (1 + 0.06 * al.bard) * (1 + 0.05 * beastsMastered()) * Math.pow(1.1, rk) * (1 + ench('gold')),
+      goldMult: (1 + 0.08 * lv.ring) * Math.pow(1.5, pe('ring')) * tale * rel('gold') * (C === 'rogue' ? [1.25, 1.5, 2][T] : 1) * folk * (1 + 0.06 * al.bard) * (1 + 0.05 * beastsMastered()) * Math.pow(1.1, rk) * (1 + ench('gold')) * eqEquip('acc') * (1 + ownedSum('acc')),
       tap: dmg * (0.35 + 0.15 * lv.gaunt) * mile(lv.gaunt) * Math.pow(3, pe('gaunt')) * rel('tap') * (C === 'monk' ? [1.6, 2.2, 3][T] : 1) * (1 + ench('tap')),
       comboCap: combo,
       comboMax: 1 + 0.025 * combo,
@@ -847,7 +945,8 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
       taken: (1 - block(al.knight)) * (C === 'knight' ? [0.85, 0.75, 0.65][T] : 1),
       skillMult: (C === 'mage' ? [1.5, 2.2, 3][T] : 1) * (1 + ench('skill')),
       cdMult: C === 'mage' ? [0.75, 0.65, 0.55][T] : 1,
-      leech: ench('leech')
+      leech: ench('leech'),
+      petHit: dmg * eqEquip('pet')
     };
   }
   let st = stats(S.lv);
@@ -884,7 +983,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
   const allyT = { knight: 0.5, wizard: 1 }, allyLunge = { knight: 0, wizard: 0 };
   let feverT = 0, frenzyT = 0, feverVal = 2, frenzyVal = 1.8, income = 0;
   let goblin = null, goblinT = rand(40, 75);
-  let mode = 'main', run = null, farmLoops = 0;
+  let mode = 'main', run = null, farmLoops = 0, petEqT = 1, petLunge = 0;
   const dev = { god: false, onehit: false, speed: 1, debug: false };
   const dpsLog = [];
 
@@ -1030,7 +1129,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
       S.deepest = Math.max(S.deepest, S.floor);
       const crossed = n => prevMax < n && S.maxFloor >= n, crossedDeep = n => prevDeep < n && S.deepest >= n;
       banner = { text: skip ? `+${skip + 1} FLOORS` : `FLOOR ${S.floor}`, sub: skip ? `Floor ${S.floor} · ${themeName(S.floor)}` : themeName(S.floor), life: 1.8 };
-      if (Math.random() < 0.6) lootWeapon(S.floor, null);
+      if (Math.random() < 0.6) dropEq();
       if (Math.random() < 0.4 || S.floor % 5 === 1) dropRelic();
       if (Math.random() < 0.15) addGems(1, 'from the boss');
       const sh = randi(1, 3) + skip; S.shards += sh;
@@ -1054,35 +1153,25 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
 
   /* ================= loot ================= */
   function rollPrefix() { const p = wpick(PREFIXES, PREFIXES.map(x => x[2])); return { pre: p[0], pm: p[1] }; }
-  function weaponName(w) { return `${w.pre} ${w.base}${w.suf ? ' ' + w.suf : ''}`; }
-  function rollWeapon(f, weights) {
-    const i = RARITY.indexOf(wpick(RARITY, weights || RARITY.map(r => r.w)));
-    const R = RARITY[i], base = pick(WBASE), p = rollPrefix();
-    const power = Math.round(rand(R.m[0], R.m[1]) * (1 + 0.06 * (f - 1)) * 100) / 100;
-    const w = { base, rar: i, power, pre: p.pre, pm: p.pm, suf: Math.random() < 0.4 ? pick(WSUF) : '' };
-    w.name = weaponName(w);
-    return w;
+  const itemLabel = (cat, i) => `<b style="color:${GRADES[Math.floor(i / 4)].c}">${EQ[cat].names[i]}</b> (${GRADES[Math.floor(i / 4)].n} ${TIERN[i % 4]})`;
+  function rollItem(L) { const g = wpick([0, 1, 2, 3, 4, 5], gradeWeights(L)); return g * 4 + wpick([0, 1, 2, 3], [40, 30, 20, 10]); }
+  function giveItem(cat, i, n) {
+    const E = S.eq[cat];
+    const fresh = !E.s[i];
+    E.c[i] += n || 1; E.s[i] = 1;
+    if (Math.floor(i / 4) >= 4 && fresh) S.life.legendaries++;
+    if (Math.floor(i / 4) >= 5) S.life.mythics++;
+    if (fresh) markTab('equip');
+    if (S.set.autoeq && i > E.on) E.on = i;
+    return fresh;
   }
-  function lootWeapon(f, weights, quiet) {
-    const w = rollWeapon(f, weights), R = RARITY[w.rar];
-    const key = w.base + '|' + w.rar;
-    let note = '';
-    if (!S.book[key]) { S.book[key] = 1; note = ' <i style="color:var(--heal)">New in the book: +1% damage.</i>'; markTab('book'); }
-    if (w.rar === 3) S.life.legendaries++;
-    const label = `<b style="color:${R.c}">${w.name}</b> (${R.n}, ×${weaponPower(w).toFixed(2)})`;
-    let equipped = false;
-    if (!S.weapon || weaponPower(w) > weaponPower(S.weapon)) {
-      S.weapon = w; equipped = true; recalc();
-      if (!quiet) log(`Found ${label}. Equipped!${note}`, 't');
-      if (w.rar >= 2 && !quiet) banner = { text: R.n.toUpperCase() + '!', sub: w.name, life: 2.4 };
-      tone(659, 1319, 0.25, 'triangle', 0.05, 0.2);
-    } else {
-      recalc();
-      const g = 15 * baseGold() * goldNow(), sh = 1 + w.rar * 2;
-      earn(g); S.shards += sh;
-      if (!quiet) log(`Found ${label}. Yours is better, salvaged it for ${fmt(g)} gold and ${sh} shards.${note}`);
-    }
-    return { w, equipped };
+  function dropEq() {
+    const cat = pick(['weapon', 'armor', 'acc']), i = rollItem(1 + Math.floor(S.floor / 12));
+    const fresh = giveItem(cat, i);
+    recalc();
+    log(`Found ${itemLabel(cat, i)}${fresh ? ' <i style="color:var(--heal)">New! +1% damage.</i>' : '.'}`, 't');
+    if (Math.floor(i / 4) >= 3) banner = { text: GRADES[Math.floor(i / 4)].n.toUpperCase() + '!', sub: EQ[cat].names[i], life: 2.2 };
+    tone(659, 1319, 0.2, 'triangle', 0.05, 0.2);
   }
   function dropRelic() {
     const r = pick(RELICS);
@@ -1132,35 +1221,87 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
   const reforgeCost = () => 8;
   function reforge() {
     audio();
-    if (!S.weapon || S.runes < reforgeCost()) return;
+    if (S.runes < reforgeCost()) return;
     S.runes -= reforgeCost();
-    const p = rollPrefix(), old = S.weapon.pre;
-    S.weapon.pre = p.pre; S.weapon.pm = p.pm; S.weapon.name = weaponName(S.weapon);
+    const p = rollPrefix(), old = S.prefix.pre;
+    S.prefix = { pre: p.pre, pm: p.pm };
     log(`Reforged: <b>${old}</b> → <b>${p.pre}</b> (×${p.pm.toFixed(2)} power).`, 'u');
     tone(500, 900, 0.12, 'triangle', 0.05);
     recalc(); save();
   }
 
-  /* ================= summon ================= */
-  const sumNeed = lv => 10 + (lv - 1) * 15;
-  function sumWeights() { const L = S.summon.lv - 1; return [Math.max(5, 40 - 4 * L), 40, 15 + 2.2 * L, 5 + 1.1 * L]; }
-  function summon(n) {
+  /* ================= equipment: summon, merge, level ================= */
+  let eqCat = 'weapon', lastSum = 11;
+  const eqSel = { weapon: 0, armor: 0, acc: 0, pet: 0 };
+  function summonEq(cat, n) {
     audio();
-    const cost = n === 10 ? 90 : 10;
+    const cost = SUM_COST[n];
     if (S.gems < cost) return;
-    S.gems -= cost;
-    let bestR = -1, eq = null;
-    for (let i = 0; i < n; i++) {
-      const weights = sumWeights();
-      const res = lootWeapon(S.maxFloor, n === 10 && i === 9 && bestR < 2 ? [0, 0, 1, weights[3] / weights[2]] : weights, true);
-      bestR = Math.max(bestR, res.w.rar);
-      if (res.equipped) eq = res.w;
-      S.summon.xp++;
-      if (S.summon.xp >= sumNeed(S.summon.lv)) { S.summon.xp -= sumNeed(S.summon.lv); S.summon.lv++; log(`Summon level <b>${S.summon.lv}</b>! Better odds from now on.`, 'p'); }
+    S.gems -= cost; lastSum = n;
+    const E = S.eq[cat], res = [];
+    for (let k = 0; k < n; k++) {
+      const i = rollItem(E.sl);
+      res.push({ i, fresh: giveItem(cat, i) });
+      E.sx++; S.life.summons++;
+      if (E.sx >= sumNeedEq(E.sl)) { E.sx -= sumNeedEq(E.sl); E.sl++; log(`${EQ[cat].name} summon level <b>${E.sl}</b>! Better odds from now on.`, 'p'); }
     }
-    log(`Summoned ${n} weapon${n > 1 ? 's' : ''}. Best: <b style="color:${RARITY[bestR].c}">${RARITY[bestR].n}</b>.${eq ? ` Equipped <b>${eq.name}</b>.` : ' Salvaged the rest.'}`, 'p');
-    if (bestR >= 2) banner = { text: RARITY[bestR].n.toUpperCase() + '!', sub: eq ? eq.name : 'from the summon', life: 2 };
-    jingle(); save();
+    questEvent('summon', n);
+    recalc();
+    const best = Math.max(...res.map(r => r.i)), bg = Math.floor(best / 4);
+    log(`Summoned ${n} ${n > 1 ? EQ[cat].name.toLowerCase() : EQ[cat].one}. Best: ${itemLabel(cat, best)}.`, 'p');
+    if (bg >= 3) { banner = { text: GRADES[bg].n.toUpperCase() + '!', sub: EQ[cat].names[best], life: 2.2 }; jingle(); } else tone(880, 1320, 0.15, 'triangle', 0.05);
+    eqSel[cat] = best;
+    if (n > 1) {
+      $('#sumRes').innerHTML = res.map((r, k) => `<div style="--gc:${GRADES[Math.floor(r.i / 4)].c};animation-delay:${Math.min(k * 25, 800)}ms" title="${EQ[cat].names[r.i]}"><img alt="${EQ[cat].names[r.i]}" src="${eqIcon(cat, r.i)}">${r.fresh ? '<span class="nw">NEW</span>' : ''}</div>`).join('');
+      setText($('#sumResText'), `${res.filter(r => r.fresh).length} new, best was ${EQ[cat].names[best]} (${GRADES[bg].n} ${TIERN[best % 4]}).`);
+      setText($('#sumAgain'), `Summon ×${n} again (${cost} gems)`);
+      $('#sumModal').hidden = false;
+    }
+    save();
+  }
+  function mergeOne(cat, i) {
+    const E = S.eq[cat];
+    if (i >= 23 || E.c[i] < 5) return false;
+    E.c[i] -= 5; S.life.merges++;
+    const fresh = giveItem(cat, i + 1);
+    return fresh;
+  }
+  function mergeAll(cat) {
+    audio();
+    let merges = 0, top = -1;
+    for (let i = 0; i < 23; i++) while (S.eq[cat].c[i] >= 5) { mergeOne(cat, i); merges++; top = i + 1; }
+    if (!merges) return 0;
+    recalc();
+    log(`Merged ${merges} time${merges > 1 ? 's' : ''}. Best new piece: ${itemLabel(cat, top)}.`, 'p');
+    tone(523, 1046, 0.2, 'triangle', 0.05); burst(hero.wx, groundY() - PX * 6, GRADES[Math.floor(top / 4)].c, 20, 160);
+    save(); return merges;
+  }
+  function levelEq(cat, i) {
+    const E = S.eq[cat];
+    if (!E.s[i] || E.l[i] >= eqMax(i)) return false;
+    const c = eqLvCost(i, E.l[i]);
+    if (S.shards < c) return false;
+    S.shards -= c; E.l[i]++;
+    recalc(); tone(600 + E.l[i] * 10, 900, 0.06, 'triangle', 0.04);
+    return true;
+  }
+  function equipBest(cat) { const E = S.eq[cat]; E.on = E.s.lastIndexOf(1); recalc(); save(); }
+  const eqIconCache = {};
+  function eqIcon(cat, i) {
+    const key = cat + i;
+    if (eqIconCache[key]) return eqIconCache[key];
+    const gc = GRADES[Math.floor(i / 4)].c, dk = mix(gc, '#000000', 0.35), lt = mix(gc, '#ffffff', 0.5);
+    let url;
+    if (cat === 'weapon') { const id = ['sword', 'axe', 'spoon', 'staff'][i % 4]; url = spriteURL(ICON[id], { a: gc, b: '#8a5a3c', c: gc, d: lt }, 4); }
+    else if (cat === 'armor') url = spriteURL(ICON[i % 2 ? 'helm' : 'armor'], { a: gc, b: dk, c: lt }, 4);
+    else if (cat === 'acc') url = spriteURL(ICON[i % 2 ? 'amulet' : 'ring'], { a: gc, b: i % 2 ? dk : '#f5b942', c: lt, d: '#ffffff' }, 4);
+    else url = spriteURL(SPR[PET_KINDS[i]], petPal(i), 3);
+    return (eqIconCache[key] = url);
+  }
+  function petPal(i) {
+    const k = PET_KINDS[i], gc = GRADES[Math.floor(i / 4)].c;
+    if (k === 'tgoblin') return { a: '#f5b942', b: '#6b4a2f', c: '#ffffff', d: '#1a1424', e: '#ffe066' };
+    return monPal({ kind: k, tint: mix(THEMES.find(t => t.kinds.includes(k) || t.boss === k).tint, gc, 0.35) });
   }
 
   /* ================= runs: dungeons + trials ================= */
@@ -1394,7 +1535,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     burst(chest.wx, gy - PX * 4, '#f5b942', 26, 200);
     log(share < 1 ? `The raccoon grabbed the chest for you: <b>+${fmt(g)} gold</b>.` : `Opened a chest: <b>+${fmt(g)} gold</b>.`, 'g');
     tone(988, 1976, 0.2, 'triangle', 0.06); tone(1318, 2637, 0.2, 'triangle', 0.04, 0.08);
-    if (share >= 1 && Math.random() < 0.4) lootWeapon(S.floor, null);
+    if (share >= 1 && Math.random() < 0.4) dropEq();
     if (share >= 1 && Math.random() < 0.1) addGems(1, 'in the chest');
     if (Math.random() < 0.3) { const r = randi(1, 3); S.runes += r; }
     chest = null;
@@ -1491,8 +1632,11 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
           }
         }
       }
+      f = front();
+      if (S.eq.pet.on >= 0 && f && !fainted) { petEqT -= dt; if (petEqT <= 0 && onScreen(f)) { petEqT = 1.2; petLunge = 1; hit(f, st.petHit, 'ally'); } }
       autoSkills();
     }
+    petLunge = Math.max(0, petLunge - dt * 4);
     if (mode === 'main') {
       goblinT -= dt;
       if (!goblin && goblinT <= 0 && !fainted) { spawnGoblin(); goblinT = rand(70, 130); }
@@ -1668,12 +1812,18 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
       ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.beginPath(); ctx.ellipse(allySX(id), gy + 2, apx * 4, apx * 0.8, 0, 0, 6.28); ctx.fill();
       sprite(SPR[id], ax, gy - walkBob(k + 1), apx, ALLY_PAL[id], false, false);
     });
+    if (S.eq.pet.on >= 0 && !fainted) {
+      const pi = S.eq.pet.on, pk = PET_KINDS[pi], ppx = PX * 0.55;
+      const px0 = heroSX() - PX * 8 + petLunge * PX * 12, py0 = gy - PX * 12 + Math.sin(t * 4) * 4;
+      if (pi >= 16) { const g = ctx.createRadialGradient(px0, py0 - ppx * 5, 1, px0, py0 - ppx * 5, PX * 5); g.addColorStop(0, GRADES[Math.floor(pi / 4)].c + '66'); g.addColorStop(1, GRADES[Math.floor(pi / 4)].c + '00'); ctx.fillStyle = g; ctx.fillRect(px0 - PX * 6, py0 - PX * 10, PX * 12, PX * 12); }
+      sprite(SPR[pk], px0, py0, ppx, petPal(pi), false, false);
+    }
     ctx.font = '600 14px "Pixelify Sans", monospace'; ctx.textAlign = 'center';
     for (const n of notes) { ctx.globalAlpha = clamp(n.life, 0, 1); ctx.fillStyle = '#ffe066'; ctx.fillText(n.ch, n.x, n.y); }
     ctx.globalAlpha = 1;
 
     const hx0 = heroSX();
-    const wcol = S.weapon ? RARITY[S.weapon.rar].c : '#e8eefc';
+    const wcol = S.eq.weapon.on >= 0 ? GRADES[Math.floor(S.eq.weapon.on / 4)].c : '#e8eefc';
     const tunic = CLASSES[S.cls].tunic, ctier = clsTier();
     if (!fainted) {
       const f = front();
@@ -1927,8 +2077,6 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
       save();
     }, '', true);
     for (const g of GEMSHOP) gemRows[g.id] = makeRow($('#gemList'), iconURL(g.icon, g.pal && ICON_PAL[g.pal]), () => buyGem(g), 'gemb');
-    sumRows.one = makeRow($('#sumList'), iconURL('box'), () => summon(1), 'gemb');
-    sumRows.ten = makeRow($('#sumList'), iconURL('box', ICON_PAL.box10), () => summon(10), 'gemb');
     for (const d of DUNGEONS) {
       const el = document.createElement('div'); el.className = 'dung';
       el.innerHTML = `<img alt="" src="${spriteURL(SPR[d.kind], monPal({ kind: d.kind, tint: d.tint, special: true }), 4)}"><div style="min-width:0"><div class="pname">${d.name} <span class="keys"></span></div><div class="pfx">${d.text}</div></div><button class="buy" type="button"><span class="bn">Enter</span><span class="bc"></span></button>`;
@@ -1975,14 +2123,14 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     const ab = $('#autobuyBtn'); setText(ab, S.set.autobuy ? 'Auto-buy: on' : 'Auto-buy: off'); ab.setAttribute('aria-pressed', String(S.set.autobuy));
   }
   function renderForge() {
-    const w = S.weapon, R = w ? RARITY[w.rar] : null, wc = $('#weapon');
-    wc.style.setProperty('--rc', R ? R.c : '');
-    setHTML(wc, `<img alt="" src="${iconURL('sword', { c: R ? R.c : '#e8eefc', b: '#f5b942' })}"><div style="min-width:0"><div class="lbl">Weapon${S.wlv ? ' +' + S.wlv : ''}</div><div class="wn">${w ? w.name : 'Plain Stick'}</div><div class="wr">${w ? `${R.n} · ×${w.power.toFixed(2)} base × ${(w.pm || 1).toFixed(2)} prefix × ${(1 + 0.12 * S.wlv).toFixed(2)} forge` : '×1.00 damage. Bosses, chests and summons drop better ones.'}</div></div>`);
+    const wi = S.eq.weapon.on, G = wi >= 0 ? GRADES[Math.floor(wi / 4)] : null, wc = $('#weapon');
+    wc.style.setProperty('--rc', G ? G.c : '');
+    setHTML(wc, `<img alt="" src="${wi >= 0 ? eqIcon('weapon', wi) : iconURL('sword')}"><div style="min-width:0"><div class="lbl">Equipped weapon${S.wlv ? ' +' + S.wlv : ''}</div><div class="wn">${S.prefix.pre} ${wi >= 0 ? EQ.weapon.names[wi] : 'Stick'}</div><div class="wr">${wi >= 0 ? `${G.n} ${TIERN[wi % 4]} · ×${fmt2(eqEquip('weapon'))} piece × ${(S.prefix.pm || 1).toFixed(2)} prefix × ${(1 + 0.12 * S.wlv).toFixed(2)} forge` : 'No weapon yet. Summon one in Equip.'} The forge upgrades the weapon slot, so it carries over when you swap weapons or retire.</div></div>`);
     setText($('#wlvLbl'), `Weapon +${S.wlv}`);
-    setText($('#forgeText'), `Enhance: +12% weapon power per level. Next costs ${enhCost()} shards, ${pct(enhChance())} success. Reforge rolls a new prefix (from Rusty ×0.85 to Mythic ×1.50) for ${reforgeCost()} runes.${w ? ` Current prefix: ${w.pre} ×${(w.pm || 1).toFixed(2)}.` : ''}`);
+    setText($('#forgeText'), `Enhance: +12% weapon power per level. Next costs ${enhCost()} shards, ${pct(enhChance())} success. Reforge rolls a new prefix (from Rusty ×0.85 to Mythic ×1.50) for ${reforgeCost()} runes. Current prefix: ${S.prefix.pre} ×${(S.prefix.pm || 1).toFixed(2)}.`);
     const eb = $('#enhanceBtn'), rb = $('#reforgeBtn'), xb = $('#rerollBtn');
     eb.textContent = `Enhance (${enhCost()} shards)`; eb.classList.toggle('ok', S.shards >= enhCost());
-    rb.textContent = `Reforge prefix (${reforgeCost()} runes)`; rb.classList.toggle('ok', !!w && S.runes >= reforgeCost());
+    rb.textContent = `Reforge prefix (${reforgeCost()} runes)`; rb.classList.toggle('ok', S.runes >= reforgeCost());
     const lines = enchLines(), allLocked = S.locks.slice(0, lines).every((l, i) => l && S.ench[i]);
     xb.textContent = `Reroll enchants (${enchCost()} runes)`; xb.classList.toggle('ok', S.runes >= enchCost() && !allLocked);
     setText($('#enchHint'), lines < 3 ? `Line ${lines + 1} opens at floor ${lines === 1 ? 15 : 30}.` : 'Each lock adds 6 runes to the cost.');
@@ -2093,11 +2241,6 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
       e.btn.classList.toggle('ok', q.done); e.btn.setAttribute('aria-disabled', String(!q.done));
     });
     for (const g of GEMSHOP) setRow(gemRows[g.id], { name: g.name, lv: '', fx: g.text, bn: 'Buy', bc: g.cost + ' gems', ok: S.gems >= g.cost });
-    const w = sumWeights(), tot = w.reduce((a, b) => a + b, 0);
-    setText($('#sumLbl'), `Summon level ${S.summon.lv} · ${S.summon.xp}/${sumNeed(S.summon.lv)}`);
-    setText($('#sumOdds'), `Weapons from floor ${S.maxFloor}. Odds: ` + RARITY.map((r, i) => `${r.n} ${pct1(w[i] / tot)}`).join(', ') + '. Each summon raises your summon level, which improves the odds.');
-    setRow(sumRows.one, { name: 'Summon ×1', lv: '', fx: 'One weapon. Better ones equip themselves, the rest get salvaged.', bn: 'Summon', bc: '10 gems', ok: S.gems >= 10 });
-    setRow(sumRows.ten, { name: 'Summon ×10', lv: '', fx: 'Ten weapons for the price of nine. At least one Epic or better guaranteed.', bn: 'Summon', bc: '90 gems', ok: S.gems >= 90 });
     const ab = $('#autoclaimBtn'); setText(ab, S.set.autoclaim ? 'Auto-claim: on' : 'Auto-claim: off'); ab.setAttribute('aria-pressed', String(S.set.autoclaim));
     const ready = dailyReady(), sk = ready ? dailyStreakNext() : S.daily.streak, r = dailyReward(ready ? sk : sk + 1);
     setText($('#dailyLbl'), `Streak: ${S.daily.streak} day${S.daily.streak === 1 ? '' : 's'}`);
@@ -2105,11 +2248,9 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     const db = $('#dailyBtn'); db.disabled = !ready; db.classList.toggle('ok', ready); setText(db, ready ? 'Open daily chest' : 'Come back tomorrow');
   }
   function renderBook() {
-    let html = '<span class="lbl">Weapon</span>' + RARITY.map(r => `<span class="bh" style="color:${r.c}">${r.n.slice(0, 3)}</span>`).join('');
-    for (const b of WBASE) html += `<span>${b}</span>` + RARITY.map((r, i) => `<span class="cell${S.book[b + '|' + i] ? ' on' : ''}" style="--rc:${r.c}" title="${r.n} ${b}${S.book[b + '|' + i] ? '' : ' (not found yet)'}"></span>`).join('');
-    setHTML($('#bookGrid'), html);
-    setText($('#bookCount'), `${bookCount()} / 48`);
-    setText($('#bookHint'), `Every new weapon type and rarity you find is +1% damage forever. Book bonus now: +${bookCount()}% damage.`);
+    setHTML($('#bookGrid'), CATS.map(k => { const n = S.eq[k].s.reduce((x, y) => x + (y ? 1 : 0), 0); return `<span>${EQ[k].name}</span><span class="cell${n ? ' on' : ''}" style="--rc:${GRADES[Math.min(5, Math.floor(n / 4))].c};width:auto;grid-column:span 4;height:18px;position:relative"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 11px var(--pixel);color:${n ? 'var(--stone)' : 'var(--mute)'}">${n} / 24</span></span>`; }).join(''));
+    setText($('#bookCount'), `${bookCount()} / 96`);
+    setText($('#bookHint'), `Every new piece of equipment you discover is +1% damage forever. Collection bonus now: +${bookCount()}% damage. Open Equip to see every piece.`);
     setHTML($('#beast'), KINDS.map(k => {
       const n = S.life.beasts[k] || 0;
       return `<div class="${n ? '' : 'unseen'}"><img alt="" src="${beastIcon(k)}"><span><b>${n ? CNAME[k] : '???'}</b><span class="${n >= 100 ? 'done' : ''}">${n >= 100 ? 'Mastered · ' + fmt(n) : n + ' / 100'}</span></span></div>`;
@@ -2132,7 +2273,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     btn.disabled = gain <= 0 || mode !== 'main';
     setText(btn, gain <= 0 ? `Reach floor 10 to retire (now ${S.maxFloor})` : `Retire for +${gain} tales`);
   }
-  const RENDER = { train: renderTrain, forge: renderForge, hero: renderHero, skills: renderSkills, allies: renderAllies, trials: renderTrials, quests: renderQuests, book: renderBook, legacy: renderLegacy };
+  const RENDER = { train: renderTrain, equip: renderEquip, forge: renderForge, hero: renderHero, skills: renderSkills, allies: renderAllies, trials: renderTrials, quests: renderQuests, book: renderBook, legacy: renderLegacy };
 
   const skBtns = {};
   function buildSkillbar() {
@@ -2242,7 +2383,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     const gain = talesFor(S.maxFloor);
     if (gain <= 0) return;
     const cls = b.dataset.cls;
-    const keep = { tales: S.tales + gain, runs: S.runs + 1, rank: S.rank, relics: S.relics, deepest: S.deepest, gems: S.gems, runes: S.runes, shards: S.shards, book: S.book, ach: S.ach, life: S.life, quests: S.quests, keys: S.keys, keyT: S.keyT, summon: S.summon, daily: S.daily, set: S.set, evo: S.evo, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls };
+    const keep = { tales: S.tales + gain, runs: S.runs + 1, rank: S.rank, relics: S.relics, deepest: S.deepest, gems: S.gems, runes: S.runes, shards: S.shards, book: S.book, ach: S.ach, life: S.life, quests: S.quests, keys: S.keys, keyT: S.keyT, summon: S.summon, daily: S.daily, set: S.set, evo: S.evo, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls };
     resetRun(keep);
     $('#classModal').hidden = true;
     log(`Retired! +${gain} tales. A new <b>${clsName(cls)}</b> enters the Damp Cellar.`, 't');
@@ -2328,6 +2469,75 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
     refreshAll();
   });
 
+  /* ---------- equip tab ---------- */
+  function buildEquip() {
+    $('#eqCats').innerHTML = CATS.map(k => `<button type="button" data-cat="${k}" aria-pressed="${k === eqCat}"><img alt="" src="${eqIcon(k, k === 'pet' ? 4 : 10)}">${EQ[k].name}</button>`).join('');
+    let html = '';
+    for (let g = 0; g < 6; g++) {
+      html += `<span class="gl" style="color:${GRADES[g].c}">${GRADES[g].n}</span>`;
+      for (let k = 0; k < 4; k++) { const i = g * 4 + k; html += `<button type="button" class="eqc" data-i="${i}" style="--gc:${GRADES[g].c}"><img alt=""><span class="lvl"></span><span class="cnt"></span></button>`; }
+    }
+    $('#eqGrid').innerHTML = html;
+  }
+  function renderEquip() {
+    const E = S.eq[eqCat], D = EQ[eqCat];
+    for (const b of document.querySelectorAll('#eqCats button')) b.setAttribute('aria-pressed', String(b.dataset.cat === eqCat));
+    for (const b of document.querySelectorAll('#eqGrid .eqc')) {
+      const i = +b.dataset.i, seen = !!E.s[i];
+      const img = b.querySelector('img'); const src = eqIcon(eqCat, i); if (img.getAttribute('src') !== src) img.src = src;
+      b.classList.toggle('unseen', !seen);
+      b.setAttribute('aria-pressed', String(eqSel[eqCat] === i));
+      b.title = seen ? `${D.names[i]} · ${GRADES[Math.floor(i / 4)].n} ${TIERN[i % 4]}` : `${GRADES[Math.floor(i / 4)].n} ${TIERN[i % 4]} (not found yet)`;
+      setText(b.querySelector('.lvl'), seen ? 'Lv' + E.l[i] : '');
+      const cnt = b.querySelector('.cnt'); setText(cnt, E.c[i] ? '×' + E.c[i] : ''); cnt.classList.toggle('m', E.c[i] >= 5 && i < 23);
+      let onb = b.querySelector('.onb');
+      if (E.on === i && !onb) { onb = document.createElement('span'); onb.className = 'onb'; onb.textContent = 'E'; b.appendChild(onb); }
+      else if (E.on !== i && onb) onb.remove();
+    }
+    const i = eqSel[eqCat], seen = !!E.s[i], G = GRADES[Math.floor(i / 4)], lv = E.l[i], max = eqMax(i);
+    const d = $('#eqDetail'); d.style.setProperty('--gc', G.c);
+    if (!d._built) { d.innerHTML = `<div class="big"><img alt=""></div><div style="min-width:0;display:flex;flex-direction:column;gap:6px"><div class="nm"></div><div class="fx"></div><div class="row"><button class="act heal" type="button" data-a="equip">Equip</button><button class="act shard" type="button" data-a="level">Level up</button><button class="act gem" type="button" data-a="merge">Merge 5 → 1</button></div></div>`; d._built = 1; holdable(d.querySelector('[data-a=level]'), () => { if (levelEq(eqCat, eqSel[eqCat])) save(); }); }
+    d.querySelector('.big img').src = eqIcon(eqCat, i);
+    d.querySelector('.big img').style.filter = seen ? '' : 'brightness(0) opacity(.35)';
+    setHTML(d.querySelector('.nm'), seen ? `${D.names[i]} <span class="lbl" style="color:${G.c}">${G.n} ${TIERN[i % 4]}</span>` : `??? <span class="lbl">${G.n} ${TIERN[i % 4]}</span>`);
+    setHTML(d.querySelector('.fx'), seen
+      ? `Owned: <b>${E.c[i]}</b> · Level <b>${lv}/${max}</b><br>Equipped effect: <b>${D.eqText(i, lv)}</b>${E.on === i ? ' (equipped)' : ''}<br>Owned effect: <b>${D.owText(i, lv)}</b> (always on)${i < 23 ? `<br>Merge 5 into <b>${D.names[i + 1]}</b>.` : '<br>The best piece there is.'}`
+      : `Not found yet. Summon ${D.name.toLowerCase()} or merge 5 of the piece before it.<br>Equipped effect: ${D.eqText(i, 1)}<br>Owned effect: ${D.owText(i, 1)}`);
+    const be = d.querySelector('[data-a=equip]'), bl = d.querySelector('[data-a=level]'), bm = d.querySelector('[data-a=merge]');
+    be.classList.toggle('ok', seen && E.on !== i); setText(be, E.on === i ? 'Equipped' : 'Equip');
+    const lc = eqLvCost(i, lv);
+    bl.classList.toggle('ok', seen && lv < max && S.shards >= lc); setText(bl, lv >= max ? 'Max level' : `Level up (${lc} shards)`);
+    bm.classList.toggle('ok', E.c[i] >= 5 && i < 23); bm.hidden = i >= 23;
+    const w = gradeWeights(E.sl), tot = w.reduce((a, b) => a + b, 0);
+    setText($('#sumTitle'), `${D.name} summon`);
+    setText($('#sumLbl'), `Summon level ${E.sl} · ${E.sx}/${sumNeedEq(E.sl)}`);
+    $('#sumBar').style.width = pct(E.sx / sumNeedEq(E.sl));
+    setText($('#sumOdds'), GRADES.map((g, k) => `${g.n} ${pct1(w[k] / tot)}`).join(' · '));
+    for (const n of [1, 11, 35]) { const b = $('#sum' + n); setText(b, `×${n} · ${SUM_COST[n]} gems`); b.classList.toggle('ok', S.gems >= SUM_COST[n]); }
+    const ab = $('#autoEq'); setText(ab, S.set.autoeq ? 'Auto-equip: on' : 'Auto-equip: off'); ab.setAttribute('aria-pressed', String(S.set.autoeq));
+    $('#mergeAll').disabled = !E.c.some((c, k) => c >= 5 && k < 23);
+    const found = E.s.reduce((x, y) => x + (y ? 1 : 0), 0);
+    setText($('#eqOwned'), `${found}/24 found. All owned ${D.name.toLowerCase()} together: ${eqCat === 'weapon' || eqCat === 'pet' ? '+' + pct1(ownedSum(eqCat)) + ' damage' : eqCat === 'armor' ? '+' + pct1(ownedSum(eqCat)) + ' health' : '+' + pct1(ownedSum(eqCat)) + ' gold'}.`);
+  }
+  $('#eqCats').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (!b) return; eqCat = b.dataset.cat; renderEquip(); });
+  $('#eqGrid').addEventListener('click', e => { const b = e.target.closest('.eqc'); if (!b) return; eqSel[eqCat] = +b.dataset.i; renderEquip(); });
+  $('#eqDetail').addEventListener('click', e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    audio();
+    const i = eqSel[eqCat], E = S.eq[eqCat];
+    if (b.dataset.a === 'equip' && E.s[i]) { E.on = i; recalc(); tone(660, 990, 0.1, 'triangle', 0.05); log(`Equipped ${itemLabel(eqCat, i)}.`, 't'); save(); }
+    if (b.dataset.a === 'merge' && mergeOne(eqCat, i)) { recalc(); log(`Merged 5 into ${itemLabel(eqCat, i + 1)}!`, 'p'); tone(523, 1046, 0.2, 'triangle', 0.05); eqSel[eqCat] = i + 1; save(); }
+    else if (b.dataset.a === 'merge' && E.c[i] >= 0) { recalc(); save(); }
+    renderEquip();
+  });
+  for (const n of [1, 11, 35]) $('#sum' + n).addEventListener('click', () => summonEq(eqCat, n));
+  $('#sumAgain').addEventListener('click', () => summonEq(eqCat, lastSum));
+  $('#sumMerge').addEventListener('click', () => { mergeAll(eqCat); $('#sumModal').hidden = true; renderEquip(); });
+  $('#mergeAll').addEventListener('click', () => { mergeAll(eqCat); renderEquip(); });
+  $('#equipBest').addEventListener('click', () => { equipBest(eqCat); renderEquip(); });
+  $('#autoEq').addEventListener('click', () => { S.set.autoeq = !S.set.autoeq; save(); renderEquip(); });
+  $('#goEquip').addEventListener('click', () => showTab('equip'));
+
   /* ---------- world map ---------- */
   function travel(f) {
     f = clamp(Math.floor(f) || 1, 1, S.deepest);
@@ -2393,10 +2603,11 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
       ['Party potion', () => { feverT = 20; frenzyT = 20; }]
     ],
     devLoot: [
-      ['Legendary weapon', () => lootWeapon(S.maxFloor, [0, 0, 0, 1])],
+      ['Legendary set', () => { for (const k of CATS) giveItem(k, 16 + randi(0, 3)); recalc(); }],
+      ['+35 of each pet/gear', () => { for (const k of CATS) for (let n = 0; n < 35; n++) giveItem(k, rollItem(S.eq[k].sl)); recalc(); }],
       ['Mythic enchants', () => { for (let i = 0; i < 3; i++) { const s = pick(ENCH_STATS); S.ench[i] = { s: s.id, t: 4, v: Math.round(s.r[1] * 8 * 10) / 10 }; } S.life.mythic++; recalc(); }],
       ['Every relic +1', () => { for (const r of RELICS) S.relics[r.id] = (S.relics[r.id] || 0) + 1; recalc(); }],
-      ['Fill weapon book', () => { for (const b of WBASE) for (let i = 0; i < 4; i++) S.book[b + '|' + i] = 1; recalc(); }],
+      ['Discover all equipment', () => { for (const k of CATS) for (let i = 0; i < 24; i++) S.eq[k].s[i] = 1; recalc(); }],
       ['Weapon +5', () => { S.wlv += 5; recalc(); }],
       ['Master bestiary', () => { for (const k of KINDS) S.life.beasts[k] = Math.max(100, S.life.beasts[k] || 0); recalc(); }]
     ],
@@ -2445,7 +2656,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
   });
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
-  const TAB_ICON = { train: () => iconURL('sword'), forge: () => iconURL('hammer'), hero: () => heroIcon(S.cls, 0), skills: () => iconURL('bolt'), allies: () => spriteURL(SPR.wizard, ALLY_PAL.wizard, 3), trials: () => iconURL('crown'), quests: () => iconURL('scroll'), book: () => iconURL('book'), legacy: () => iconURL('relicbox') };
+  const TAB_ICON = { train: () => iconURL('sword'), equip: () => eqIcon('acc', 13), forge: () => iconURL('hammer'), hero: () => heroIcon(S.cls, 0), skills: () => iconURL('bolt'), allies: () => spriteURL(SPR.wizard, ALLY_PAL.wizard, 3), trials: () => iconURL('crown'), quests: () => iconURL('scroll'), book: () => iconURL('book'), legacy: () => iconURL('relicbox') };
   const badges = {};
   for (const b of document.querySelectorAll('.tabs button')) {
     const img = document.createElement('img'); img.alt = ''; img.src = TAB_ICON[b.dataset.tab]();
@@ -2455,6 +2666,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
   function renderBadges() {
     const n = {
       train: PARTS.filter(p => atCap(p) ? (S.gold >= pevoCost(p).gold && S.shards >= pevoCost(p).shards) : S.gold >= costOf(p.base, p.r, S.lv[p.id], 1)).length,
+      equip: CATS.reduce((a, k) => a + S.eq[k].c.filter((c, i) => c >= 5 && i < 23).length, 0) + (S.gems >= 50 ? 1 : 0),
       forge: (S.shards >= enhCost() ? 1 : 0),
       hero: evoReady() || PARTS.some(p => atCap(p) && S.gold >= pevoCost(p).gold && S.shards >= pevoCost(p).shards) ? '!' : '',
       skills: SKILLS.filter(s => unlocked(s) && S.gold >= skillCost(s)).length,
@@ -2473,6 +2685,7 @@ input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--
 
   /* ================= boot ================= */
   applyPin();
+  buildEquip();
   buildLists(); resize(); recalc(); hero.hp = st.maxHp; fillQuests(); regenKeys();
   if (!RENDER[S.tab]) S.tab = 'train';
   refreshAll();
