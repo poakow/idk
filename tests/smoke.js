@@ -5,6 +5,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 
 const DIST = path.resolve(__dirname, '..', 'dist');
 const url = rel => 'file://' + path.join(DIST, rel);
@@ -109,6 +110,26 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   await page.click('#titleGo'); await page.waitForTimeout(800);
   check(await page.evaluate(() => document.documentElement.scrollWidth) <= 390, 'Coin Crawl phone layout fits 390px');
   await ctx.close();
+
+  // 6. Installable app: served over http, the service worker caches the game so it loads offline
+  const types = { '.html': 'text/html', '.js': 'text/javascript', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
+  const server = http.createServer((req, res) => {
+    let f = path.join(DIST, decodeURIComponent(req.url.split('?')[0]));
+    if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
+    if (!f.startsWith(DIST) || !fs.existsSync(f)) { res.writeHead(404); res.end(); return; }
+    res.writeHead(200, { 'content-type': types[path.extname(f)] || 'application/octet-stream' }); res.end(fs.readFileSync(f));
+  }).listen(0);
+  const base = `http://127.0.0.1:${server.address().port}`;
+  ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  page = await ctx.newPage(); page.on('pageerror', e => errors.push(`http: ${e.message}`));
+  await page.goto(base + '/coin-crawl/');
+  check(await page.evaluate(() => fetch('../manifest.webmanifest').then(r => r.json()).then(m => m.icons.length > 0 && m.start_url === './coin-crawl/')), 'web manifest is served with icons');
+  await page.evaluate(() => navigator.serviceWorker.ready);
+  await page.reload(); await page.waitForTimeout(500);
+  await ctx.setOffline(true);
+  await page.reload(); await page.waitForTimeout(800);
+  check(await page.isVisible('#titleGo') || await page.isVisible('#arena'), 'the game loads offline after one visit');
+  await ctx.close(); server.close();
 
   check(errors.length === 0, `no page errors${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''}`);
   await browser.close();

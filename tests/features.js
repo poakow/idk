@@ -41,6 +41,9 @@ const ACTIONS = [
   ['legacy: retire', 'retireAs("rogue"); __cc.step(5)'],
   ['legacy: challenge', 'S.floor = S.maxFloor = 40; startChallenge("glass"); __cc.step(5); S.chal = null'],
   ['legacy: ascend', 'S.deepest = S.floor = S.maxFloor = 120; S.tales = 5000; ascendArm = 0; ascend(); ascend(); __cc.step(5)'],
+  ['trials: titan', 'S.keys.titan = 1; startRun("titan", true); __cc.step(3); if (run) endRun(true)'],
+  ['world: new areas past floor 110', 'for (const f of [111, 116, 121, 126]) { S.floor = f; S.maxFloor = Math.max(S.maxFloor, f); S.deepest = Math.max(S.deepest, f); enemies = []; spawnWave(); __cc.step(1); draw(); }'],
+  ['legacy: progress chart', 'S.hist = [[0, 1, 1, 0], [600, 20, 20, 0], [1200, 8, 30, 1]]; showTab("legacy"); drawHist()'],
   ['map: travel', 'S.deepest = Math.max(S.deepest, 30); travel(20); travel(1)'],
   ['ui: every tab and modal', 'Object.keys(RENDER).forEach(k => showTab(k)); breakdown(); renderFullLog(); openGuide(); shareCard(); renderMap(); renderSettings(); buildDev(); document.querySelectorAll(".overlay").forEach(o => { o.hidden = true; })'],
   ['play: 5 minutes with every auto on', 'Object.keys(S.set).forEach(k => { if (typeof S.set[k] === "boolean" && k !== "tips") S.set[k] = true; }); __cc.step(300)']
@@ -56,6 +59,8 @@ const EXPECT = {
   'trials: rank trial': 'S.rank >= 9',
   'trials: dungeons': 'S.life.dungeons >= 4',
   'quests: daily, quests, weekly, milestones': 'S.mileDone >= 100 && S.daily.streak >= 1',
+  'trials: titan': 'S.life.titans >= 1 && S.life.titanBest >= 1',
+  'world: new areas past floor 110': 'S.life.beasts.jelly > 0 || S.life.beasts.scarab > 0 || S.life.beasts.gargoyle > 0 || S.life.beasts.alien > 0 || enemies.some(e => ["jelly", "scarab", "gargoyle", "alien"].includes(e.kind))',
   'legacy: lab': 'Object.values(S.lab).some(v => v > 0)',
   'legacy: retire': 'S.runs >= 9 && S.cls === "rogue" && S.tales > 900',
   'legacy: ascend': 'S.stars >= 1 && S.tales === 0',

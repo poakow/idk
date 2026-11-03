@@ -9,7 +9,8 @@ Two small browser games. No install, no account, no build tools needed to play.
 
 ## Play
 
-- **On GitHub Pages:** `https://poakow.github.io/idk/` once Pages is turned on (see [Deploying](#deploying)).
+- **On the web:** https://poakow.github.io/idk/
+- **As an app:** open the site on your phone or in Chrome or Edge and choose *Install* or *Add to Home Screen*. After one visit the games also work offline.
 - **Locally:** run `npm run serve` and open http://localhost:8080, or open `dist/index.html` after `npm run build`.
 
 Progress saves in your browser (`localStorage`). Coin Crawl also has save export/import in Settings. Its leaderboard and cloud save only work when the game is opened inside Claude as an artifact; anywhere else those panels say so and the rest of the game works normally.
@@ -23,7 +24,8 @@ coin-crawl/
   coin-crawl.js         Coin Crawl game code
 orbit-hop/
   index.html            Orbit Hop (single file)
-scripts/build.js        Builds dist/ for normal web hosting
+scripts/build.js        Builds dist/ for normal web hosting, plus the app manifest and offline service worker
+site/icons/             App icons
 scripts/sim.js          Balance simulator: a bot plays Coin Crawl for hours of game time
 tests/smoke.js          Playwright smoke test of the built site
 tests/stress.js         Crash and freeze test: extreme and broken saves plus random clicking
@@ -62,6 +64,7 @@ The smoke test checks that:
 - locked tabs match the player's progress, and a seasoned save has every tab and feature open
 - the research lab shows and floor milestones pay out
 - the phone layout fits 390px
+- the site serves a web manifest and the game loads offline after one visit
 - no page throws an error
 
 ### Balance

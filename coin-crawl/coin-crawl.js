@@ -68,6 +68,10 @@
     bard: ['..rrrr.f..', '.rrrrrrf..', '...gggg...', '...dgdg...', '...gggg...', '..aaaaaa..', '.llaaaaa..', 'lllaaaaa..', '.l.bb.bb..', '...bb.bb..'],
     raccoon: ['..........', '.a......a.', '.aa....aa.', '.aaaaaaaa.', 'akckaakcka', '.aaaadaaa.', '..wwwwww..', '.aaaaaaaa.', '.aa....aa.', '..........'],
     chest: ['..........', '..........', '.aaaaaaaa.', 'abbbbbbbba', 'abbbbbbbba', 'aaaaeeaaaa', 'abbbeebbba', 'abbbbbbbba', 'aaaaaaaaaa', '..........'],
+    jelly: ['...aaaa...', '..aaaaaa..', '.acdaacda.', '.aaaaaaaa.', '.abababab.', '..a.a.a.a.', '..a.a.a.a.', '.a.a.a.a..', '..a.a.a.a.', '..........'],
+    scarab: ['..........', '...e..e...', '....ee....', '..aaaaaa..', '.acdaacda.', 'abbbbbbbba', 'abbbabbbba', 'abbbabbbba', '.abbabbba.', 'a.a....a.a'],
+    gargoyle: ['a........a', 'aa.bbbb.aa', 'aaabbbbaaa', 'aabcdbcdba', '.abbbbbba.', '..bbeebb..', '.bbbbbbbb.', 'b.bbbbbb.b', '..bb..bb..', '.bbb..bbb.'],
+    alien: ['.e......e.', '..e....e..', '..aaaaaa..', '.aaaaaaaa.', 'aaddaaddaa', 'aaddaaddaa', '.aaaaaaaa.', '..abbbba..', '...aaaa...', '..a....a..'],
     tgoblin: ['....ee....', '...eeee...', '...aaaa...', 'a.aaaaaa.a', 'aaacdacdaa', '.aaaaaaaa.', '..bbbbbb.e', '.abbbbbbee', '..bb..bbee', '..bb..bb..']
   };
   const ICON = {
@@ -144,15 +148,19 @@
     { name: 'Clock Tower', kinds: ['robot', 'dknight', 'bat'], tint: '#d6b26a', wall: '#231f1a', fx: 'dust', boss: 'dknight' },
     { name: 'Mushroom Rave', kinds: ['mushroom', 'frog', 'wisp'], tint: '#9dff6a', wall: '#1d1430', fx: 'spores', disco: true, boss: 'mushroom' },
     { name: 'Ninja Dojo', kinds: ['ninja', 'imp', 'spider'], tint: '#ff6f6f', wall: '#1f1416', fx: 'dust', boss: 'ninja' },
-    { name: "Dragon's Bedroom", kinds: ['imp', 'golem', 'dknight'], tint: '#ff9a3d', wall: '#2b1410', fx: 'embers', boss: 'dragon' }
+    { name: "Dragon's Bedroom", kinds: ['imp', 'golem', 'dknight'], tint: '#ff9a3d', wall: '#2b1410', fx: 'embers', boss: 'dragon' },
+    { name: 'Jellyfish Lagoon', kinds: ['jelly', 'octopus', 'crab'], tint: '#7fd6ff', wall: '#0f2236', fx: 'bubbles', boss: 'jelly' },
+    { name: 'Scarab Sanctum', kinds: ['scarab', 'mummy', 'cactus'], tint: '#e6c35a', wall: '#2a2214', fx: 'sand', boss: 'scarab' },
+    { name: 'Gargoyle Spires', kinds: ['gargoyle', 'bat', 'ghost'], tint: '#a7a0c8', wall: '#1b1a28', fx: 'dust', boss: 'gargoyle' },
+    { name: 'Starship Basement', kinds: ['alien', 'robot', 'eyeball'], tint: '#8dff9a', wall: '#101c22', fx: 'sparks', boss: 'alien' }
   ];
-  const PROPS = { 'Damp Cellar': 'barrel', 'Fungus Halls': 'shroom', 'Goblin Market': 'crate', 'Sewer Spa': 'pipe', 'Spider Nest': 'web', 'Bone Pantry': 'bones', 'Frog Swamp': 'reed', 'Haunted Library': 'shelf', 'Desert Tomb': 'cactus', 'Frozen Freezer': 'icicle', 'Lava Basement': 'rock', 'Imp Office': 'desk', 'Crab Disco': 'speaker', 'Robot Factory': 'gear', 'Cloud Kingdom': 'cloud', 'The Void Attic': 'crate', 'Candy Caverns': 'candy', 'Pirate Cove': 'barrel', 'Clock Tower': 'gear', 'Mushroom Rave': 'speaker', 'Ninja Dojo': 'lantern', "Dragon's Bedroom": 'gold' };
+  const PROPS = { 'Damp Cellar': 'barrel', 'Fungus Halls': 'shroom', 'Goblin Market': 'crate', 'Sewer Spa': 'pipe', 'Spider Nest': 'web', 'Bone Pantry': 'bones', 'Frog Swamp': 'reed', 'Haunted Library': 'shelf', 'Desert Tomb': 'cactus', 'Frozen Freezer': 'icicle', 'Lava Basement': 'rock', 'Imp Office': 'desk', 'Crab Disco': 'speaker', 'Robot Factory': 'gear', 'Cloud Kingdom': 'cloud', 'The Void Attic': 'crate', 'Candy Caverns': 'candy', 'Pirate Cove': 'barrel', 'Clock Tower': 'gear', 'Mushroom Rave': 'speaker', 'Ninja Dojo': 'lantern', "Dragon's Bedroom": 'gold', 'Jellyfish Lagoon': 'pipe', 'Scarab Sanctum': 'cactus', 'Gargoyle Spires': 'bones', 'Starship Basement': 'gear' };
   const GUARDIANS = ['Gorgonzola, Cheese of Doom', 'The Unpaid Intern Supreme', 'Count Dracoola', 'Grandma Gristle', 'Sir Reginald Fluffbottom', 'The Final Landlord', 'Baron Bananas', 'Queen of All Slimes', 'The Dentist', 'Lord Snackington', 'Mecha Steve', 'The Floor Manager'];
-  const LORE = { slime: 'Mostly water, partly attitude.', bat: 'Hangs out. Literally.', rat: 'Knows where the cheese is. Will not tell.', mushroom: 'A fun guy, allegedly.', snail: 'Slow, but has never once given up.', goblin: 'Runs three small businesses and owes everyone money.', mimic: 'It was a chest. It had a lot of opinions.', crab: 'Walks sideways out of spite.', frog: 'Ribbit means "no refunds".', spider: 'Eight legs, zero chill.', skeleton: 'Has a funny bone, but it is broken.', mummy: 'Wrapped up in its own problems.', ghost: 'Still paying rent on a room it can walk through.', eyeball: 'Sees everything, says nothing.', wisp: 'A little candle with big dreams.', cactus: 'Hugs are free. Recovery is not.', yeti: 'Big, fluffy and very bad at hide and seek.', penguin: 'Dressed for an event nobody else was invited to.', imp: 'Middle management of the underworld.', golem: 'Rock solid in every way except conversation.', robot: 'Beeps when happy. Beeps when angry. Just beeps.', ogre: 'Has layers. Mostly anger.', dragon: 'Sleeps on gold. Has back problems.', lich: 'Kept its soul in a jar. Lost the lid.', bee: 'Busy. Always busy. Do not ask.', octopus: 'Eight arms, all of them pointing at you.', dknight: 'Very edgy. Literally covered in edges.', ninja: 'You did not see this entry.', clown: 'Honk.' };
-  const KINDS = ['slime', 'bat', 'rat', 'mushroom', 'snail', 'goblin', 'mimic', 'crab', 'frog', 'spider', 'skeleton', 'mummy', 'ghost', 'eyeball', 'wisp', 'cactus', 'yeti', 'penguin', 'imp', 'golem', 'robot', 'ogre', 'dragon', 'lich', 'bee', 'octopus', 'dknight', 'ninja', 'clown'];
-  const CNAME = { slime: 'Slime', bat: 'Bat', goblin: 'Goblin', skeleton: 'Skeleton', mushroom: 'Shroom', ghost: 'Ghost', rat: 'Rat', eyeball: 'Eyeball', crab: 'Crab', spider: 'Spider', frog: 'Frog', imp: 'Imp', golem: 'Golem', mummy: 'Mummy', yeti: 'Yeti', wisp: 'Wisp', mimic: 'Mimic', robot: 'Robot', cactus: 'Cactus', snail: 'Snail', penguin: 'Penguin', ogre: 'Ogre', dragon: 'Dragon', lich: 'Lich', bee: 'Bee', octopus: 'Octopus', dknight: 'Dark Knight', ninja: 'Ninja', clown: 'Clown' };
+  const LORE = { slime: 'Mostly water, partly attitude.', bat: 'Hangs out. Literally.', rat: 'Knows where the cheese is. Will not tell.', mushroom: 'A fun guy, allegedly.', snail: 'Slow, but has never once given up.', goblin: 'Runs three small businesses and owes everyone money.', mimic: 'It was a chest. It had a lot of opinions.', crab: 'Walks sideways out of spite.', frog: 'Ribbit means "no refunds".', spider: 'Eight legs, zero chill.', skeleton: 'Has a funny bone, but it is broken.', mummy: 'Wrapped up in its own problems.', ghost: 'Still paying rent on a room it can walk through.', eyeball: 'Sees everything, says nothing.', wisp: 'A little candle with big dreams.', cactus: 'Hugs are free. Recovery is not.', yeti: 'Big, fluffy and very bad at hide and seek.', penguin: 'Dressed for an event nobody else was invited to.', imp: 'Middle management of the underworld.', golem: 'Rock solid in every way except conversation.', robot: 'Beeps when happy. Beeps when angry. Just beeps.', ogre: 'Has layers. Mostly anger.', dragon: 'Sleeps on gold. Has back problems.', lich: 'Kept its soul in a jar. Lost the lid.', bee: 'Busy. Always busy. Do not ask.', octopus: 'Eight arms, all of them pointing at you.', dknight: 'Very edgy. Literally covered in edges.', ninja: 'You did not see this entry.', clown: 'Honk.', jelly: 'Ninety-five percent water, five percent sting.', scarab: 'Rolls things uphill for a living. Proud of it.', gargoyle: 'Guards the roof. Nobody asked it to.', alien: 'Came for the snacks. Stayed for the violence.' };
+  const KINDS = ['slime', 'bat', 'rat', 'mushroom', 'snail', 'goblin', 'mimic', 'crab', 'frog', 'spider', 'skeleton', 'mummy', 'ghost', 'eyeball', 'wisp', 'cactus', 'yeti', 'penguin', 'imp', 'golem', 'robot', 'ogre', 'dragon', 'lich', 'bee', 'octopus', 'dknight', 'ninja', 'clown', 'jelly', 'scarab', 'gargoyle', 'alien'];
+  const CNAME = { slime: 'Slime', bat: 'Bat', goblin: 'Goblin', skeleton: 'Skeleton', mushroom: 'Shroom', ghost: 'Ghost', rat: 'Rat', eyeball: 'Eyeball', crab: 'Crab', spider: 'Spider', frog: 'Frog', imp: 'Imp', golem: 'Golem', mummy: 'Mummy', yeti: 'Yeti', wisp: 'Wisp', mimic: 'Mimic', robot: 'Robot', cactus: 'Cactus', snail: 'Snail', penguin: 'Penguin', ogre: 'Ogre', dragon: 'Dragon', lich: 'Lich', bee: 'Bee', octopus: 'Octopus', dknight: 'Dark Knight', ninja: 'Ninja', clown: 'Clown', jelly: 'Jellyfish', scarab: 'Scarab', gargoyle: 'Gargoyle', alien: 'Alien' };
   const BIG = { ogre: 1, dragon: 1, lich: 1 };
-  const FLOATY = { bat: 1, ghost: 1, eyeball: 1, wisp: 1, bee: 1 };
+  const FLOATY = { bat: 1, ghost: 1, eyeball: 1, wisp: 1, bee: 1, jelly: 1 };
   const ADJ = ['Grumpy', 'Soggy', 'Overconfident', 'Sleepy', 'Tax-Evading', 'Moist', 'Polite', 'Furious', 'Suspicious', 'Dramatic', 'Wobbly', 'Snacking', 'Unemployed', 'Very Loud', 'Shy', 'Sweaty', 'Smug', 'Sarcastic', 'Lost', 'Crunchy', 'Extremely Online', 'Retired', 'Bored', 'Caffeinated'];
   const BOSSES = ['Big Steve', 'Lord Wobblebottom', 'The Landlord', 'Duke Dampness', 'Sir Chompsalot', 'Queen Gloop', 'Baron Von Crumbs', 'Auntie Fangs', 'Gary Sr.', 'The Intern', 'Count Crumbleton', 'Mega Brenda', 'Admiral Pinch', 'Professor Ooze', 'The HOA President', 'Middle Manager Mort', 'Grand Wizard Kevin II', 'Chef Rotten', 'The Tax Man', 'Princess Pebble'];
   const VARIANTS = {
@@ -320,9 +328,11 @@
     { id: 'vault', name: 'Gold Vault', kind: 'mimic', tint: '#f5b942', cur: 'gold', text: 'A greedy mimic full of gold. Every bar you break pays a pile of gold.' },
     { id: 'mine', name: 'Rune Mine', kind: 'golem', tint: '#6fd6ff', cur: 'runes', text: 'A rune golem. Every bar you break drops runes for enchants and reforging.' },
     { id: 'forge', name: 'Shard Forge', kind: 'robot', tint: '#ff9a5a', cur: 'shards', text: 'A haywire forge robot. Every bar you break drops shards for weapon enhancing.' },
+    { id: 'titan', name: "Titan's Lair", kind: 'gargoyle', tint: '#ff5d73', cur: 'loot', text: 'A stone titan. Every bar pays runes and shards, every other bar a gem, and 20 bars a Legendary piece. 1 key every 6 hours.' },
     { id: 'grotto', name: 'Gem Grotto', kind: 'eyeball', tint: '#b98cff', cur: 'gems', text: 'A crystal eye that cries gems. One gem for every 3 bars. Only 1 key, and it refills every 4 hours.' }
   ];
-  const keyMax = id => id === 'grotto' ? 1 : 3;
+  const keyMax = id => id === 'grotto' || id === 'titan' ? 1 : 3;
+  const TITAN_MS = 6 * 3600 * 1000;
   const GROTTO_MS = 4 * 3600 * 1000;
   const KEY_MS = 20 * 60 * 1000;
   const QT = {
@@ -427,17 +437,17 @@
   const fresh = () => ({
     gold: 0, gems: 0, runes: 0, shards: 0, floor: 1, kill: 0, maxFloor: 1, deepest: 1, tales: 0, runs: 0, cls: 'peasant', rank: 0,
     lv: freshLv(), sk: freshSk(), allies: freshAllies(), weapon: null, wlv: 0, ench: [null, null, null], locks: [false, false, false],
-    relics: {}, book: {}, ach: {}, life: freshLife(), quests: [], keys: { vault: 3, mine: 3, forge: 3, grotto: 1 }, keyT: Date.now(),
+    relics: {}, book: {}, ach: {}, life: freshLife(), quests: [], keys: { vault: 3, mine: 3, forge: 3, grotto: 1, titan: 1 }, titanT: Date.now(), keyT: Date.now(),
     summon: { lv: 1, xp: 0 }, daily: { last: '', streak: 0 }, set: freshSet(),
     amt: '1', auto: true, farm: false, bossReady: false, evo: {}, pevo: {}, eq: freshEq(), prefix: { pre: 'Plain', pm: 1 }, tab: 'train', gps: 0, lastSeen: 0, muted: false, dev: false,
-    evMonth: 0, evoPath: {}, tal: {}, chal: null, chDone: {}, lshop: {}, ltok: 0, heir: null, camp: null, pass: null, maps: 0, fish: null, dailyCh: null, skOwn: {}, skCp: {}, skLv: {}, evTok: 0, sock: [null, null, null, null], gemInv: {}, look: { weapon: -1 }, cos: { hat: 'none', cape: 'none' }, cosOwn: {}, stars: 0, abyssBest: 0, rushBest: 0, abyssT: 0, rushT: 0, grottoT: Date.now(), exped: null, loadout: ['spin', 'bolt', 'heal', 'rush', 'frenzy'], weekly: null, unl: {}, tutQ: [], lab: {}, labJobs: [], mileDone: 0, seenVer: 0, eqSel: { weapon: 0, armor: 0, acc: 0, pet: 0 }, eqCat: 'weapon'
+    evMonth: 0, evoPath: {}, tal: {}, chal: null, chDone: {}, lshop: {}, ltok: 0, heir: null, camp: null, pass: null, maps: 0, fish: null, dailyCh: null, skOwn: {}, skCp: {}, skLv: {}, evTok: 0, sock: [null, null, null, null], gemInv: {}, look: { weapon: -1 }, cos: { hat: 'none', cape: 'none' }, cosOwn: {}, stars: 0, abyssBest: 0, rushBest: 0, abyssT: 0, rushT: 0, grottoT: Date.now(), exped: null, loadout: ['spin', 'bolt', 'heal', 'rush', 'frenzy'], weekly: null, unl: {}, tutQ: [], hist: [], lab: {}, labJobs: [], mileDone: 0, seenVer: 0, eqSel: { weapon: 0, armor: 0, acc: 0, pet: 0 }, eqCat: 'weapon'
   });
   function migrate(o) {
     const s = Object.assign(fresh(), o);
     s.lv = Object.assign(freshLv(), o.lv || {}); s.sk = Object.assign(freshSk(), o.sk || {});
     s.allies = Object.assign(freshAllies(), o.allies || {}); s.life = Object.assign(freshLife(), o.life || {});
     s.life.beasts = s.life.beasts || {}; s.relics = o.relics || {}; s.book = o.book || {}; s.ach = o.ach || {};
-    s.set = Object.assign(freshSet(), o.set || {}); s.keys = Object.assign({ vault: 3, mine: 3, forge: 3, grotto: 1 }, o.keys || {}); s.life.first = s.life.first || {};
+    s.set = Object.assign(freshSet(), o.set || {}); s.keys = Object.assign({ vault: 3, mine: 3, forge: 3, grotto: 1, titan: 1 }, o.keys || {}); s.life.first = s.life.first || {};
     s.eqSel = Object.assign({ weapon: 0, armor: 0, acc: 0, pet: 0 }, o.eqSel || {}); if (!Array.isArray(s.loadout) || s.loadout.length !== 5) s.loadout = ['spin', 'bolt', 'heal', 'rush', 'frenzy'];
     s.summon = Object.assign({ lv: 1, xp: 0 }, o.summon || {}); s.daily = Object.assign({ last: '', streak: 0 }, o.daily || {});
     s.ench = Array.isArray(o.ench) && o.ench.length === 3 ? o.ench : [null, null, null];
@@ -457,7 +467,7 @@
     s.prefix = o.prefix || (o.weapon && o.weapon.pm ? { pre: o.weapon.pre || 'Plain', pm: o.weapon.pm } : { pre: 'Plain', pm: 1 });
     s.book = {}; s.weapon = null;
     if (s.tab === 'gear') s.tab = 'train';
-    if (!Array.isArray(s.sock) || s.sock.length !== 4) s.sock = [null, null, null, null]; s.gemInv = s.gemInv || {}; s.look = Object.assign({ weapon: -1 }, s.look || {}); s.cos = Object.assign({ hat: 'none', cape: 'none' }, s.cos || {}); s.cosOwn = s.cosOwn || {}; s.skOwn = s.skOwn || {}; s.skCp = s.skCp || {}; s.skLv = s.skLv || {}; s.evoPath = s.evoPath || {}; s.tal = s.tal || {}; s.chDone = s.chDone || {}; s.lshop = s.lshop || {}; s.unl = s.unl || {}; s.lab = s.lab || {}; s.labJobs = Array.isArray(s.labJobs) ? s.labJobs : []; s.tutQ = Array.isArray(s.tutQ) ? s.tutQ : [];
+    if (!Array.isArray(s.sock) || s.sock.length !== 4) s.sock = [null, null, null, null]; s.gemInv = s.gemInv || {}; s.look = Object.assign({ weapon: -1 }, s.look || {}); s.cos = Object.assign({ hat: 'none', cape: 'none' }, s.cos || {}); s.cosOwn = s.cosOwn || {}; s.skOwn = s.skOwn || {}; s.skCp = s.skCp || {}; s.skLv = s.skLv || {}; s.evoPath = s.evoPath || {}; s.tal = s.tal || {}; s.chDone = s.chDone || {}; s.lshop = s.lshop || {}; s.unl = s.unl || {}; s.lab = s.lab || {}; s.labJobs = Array.isArray(s.labJobs) ? s.labJobs : []; s.tutQ = Array.isArray(s.tutQ) ? s.tutQ : []; s.hist = Array.isArray(s.hist) ? s.hist.filter(x => Array.isArray(x) && x.every(v => typeof v === 'number' && isFinite(v))) : [];
     for (const k of CATS) {
       const E = s.eq[k], arr = (v, d) => Array.isArray(v) && v.length === 24 ? v.map(x => (typeof x === 'number' && isFinite(x) && x >= 0 ? x : d)) : Array(24).fill(d);
       E.c = arr(E.c, 0); E.l = arr(E.l, 1); E.s = arr(E.s, 0); E.st = arr(E.st, 0);
@@ -473,7 +483,7 @@
   }
   // Numbers in a save must be finite: NaN or Infinity would spread into every
   // stat. Bad values become 0 (or a huge cap for overflowing currencies).
-  const NUMS = ['gold', 'gems', 'runes', 'shards', 'floor', 'kill', 'maxFloor', 'deepest', 'tales', 'runs', 'rank', 'wlv', 'stars', 'abyssBest', 'rushBest', 'ltok', 'maps', 'evTok', 'mileDone', 'gps', 'keyT', 'grottoT', 'abyssT', 'rushT'];
+  const NUMS = ['titanT', 'gold', 'gems', 'runes', 'shards', 'floor', 'kill', 'maxFloor', 'deepest', 'tales', 'runs', 'rank', 'wlv', 'stars', 'abyssBest', 'rushBest', 'ltok', 'maps', 'evTok', 'mileDone', 'gps', 'keyT', 'grottoT', 'abyssT', 'rushT'];
   function sane(o) {
     for (const k of NUMS) { const v = o[k]; if (typeof v !== 'number' || Number.isNaN(v)) o[k] = 0; else if (!isFinite(v)) o[k] = v > 0 ? 1e300 : 0; }
     for (const k of ['floor', 'maxFloor', 'deepest']) o[k] = Math.max(1, Math.floor(o[k]));
@@ -952,7 +962,8 @@
   /* ================= runs: dungeons + trials ================= */
   function regenKeys() {
     const now = Date.now();
-    const std = DUNGEONS.filter(d => d.id !== 'grotto');
+    const std = DUNGEONS.filter(d => d.id !== 'grotto' && d.id !== 'titan');
+    if ((S.keys.titan || 0) >= 1 || !isFinite(S.titanT)) S.titanT = now; else if (now - S.titanT >= TITAN_MS) { S.keys.titan = 1; S.titanT = now; }
     if (std.every(d => S.keys[d.id] >= 3)) S.keyT = now;
     else { const ms = keyMs(), n = Math.floor((now - S.keyT) / ms); if (n > 0 && isFinite(n)) { const add = Math.min(n, 3); for (const d of std) S.keys[d.id] = Math.min(3, S.keys[d.id] + add); S.keyT = n > 3 ? now : S.keyT + n * ms; } else if (!isFinite(S.keyT)) S.keyT = now; }
     if (S.keys.grotto >= 1) S.grottoT = now; else if (now - S.grottoT >= GROTTO_MS) { S.keys.grotto = 1; S.grottoT = now; }
@@ -973,11 +984,11 @@
       banner = { text: 'RANK TRIAL', sub: `Beat the ${next.n} Examiner in 40 seconds`, life: 2.2 };
     } else {
       const D = DUNGEONS.find(d => d.id === type);
-      if (S.keys[type] <= 0) return;
+      if (!D || S.keys[type] <= 0 || (type === 'titan' && !isOpen('titan'))) return;
       S.keys[type]--;
       const e = makeEnemy({ boss: true, kind: D.kind, wx: hero.wx + PX * 30 });
       e.name = D.name + ' Guardian'; e.special = type; e.mechs = []; e.tint = D.tint;
-      e.base = hpM(df) * 3; e.hp = e.max = e.base; e.dmg = dmgM(df) * 0.7; e.timer = 30; e.gold = 0; e.tier = 0;
+      e.base = hpM(df) * (type === 'titan' ? 6 : 3); e.hp = e.max = e.base; e.dmg = dmgM(df) * 0.7; e.timer = 30; e.gold = 0; e.tier = 0;
       run = { type, t: 30, tier: 0, got: 0 };
       enemies = [e];
       banner = { text: D.name.toUpperCase(), sub: 'Break as many health bars as you can in 30 seconds', life: 2 };
@@ -998,6 +1009,12 @@
       if (e.special === 'vault') { const g = goldM(df) * st.goldMult * (2 + 0.5 * run.tier); earn(g); run.got += g; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${fmt(g)} gold`, '#f5b942', 18, true); }
       if (e.special === 'mine') { const r = 1 + Math.ceil(run.tier * 0.8); S.runes += r; run.got += r; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${r} runes`, '#6fd6ff', 18, true); }
       if (e.special === 'grotto' && run.tier % 3 === 0) { S.gems += 1; run.got += 1; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +1 gem`, '#b98cff', 18, true); }
+      if (e.special === 'titan') {
+        const L = run.loot || (run.loot = { gems: 0, runes: 0, shards: 0 }), r = 2 + Math.ceil(run.tier / 2), sh = 3 + run.tier, g = run.tier % 2 === 0 ? 1 : 0;
+        S.runes += r; S.shards += sh; S.gems += g; L.runes += r; L.shards += sh; L.gems += g; run.got++;
+        addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${r} runes +${sh} shards${g ? ' +1 gem' : ''}`, '#ff5d73', 16, true);
+        if (run.tier === 20) { const cat = pick(['weapon', 'armor', 'helm', 'boots', 'acc']), i = 16 + randi(0, 3); giveItem(cat, i); recalc(); log(`The titan dropped ${itemLabel(cat, i)}!`, 'p'); }
+      }
       if (e.special === 'forge') { const r = 3 + run.tier; S.shards += r; run.got += r; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${r} shards`, '#ff9a5a', 18, true); }
       e.max = e.base * Math.pow(1.8, run.tier); e.hp = e.max - over;
       if (run.tier >= 25) { addFloat(e.wx, groundY() - PX * 22, 'MAXED OUT!', '#62d2c4', 20, true); endRun(true); return; }
@@ -1016,7 +1033,8 @@
     } else {
       S.life.dungeons++; questEvent('dungeon', 1);
       const D = DUNGEONS.find(d => d.id === r.type);
-      log(`${D.name} done: broke <b>${r.tier}</b> bars for <b>${fmt(r.got)} ${D.cur}</b>.`, D.cur === 'gold' ? 'g' : 'u');
+      if (r.type === 'titan') { const L = r.loot || { gems: 0, runes: 0, shards: 0 }; S.life.titans = (S.life.titans || 0) + 1; S.life.titanBest = Math.max(S.life.titanBest || 0, r.tier); log(`${D.name} done: broke <b>${r.tier}</b> bars for ${L.runes} runes, ${L.shards} shards and ${L.gems} gems.`, 'u'); }
+      else log(`${D.name} done: broke <b>${r.tier}</b> bars for <b>${fmt(r.got)} ${D.cur}</b>.`, D.cur === 'gold' ? 'g' : 'u');
       banner = { text: `${r.tier} BARS`, sub: `+${fmt(r.got)} ${D.cur}`, life: 2 };
       jingle();
     }
@@ -1416,6 +1434,10 @@
       case 'dknight': return Object.assign(P, { a: '#3a3048', b: mix(tint, '#3a3048', 0.5), c: '#ff5d73', e: '#c9d2ea' });
       case 'ninja': return Object.assign(P, { a: '#2a2238', b: tint, e: '#c9d2ea' });
       case 'clown': return Object.assign(P, { b: '#ff5d73', e: '#ff9a5a' });
+      case 'jelly': return Object.assign(P, { a: mix(tint, '#ffffff', 0.25), b: mix(tint, '#ff7ad9', 0.5) });
+      case 'scarab': return Object.assign(P, { b: mix(tint, '#1f6f6a', 0.55), e: '#f5b942' });
+      case 'gargoyle': return Object.assign(P, { a: mix(tint, '#000000', 0.25), b: tint, c: '#ff5d73', e: '#ffe066' });
+      case 'alien': return Object.assign(P, { e: '#ffe066', b: mix(tint, '#2a2238', 0.6) });
       case 'lich': return { c: '#ece4cc', d: '#62d2c4', e: '#f5b942', b: mix('#3b2a5c', tint, 0.25), s: '#8a5a3c' };
       default: return P;
     }
@@ -1774,7 +1796,7 @@
     }, '', true);
     for (const g of GEMSHOP) gemRows[g.id] = makeRow($('#gemList'), iconURL(g.icon, g.pal && ICON_PAL[g.pal]), () => buyGem(g), 'gemb');
     for (const d of DUNGEONS) {
-      const el = document.createElement('div'); el.className = 'dung';
+      const el = document.createElement('div'); el.className = 'dung'; if (d.id === 'titan') el.dataset.lock = 'titan';
       el.innerHTML = `<img alt="" src="${spriteURL(SPR[d.kind], monPal({ kind: d.kind, tint: d.tint, special: true }), 4)}"><div style="min-width:0"><div class="pname">${d.name} <span class="keys"></span></div><div class="pfx">${d.text}</div></div><button class="buy" type="button"><span class="bn">Enter</span><span class="bc"></span></button>`;
       $('#dungList').appendChild(el);
       const r = { keys: el.querySelector('.keys'), btn: el.querySelector('.buy'), bc: el.querySelector('.bc') };
@@ -1927,7 +1949,7 @@
       setText(r.bc, S.deepest < 5 ? 'Floor 5' : mode === 'run' ? 'Busy' : `${k} key${k === 1 ? '' : 's'}`);
     }
     const full = DUNGEONS.every(d => S.keys[d.id] >= keyMax(d.id));
-    setText($('#keyTimer'), full ? 'Keys full' : (DUNGEONS.some(d => d.id !== 'grotto' && S.keys[d.id] < 3) ? `Next key in ${mmss(Math.max(0, (keyMs() - (Date.now() - S.keyT)) / 1000))}` : 'Keys full') + (S.keys.grotto < 1 ? ` · Grotto key in ${mmss(Math.max(0, (GROTTO_MS - (Date.now() - S.grottoT)) / 1000))}` : ''));
+    setText($('#keyTimer'), full ? 'Keys full' : (DUNGEONS.some(d => d.id !== 'grotto' && d.id !== 'titan' && S.keys[d.id] < 3) ? `Next key in ${mmss(Math.max(0, (keyMs() - (Date.now() - S.keyT)) / 1000))}` : 'Keys full') + (S.keys.grotto < 1 ? ` · Grotto key in ${mmss(Math.max(0, (GROTTO_MS - (Date.now() - S.grottoT)) / 1000))}` : '') + (isOpen('titan') && S.keys.titan < 1 ? ` · Titan in ${dur(Math.max(0, (TITAN_MS - (Date.now() - S.titanT)) / 1000))}` : ''));
   }
   function renderQuests() {
     fillQuests();
@@ -1975,7 +1997,7 @@
     setHTML($('#retireAdvice'), gain <= 0 ? '' : retireGood() ? '<b style="color:var(--heal)">Recommended:</b> this retire adds at least half of your tales. Retire when the run slows down.' : `Not yet worth much: aim for at least ${Math.max(10, Math.ceil(S.tales * 0.5))} tales (you would get ${gain}). Push deeper first.`);
     setHTML($('#comingUp'), (() => { const u = upcoming(4); return u.length ? `<b>Coming up:</b> ${u.join(' · ')}` : ''; })());
   }
-  const RENDER = { train: () => { renderTrain(); setText($('#focusBtn'), 'Focus: ' + (S.set.buyfocus || 'cheapest')); }, equip: renderEquip, forge: () => { renderForge(); renderSockets(); }, hero: () => { renderHero(); renderEvoBranches(); renderTalents(); renderWardrobe(); }, skills: () => { renderSkills(); xRenderSkills(); }, allies: () => { renderAllies(); xRenderAllies(); renderCamp(); }, trials: () => { renderTrials(); xRenderTrials(); renderTrials2(); }, quests: () => { renderMiles(); renderQuests(); xRenderQuests(); renderEventPass(); }, book: renderBook, legacy: () => { renderLegacy(); xRenderLegacy(); renderLegacyShop(); renderChallenges(); renderLab(); } };
+  const RENDER = { train: () => { renderTrain(); setText($('#focusBtn'), 'Focus: ' + (S.set.buyfocus || 'cheapest')); }, equip: renderEquip, forge: () => { renderForge(); renderSockets(); }, hero: () => { renderHero(); renderEvoBranches(); renderTalents(); renderWardrobe(); }, skills: () => { renderSkills(); xRenderSkills(); }, allies: () => { renderAllies(); xRenderAllies(); renderCamp(); }, trials: () => { renderTrials(); xRenderTrials(); renderTrials2(); }, quests: () => { renderMiles(); renderQuests(); xRenderQuests(); renderEventPass(); }, book: renderBook, legacy: () => { renderLegacy(); xRenderLegacy(); renderLegacyShop(); renderChallenges(); renderLab(); drawHist(); } };
   let boardRendered = 0; const _rl = RENDER.legacy; RENDER.legacy = () => { _rl(); if (performance.now() - boardRendered > 5000) { boardRendered = performance.now(); renderOnline(); } };
 
   const skBtns = {};
@@ -2613,9 +2635,9 @@
     if (mode === 'main' && t - lastFloorT > 1200 && t - stuckT > 600) { stuckT = t; const sg = suggestions()[0]; log(`Stuck? Tip: ${sg ? sg.text : 'retire for tales, then push again'}.`, 'c'); }
     if (autoOn('autolevel')) for (const k of CATS) { const E = S.eq[k]; const list = k === 'pet' ? equippedPets().map(p => p.i) : [E.on]; for (const i of list) if (i >= 0) for (let n = 0; n < 5 && levelEq(k, i); n++); }
     if (autoOn('autosummon') && S.gems >= 210) { const k = CATS.slice().sort((a, b) => S.eq[a].sl - S.eq[b].sl)[0]; summonEq(k, 35, true); }
-    if (autoOn('autodungeon') && mode === 'main' && !fainted && S.deepest >= 5) { const d = DUNGEONS.find(q => S.keys[q.id] >= keyMax(q.id)); if (d) startRun(d.id, true); }
+    if (autoOn('autodungeon') && mode === 'main' && !fainted && S.deepest >= 5) { const d = DUNGEONS.find(q => S.keys[q.id] >= keyMax(q.id) && isOpen(q.id === 'titan' ? 'titan' : 'dung')); if (d) startRun(d.id, true); }
     if (S.exped && Date.now() >= S.exped.end && !S.exped.told) { S.exped.told = 1; log(`<b>${allyName(ALLIES.find(a => a.id === S.exped.id))}</b> is back from the expedition! Collect the loot in Allies.`, 'c'); markTab('allies'); }
-    weeklyCheck(); applyLocks(); labTick(); autoMoreTick(); autoRetireTick(); renderReady(); if ($('#tutCard').hidden) showTut();
+    weeklyCheck(); applyLocks(); labTick(); autoMoreTick(); autoRetireTick(); renderReady(); histTick(); if ($('#tutCard').hidden) showTut();
     const ti = titleNow(); if (ti !== lastTitle) { if (lastTitle) log(`New title: <b>${ti}</b>.`, 'g'); lastTitle = ti; }
   }
 
@@ -2819,7 +2841,7 @@
     if (ascendArm < performance.now()) { ascendArm = performance.now() + 4000; xRenderLegacy(); return; }
     ascendArm = 0;
     const life = S.life; life.ascends = (life.ascends || 0) + 1;
-    const keep = { unl: S.unl, tutQ: S.tutQ, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, tal: S.tal, chDone: S.chDone, lshop: S.lshop, ltok: S.ltok, heir: S.heir, evoPath: S.evoPath, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars + g, rank: S.rank, life, ach: S.ach, relics: S.relics, gems: S.gems, runes: S.runes, shards: S.shards, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, evo: S.evo, set: S.set, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, keys: S.keys, keyT: S.keyT, daily: S.daily, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, quests: S.quests, runs: S.runs };
+    const keep = { unl: S.unl, tutQ: S.tutQ, hist: S.hist, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, tal: S.tal, chDone: S.chDone, lshop: S.lshop, ltok: S.ltok, heir: S.heir, evoPath: S.evoPath, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars + g, rank: S.rank, life, ach: S.ach, relics: S.relics, gems: S.gems, runes: S.runes, shards: S.shards, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, evo: S.evo, set: S.set, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, keys: S.keys, keyT: S.keyT, daily: S.daily, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, quests: S.quests, runs: S.runs };
     resetRun(keep);
     log(`Ascended! +${g} stars (${S.stars} total). Everything is ×${Math.pow(1.5, S.stars).toFixed(1)} stronger forever.`, 'p');
     banner = { text: 'ASCENDED', sub: `${S.stars} stars`, life: 3 }; flashT = 0.6; jingle(); save(); refreshAll();
@@ -2968,7 +2990,7 @@
     if (g > 0) banner = { text: 'WELCOME BACK', sub: `+${fmt(g)} gold while you were away`, life: 3 };
     return msg;
   }
-  const CHANGES = ['A Ready bar under the dungeon with one-tap shortcuts to everything waiting for you', 'Pause (P), foldable sections, tabs that remember where you scrolled, and more shortcuts (press ?)', 'Retire advice: the Legacy tab tells you when a retire is worth it and how much stronger it makes you', 'Auto-buy now covers training, skills and allies (pick which) and saves up for evolutions', 'New automation: auto-merge, auto rank trial, auto-research and auto class evolution', 'New players retry bosses on their own until floor 10', 'Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
+  const CHANGES = ["Titan's Lair: a giant boss every 6 hours that pays every currency and a Legendary piece at 20 bars", '4 new areas and 4 new monsters past floor 110: Jellyfish Lagoon, Scarab Sanctum, Gargoyle Spires and Starship Basement', 'A progress chart in Legacy and 3 new achievements', 'Install the game as an app from the website (works offline)', 'A Ready bar under the dungeon with one-tap shortcuts to everything waiting for you', 'Pause (P), foldable sections, tabs that remember where you scrolled, and more shortcuts (press ?)', 'Retire advice: the Legacy tab tells you when a retire is worth it and how much stronger it makes you', 'Auto-buy now covers training, skills and allies (pick which) and saves up for evolutions', 'New automation: auto-merge, auto rank trial, auto-research and auto class evolution', 'New players retry bosses on their own until floor 10', 'Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
   function showTitle(report) {
     const returning = S.life.kills > 0, isNew = (S.seenVer || 0) < VER && returning;
     $('#titleHero').src = heroIcon(S.cls);
@@ -3399,7 +3421,7 @@
   ];
   const ls = k => (S.lshop && S.lshop[k]) || 0;
   function retireKeep(gain) {
-    return { tales: S.tales + gain, runs: S.runs + (gain ? 1 : 0), rank: S.rank, relics: S.relics, deepest: S.deepest, gems: S.gems, runes: S.runes, shards: S.shards, book: S.book, ach: S.ach, life: S.life, quests: S.quests, keys: S.keys, keyT: S.keyT, summon: S.summon, daily: S.daily, set: S.set, evo: S.evo, evoPath: S.evoPath, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, tal: S.tal, chDone: S.chDone, lshop: S.lshop, unl: S.unl, tutQ: S.tutQ, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, ltok: (S.ltok || 0) + (gain ? Math.ceil(gain / 4) + 1 : 0), heir: S.heir, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls };
+    return { tales: S.tales + gain, runs: S.runs + (gain ? 1 : 0), rank: S.rank, relics: S.relics, deepest: S.deepest, gems: S.gems, runes: S.runes, shards: S.shards, book: S.book, ach: S.ach, life: S.life, quests: S.quests, keys: S.keys, keyT: S.keyT, summon: S.summon, daily: S.daily, set: S.set, evo: S.evo, evoPath: S.evoPath, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, tal: S.tal, chDone: S.chDone, lshop: S.lshop, unl: S.unl, tutQ: S.tutQ, hist: S.hist, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, ltok: (S.ltok || 0) + (gain ? Math.ceil(gain / 4) + 1 : 0), heir: S.heir, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls };
   }
   function afterRetire(prevGold, gain, prevLv) {
     const start = Math.min(1 + 5 * ls('head'), Math.max(1, S.deepest));
@@ -3660,7 +3682,7 @@
     'tab:quests': ['Quests', ...atF(2)], 'tab:skills': ['Skills', ...atF(3)], 'tab:allies': ['Allies', ...atF(4)],
     'tab:equip': ['Equip', ...atF(5)], 'tab:trials': ['Trials', ...atF(5)], 'tab:book': ['Book', ...atF(6)],
     'tab:forge': ['Forge', ...atF(8)], 'tab:hero': ['Hero', ...atF(10)], 'tab:legacy': ['Legacy', ...atF(10)],
-    dung: ['Side dungeons', ...atF(5)], gemshop: ['Gem shop', ...atF(8)], ench: ['Enchants', ...atF(8)],
+    dung: ['Side dungeons', ...atF(5)], titan: ["Titan's Lair", ...atF(50)], gemshop: ['Gem shop', ...atF(8)], ench: ['Enchants', ...atF(8)],
     fish: ['Fishing pond', ...atF(10)], sockets: ['Gem sockets', ...atF(10)], wardrobe: ['Wardrobe', ...atF(10)],
     weekly: ['Weekly quest', ...atF(12)], event: ['Monthly event and pass', ...atF(15)], maps: ['Treasure maps', ...atF(15)],
     exped: ['Expeditions', ...atF(20)], dailyc: ['Daily challenge', ...atF(25)], camp: ['Camp', ...atF(30)],
@@ -3796,6 +3818,7 @@
     'tab:forge': ['Forge', 'Enhance your weapon slot with shards. It can fail, but nothing breaks. Reforge rerolls the weapon prefix for runes.', 'forge', '#enhanceBtn'],
     'tab:hero': ['Hero', 'Your class lives here. Training parts evolve at level 100 for a big boost, paid with gold and shards. Check Training evolutions when a part hits its cap.', 'hero', '#pevoList'],
     'tab:legacy': ['Retiring', 'Retire to restart stronger. You earn tales (+10% damage and gold each, forever) and pick a class. Retire when progress slows down, not before.', 'legacy', '#retireBtn'],
+    titan: ["Titan's Lair", 'A stone titan you can fight every 6 hours. Every bar pays runes and shards, every other bar a gem, and breaking 20 bars drops a Legendary piece.', 'trials', '[data-lock="titan"]'],
     dung: ['Side dungeons', '30-second runs against a huge monster. The more health bars you break, the bigger the reward. Each run costs a key, and keys refill over time.', 'trials', '#dungList'],
     gemshop: ['Gem shop', 'Spend gems on boosts like Time Warp (30 minutes of gold now), rune and shard pouches, and relic boxes.', 'quests', '#gemList'],
     ench: ['Enchants', 'Reroll enchant lines on your weapon with runes. Lock a line you like so rerolls keep it. More lines open at floors 15 and 30.', 'forge', '#rerollBtn'],
@@ -3872,7 +3895,7 @@
     add(isOpen('evo') && evoReady(), 'Class evolution ready', 'hero', '#evoBtn', 'evo');
     const nx = RANKS[S.rank + 1];
     add(isOpen('tab:trials') && nx && S.deepest >= nx.need && mode === 'main', nx ? `${nx.n} rank trial` : '', 'trials', '#trialBtn', 'trial');
-    const full = DUNGEONS.filter(d => S.keys[d.id] >= keyMax(d.id)).length;
+    const full = DUNGEONS.filter(d => S.keys[d.id] >= keyMax(d.id) && (d.id !== 'titan' || isOpen('titan'))).length;
     add(isOpen('dung') && full > 0 && !autoOn('autodungeon'), `${full} dungeon${full > 1 ? 's' : ''} with full keys`, 'trials', '#dungList', 'dung');
     add(isOpen('abyss') && Date.now() >= (S.abyssT || 0), 'Abyss dive ready', 'trials', '#abyssBtn', 'abyss');
     add(isOpen('rush') && Date.now() >= (S.rushT || 0), 'Boss Rush ready', 'trials', '#rushBtn', 'rush');
@@ -3948,11 +3971,42 @@
   function openKeys() { setHTML($('#keysBody'), `<div class="keylist">${KEYS.map(([k, d]) => `<div><kbd>${k}</kbd><span>${d}</span></div>`).join('')}</div>`); $('#keysModal').hidden = false; }
   $('#keysBtn').addEventListener('click', openKeys);
 
+  // Progress chart: your run floor and best floor over play time.
+  function histTick() {
+    S.hist = Array.isArray(S.hist) ? S.hist : [];
+    const last = S.hist[S.hist.length - 1];
+    if (last && S.life.time - last[0] < 120) return;
+    S.hist.push([Math.round(S.life.time), S.maxFloor, bestDeep(), S.stars || 0]);
+    if (S.hist.length > 240) S.hist = S.hist.filter((_, i) => i % 2 === 0 || i === S.hist.length - 1);
+  }
+  function drawHist() {
+    const c = $('#histC'); if (!c || !c.offsetParent) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), w = c.clientWidth, h = 160;
+    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); c.style.height = h + 'px';
+    const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+    const H = (S.hist || []).concat([[S.life.time, S.maxFloor, bestDeep(), S.stars || 0]]);
+    const css = k => getComputedStyle(document.body).getPropertyValue(k).trim();
+    setText($('#histLbl'), H.length > 1 ? `${dur(S.life.time)} played` : 'Play a little to see your progress');
+    if (H.length < 2) return;
+    const pad = { l: 34, r: 8, t: 10, b: 20 }, t0 = H[0][0], t1 = Math.max(t0 + 1, H[H.length - 1][0]), top = Math.max(10, ...H.map(x => x[2]));
+    const X = v => pad.l + (v - t0) / (t1 - t0) * (w - pad.l - pad.r), Y = v => h - pad.b - v / top * (h - pad.t - pad.b);
+    g.strokeStyle = css('--edge'); g.lineWidth = 1; g.fillStyle = css('--mute'); g.font = '11px Nunito, sans-serif';
+    for (let k = 0; k <= 4; k++) { const v = Math.round(top * k / 4), y = Y(v); g.beginPath(); g.moveTo(pad.l, y); g.lineTo(w - pad.r, y); g.stroke(); g.fillText(String(v), 4, y + 4); }
+    g.fillText(dur(t1 - t0) + ' of play', w - pad.r - 90, h - 5);
+    const line = (i, col, wd) => { g.strokeStyle = col; g.lineWidth = wd; g.beginPath(); H.forEach((p, k) => { const x = X(p[0]), y = Y(p[i]); if (k) g.lineTo(x, y); else g.moveTo(x, y); }); g.stroke(); };
+    line(1, css('--heal'), 1.5); line(2, css('--gold'), 2.5);
+    g.fillStyle = css('--gold'); g.fillText('Best floor', pad.l + 6, pad.t + 10); g.fillStyle = css('--heal'); g.fillText('This run', pad.l + 76, pad.t + 10);
+  }
+  window.addEventListener('resize', () => { if (S.tab === 'legacy') drawHist(); });
+
   ACHS.push(
     ['unlock10', 'Grand Tour', 'Unlock 20 features', () => Object.keys(S.unl || {}).length >= 20],
     ['unlockall', 'Seen It All', 'Unlock every feature', () => Object.keys(UNLOCKS).every(isOpen)],
     ['lab5', 'Mad Scientist', 'Finish 5 research projects', () => (S.life.labs || 0) >= 5],
     ['labmax', 'Nobel Prize', 'Max a research project', () => LAB.some(r => labL(r[0]) >= LAB_MAX)],
+    ['titan10', 'Titan Tamer', "Break 10 bars in Titan's Lair", () => (S.life.titanBest || 0) >= 10],
+    ['titan20', 'Giant Slayer', "Break 20 bars in Titan's Lair", () => (S.life.titanBest || 0) >= 20],
+    ['deep150', 'Off the Map', 'Reach floor 150', () => bestDeep() >= 150],
     ['mile100', 'Milestone Maniac', 'Claim the floor 100 milestone', () => (S.mileDone || 0) >= 100]
   );
 
