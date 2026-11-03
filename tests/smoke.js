@@ -77,6 +77,24 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   await page.click('#mileBtn');
   s = await state();
   check(s.mileDone === 70 && s.gems > 0, `claiming milestones pays out (up to floor ${s.mileDone})`);
+  // quality of life
+  await page.waitForTimeout(1200);
+  check(await page.isVisible('#readyBar .rchip'), 'ready bar lists things to do');
+  await page.click('#readyBar .rchip');
+  await page.waitForTimeout(300);
+  check(await page.evaluate(() => !!document.querySelector('.tutHi')), 'a ready chip jumps to and highlights its target');
+  await page.click('#tab-legacy');
+  await page.click('#panel-legacy .foldbtn');
+  check(await page.evaluate(() => document.querySelector('#panel-legacy .box').classList.contains('folded')), 'sections fold');
+  await page.waitForTimeout(5500);
+  s = await state();
+  check(Object.values(s.set.fold || {}).some(Boolean), 'folded sections are remembered');
+  await page.keyboard.press('KeyP');
+  const tA = (await state()).life.time; await page.waitForTimeout(6000); const tB = (await state()).life.time;
+  check(tB - tA < 1, `pause stops the game (moved ${(tB - tA).toFixed(1)}s while paused)`);
+  await page.keyboard.press('KeyP');
+  await page.keyboard.press('Shift+Slash');
+  check(await page.isVisible('#keysModal'), 'question mark opens the shortcut list');
   await ctx.close();
 
   // 4. Old save from before equipment existed upgrades cleanly

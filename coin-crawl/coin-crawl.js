@@ -1970,7 +1970,10 @@
     setText($('#bestLine'), `Deepest floor: ${S.deepest}` + (S.runs ? ` · Retired ${S.runs}×` : '') + (S.dev ? ' · dev save' : ''));
     const gain = talesFor(S.maxFloor), btn = $('#retireBtn');
     btn.disabled = gain <= 0 || mode !== 'main';
-    setText(btn, gain <= 0 ? `Reach floor 10 to retire (now ${S.maxFloor})` : `Retire for +${gain} tales`);
+    setText(btn, gain <= 0 ? `Reach floor 10 to retire (now ${S.maxFloor})` : `Retire for +${gain} tales (×${retirePower().toFixed(2)} damage and gold)`);
+    btn.classList.toggle('rec', retireGood());
+    setHTML($('#retireAdvice'), gain <= 0 ? '' : retireGood() ? '<b style="color:var(--heal)">Recommended:</b> this retire adds at least half of your tales. Retire when the run slows down.' : `Not yet worth much: aim for at least ${Math.max(10, Math.ceil(S.tales * 0.5))} tales (you would get ${gain}). Push deeper first.`);
+    setHTML($('#comingUp'), (() => { const u = upcoming(4); return u.length ? `<b>Coming up:</b> ${u.join(' · ')}` : ''; })());
   }
   const RENDER = { train: () => { renderTrain(); setText($('#focusBtn'), 'Focus: ' + (S.set.buyfocus || 'cheapest')); }, equip: renderEquip, forge: () => { renderForge(); renderSockets(); }, hero: () => { renderHero(); renderEvoBranches(); renderTalents(); renderWardrobe(); }, skills: () => { renderSkills(); xRenderSkills(); }, allies: () => { renderAllies(); xRenderAllies(); renderCamp(); }, trials: () => { renderTrials(); xRenderTrials(); renderTrials2(); }, quests: () => { renderMiles(); renderQuests(); xRenderQuests(); renderEventPass(); }, book: renderBook, legacy: () => { renderLegacy(); xRenderLegacy(); renderLegacyShop(); renderChallenges(); renderLab(); } };
   let boardRendered = 0; const _rl = RENDER.legacy; RENDER.legacy = () => { _rl(); if (performance.now() - boardRendered > 5000) { boardRendered = performance.now(); renderOnline(); } };
@@ -2045,8 +2048,10 @@
       b.setAttribute('aria-selected', String(on));
       if (on) { const d = b.querySelector('.dot'); if (d) d.remove(); }
     }
+    const from = S.tab; if (from !== id) rememberScroll(from);
     for (const p of Object.keys(RENDER)) $('#panel-' + p).hidden = p !== id;
     RENDER[id]();
+    if (from !== id) restoreScroll(id);
   }
   function markTab(id) {
     if (S.tab === id) return;
@@ -2403,7 +2408,12 @@
     if (e.code === 'KeyU') { audio(); castUlt(); return; }
     if (e.code === 'KeyN') { showNext(); return; }
     if (e.code === 'KeyL') { openLog(); return; }
-    const tabKey = { KeyQ: 'quests', KeyE: 'equip', KeyT: 'train', KeyF: 'forge', KeyH: 'hero', KeyK: 'skills', KeyA: 'allies' }[e.code];
+    if (e.code === 'KeyP') { setPause(!paused); return; }
+    if (e.code === 'KeyC') { audio(); if (buyCheapest(false)) save(); return; }
+    if (e.code === 'KeyX' && isOpen('auto:autobuy')) { S.set.autobuy = !S.set.autobuy; log(`Auto-buy ${S.set.autobuy ? 'on' : 'off'}.`, 'c'); save(); if (S.tab === 'train') renderTrain(); return; }
+    if (e.code === 'KeyS') { openModal('setModal'); return; }
+    if (e.key === '?' || (e.code === 'Slash' && e.shiftKey)) { openKeys(); return; }
+    const tabKey = { KeyQ: 'quests', KeyE: 'equip', KeyT: 'train', KeyF: 'forge', KeyH: 'hero', KeyK: 'skills', KeyA: 'allies', KeyR: 'trials', KeyO: 'book', KeyG: 'legacy' }[e.code];
     if (tabKey) { showTab(tabKey); return; }
     if (e.code !== 'Space' || (e.target && e.target.tagName === 'BUTTON')) return;
     e.preventDefault();
@@ -2429,7 +2439,7 @@
       allies: ALLIES.filter(a => S.deepest >= a.unlock && S.gold >= allyCost(a)).length,
       trials: (RANKS[S.rank + 1] && S.deepest >= RANKS[S.rank + 1].need ? '!' : ''),
       quests: S.quests.filter(q => q.done).length + (dailyReady() ? 1 : 0),
-      book: '', legacy: talesFor(S.maxFloor) > 0 ? '!' : ''
+      book: '', legacy: retireGood() ? '!' : ''
     };
     for (const k in badges) { const v = n[k] || ''; setText(badges[k], v === 0 ? '' : v); badges[k].classList.toggle('hotb', v === '!'); }
   }
@@ -2605,7 +2615,7 @@
     if (autoOn('autosummon') && S.gems >= 210) { const k = CATS.slice().sort((a, b) => S.eq[a].sl - S.eq[b].sl)[0]; summonEq(k, 35, true); }
     if (autoOn('autodungeon') && mode === 'main' && !fainted && S.deepest >= 5) { const d = DUNGEONS.find(q => S.keys[q.id] >= keyMax(q.id)); if (d) startRun(d.id, true); }
     if (S.exped && Date.now() >= S.exped.end && !S.exped.told) { S.exped.told = 1; log(`<b>${allyName(ALLIES.find(a => a.id === S.exped.id))}</b> is back from the expedition! Collect the loot in Allies.`, 'c'); markTab('allies'); }
-    weeklyCheck(); applyLocks(); labTick(); autoMoreTick(); autoRetireTick(); if ($('#tutCard').hidden) showTut();
+    weeklyCheck(); applyLocks(); labTick(); autoMoreTick(); autoRetireTick(); renderReady(); if ($('#tutCard').hidden) showTut();
     const ti = titleNow(); if (ti !== lastTitle) { if (lastTitle) log(`New title: <b>${ti}</b>.`, 'g'); lastTitle = ti; }
   }
 
@@ -2958,7 +2968,7 @@
     if (g > 0) banner = { text: 'WELCOME BACK', sub: `+${fmt(g)} gold while you were away`, life: 3 };
     return msg;
   }
-  const CHANGES = ['Auto-buy now covers training, skills and allies (pick which) and saves up for evolutions', 'New automation: auto-merge, auto rank trial, auto-research and auto class evolution', 'New players retry bosses on their own until floor 10', 'Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
+  const CHANGES = ['A Ready bar under the dungeon with one-tap shortcuts to everything waiting for you', 'Pause (P), foldable sections, tabs that remember where you scrolled, and more shortcuts (press ?)', 'Retire advice: the Legacy tab tells you when a retire is worth it and how much stronger it makes you', 'Auto-buy now covers training, skills and allies (pick which) and saves up for evolutions', 'New automation: auto-merge, auto rank trial, auto-research and auto class evolution', 'New players retry bosses on their own until floor 10', 'Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
   function showTitle(report) {
     const returning = S.life.kills > 0, isNew = (S.seenVer || 0) < VER && returning;
     $('#titleHero').src = heroIcon(S.cls);
@@ -3842,13 +3852,101 @@
       const [, , tab, sel] = TUTS[k];
       if (tab === 'settings') openModal('setModal');
       else {
-        showTab(tab); save();
-        const el = sel && document.querySelector(sel);
-        if (el) { el.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' }); el.classList.remove('tutHi'); void el.offsetWidth; el.classList.add('tutHi'); setTimeout(() => el.classList.remove('tutHi'), 3200); }
+        showTab(tab); save(); flash(sel);
       }
     }
     save(); showTut();
   });
+
+  /* ---------- quality of life: ready bar, pause, folding, scroll memory, shortcuts ---------- */
+  // Retiring is worth it when the new tales add at least half of what you have.
+  const retireGood = () => { const g = talesFor(S.maxFloor); return g > 0 && mode === 'main' && g >= Math.max(10, S.tales * 0.5); };
+  const retirePower = () => (1 + 0.1 * (S.tales + talesFor(S.maxFloor))) / (1 + 0.1 * S.tales);
+  function readyList() {
+    const L = [], add = (on, text, tab, sel, k) => { if (on) L.push({ text, tab, sel, k }); };
+    const q = S.quests.filter(x => x.done).length + (S.weekly && S.weekly.done && !S.weekly.claimed ? 1 : 0);
+    add(isOpen('tab:quests') && dailyReady(), 'Daily chest', 'quests', '#dailyBtn', 'daily');
+    add(isOpen('tab:quests') && q > 0, `${q} quest${q > 1 ? 's' : ''} to claim`, 'quests', '#questList', 'quests');
+    add(milesReady().length > 0, 'Floor milestone', 'quests', '#mileBox', 'mile');
+    add(PARTS.some(p => atCap(p) && ptier(p.id) < PEVO_AT.length && S.gold >= pevoCost(p).gold && S.shards >= pevoCost(p).shards), 'Part ready to evolve', 'hero', '#pevoList', 'pevo');
+    add(isOpen('evo') && evoReady(), 'Class evolution ready', 'hero', '#evoBtn', 'evo');
+    const nx = RANKS[S.rank + 1];
+    add(isOpen('tab:trials') && nx && S.deepest >= nx.need && mode === 'main', `${nx.n} rank trial`, 'trials', '#trialBtn', 'trial');
+    const full = DUNGEONS.filter(d => S.keys[d.id] >= keyMax(d.id)).length;
+    add(isOpen('dung') && full > 0 && !autoOn('autodungeon'), `${full} dungeon${full > 1 ? 's' : ''} with full keys`, 'trials', '#dungList', 'dung');
+    add(isOpen('abyss') && Date.now() >= (S.abyssT || 0), 'Abyss dive ready', 'trials', '#abyssBtn', 'abyss');
+    add(isOpen('rush') && Date.now() >= (S.rushT || 0), 'Boss Rush ready', 'trials', '#rushBtn', 'rush');
+    add(isOpen('lab') && (S.labJobs || []).length < labSlots() && LAB.some(r => labL(r[0]) < LAB_MAX && S.runes >= labCost(labL(r[0])).runes && S.shards >= labCost(labL(r[0])).shards), 'Lab slot free', 'legacy', '#labBox', 'lab');
+    add(!!(S.exped && Date.now() >= S.exped.end), 'Expedition is back', 'allies', '#expBox', 'exped');
+    add(isOpen('fish') && fishLeft() > 0, `${fishLeft()} fishing cast${fishLeft() > 1 ? 's' : ''}`, 'quests', '[data-lock="fish"]', 'fish');
+    add(isOpen('tab:legacy') && retireGood(), `Retire: ×${retirePower().toFixed(1)} power`, 'legacy', '#retireBtn', 'retire');
+    return L;
+  }
+  function renderReady() {
+    const L = readyList();
+    $('#readyBar').hidden = !L.length;
+    setHTML($('#readyBar'), L.length ? `<span class="lbl">Ready</span>${L.map((r, i) => `<button type="button" class="rchip" data-ready="${i}">${r.text}</button>`).join('')}` : '');
+    readyCache = L;
+  }
+  let readyCache = [];
+  function flash(sel) {
+    const el = sel && document.querySelector(sel); if (!el) return;
+    const fb = el.closest('.box.folded'); if (fb) { S.set.fold = Object.assign({}, S.set.fold, { [fb.dataset.fold]: false }); applyFolds(); }
+    el.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' });
+    el.classList.remove('tutHi'); void el.offsetWidth; el.classList.add('tutHi'); setTimeout(() => el.classList.remove('tutHi'), 2600);
+  }
+  $('#readyBar').addEventListener('click', e => {
+    const b = e.target.closest('[data-ready]'); if (!b) return;
+    const r = readyCache[+b.dataset.ready]; if (!r) return;
+    audio(); showTab(r.tab); save(); setTimeout(() => flash(r.sel), 30);
+  });
+
+  // Coming up: the next few features you will unlock.
+  function upcoming(n) { return Object.keys(UNLOCKS).filter(k => !isOpen(k) && !k.startsWith('auto:')).slice(0, n).map(k => `${UNLOCKS[k][0]} (${UNLOCKS[k][2].toLowerCase()})`); }
+
+  // Pause: stops the game clock. Timers that run on the real clock (keys,
+  // lab, camp, expeditions) keep going.
+  let paused = false;
+  function setPause(on) {
+    paused = on; $('#pauseBtn').textContent = paused ? 'Resume' : 'Pause'; $('#pauseBtn').setAttribute('aria-pressed', String(paused));
+    if (paused) log('Paused. Press P or Resume to keep going.', 'c');
+  }
+  $('#pauseBtn').addEventListener('click', () => setPause(!paused));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+
+  // Foldable sections: click a section's title to fold it. Remembered per save.
+  function setupFolds() {
+    let n = 0;
+    for (const panel of document.querySelectorAll('.tabpanel')) {
+      [...panel.children].forEach((box, i) => {
+        if (!box.classList.contains('box')) return;
+        const head = [...box.children].find(c => /^H[23]$/.test(c.tagName) || c.classList.contains('shophead'));
+        if (!head) return;
+        const id = box.id || box.dataset.lock || panel.id + ':' + i;
+        box.dataset.fold = id; head.classList.add('foldhead'); n++;
+        const t = document.createElement('button'); t.type = 'button'; t.className = 'foldbtn'; t.setAttribute('aria-label', 'Fold or unfold this section'); t.textContent = '▾';
+        head.appendChild(t);
+        t.addEventListener('click', ev => { ev.stopPropagation(); S.set.fold = Object.assign({}, S.set.fold); S.set.fold[id] = !S.set.fold[id]; applyFolds(); save(); });
+      });
+    }
+    applyFolds();
+  }
+  function applyFolds() {
+    const f = S.set.fold || {};
+    for (const box of document.querySelectorAll('[data-fold]')) { const on = !!f[box.dataset.fold]; box.classList.toggle('folded', on); const b = box.querySelector('.foldbtn'); if (b) { b.textContent = on ? '▸' : '▾'; b.setAttribute('aria-expanded', String(!on)); } }
+  }
+
+  // Each tab remembers how far down you scrolled.
+  const tabScroll = {};
+  function scrollBox() { const shop = $('.panel.shop'); return getComputedStyle(shop).overflowY === 'auto' ? shop : document.scrollingElement; }
+  function rememberScroll(from) { tabScroll[from] = scrollBox().scrollTop; }
+  function restoreScroll(to) { const el = scrollBox(); if (el !== document.scrollingElement && tabScroll[to] !== undefined) el.scrollTop = tabScroll[to]; }
+
+  // Shortcuts help.
+  const KEYS = [['Space', 'Tap the front monster'], ['1 to 5', 'Cast a skill'], ['U', 'Ultimate'], ['B', 'Fight boss / farm'], ['C', 'Buy cheapest'], ['X', 'Auto-buy on or off'], ['P', 'Pause'], ['M', 'World map'], ['N', 'What should I do next?'], ['L', 'Full log'], ['S', 'Settings'],
+    ['T E F H K A', 'Train, Equip, Forge, Hero, Skills, Allies'], ['R Q O G', 'Trials, Quests, Book, Legacy'], ['?', 'This list'], ['Esc', 'Close a window']];
+  function openKeys() { setHTML($('#keysBody'), `<div class="keylist">${KEYS.map(([k, d]) => `<div><kbd>${k}</kbd><span>${d}</span></div>`).join('')}</div>`); $('#keysModal').hidden = false; }
+  $('#keysBtn').addEventListener('click', openKeys);
 
   ACHS.push(
     ['unlock10', 'Grand Tour', 'Unlock 20 features', () => Object.keys(S.unl || {}).length >= 20],
@@ -3861,6 +3959,7 @@
   /* ================= boot ================= */
   applyPin();
   buildEquip();
+  setupFolds();
   buildLists(); resize(); recalc(); hero.hp = st.maxHp; fillQuests(); regenKeys();
   if (!RENDER[S.tab]) S.tab = 'train';
   refreshAll();
@@ -3893,8 +3992,10 @@
     let left = raw * dev.speed * (slowmo > 0 ? 0.3 : 1);
     if (hitStop > 0) { hitStop -= raw; left = 0; }
     slowmo = Math.max(0, slowmo - raw); flashT = Math.max(0, flashT - raw);
+    if (paused) left = 0;
     while (left > 0) { const step = Math.min(0.05, left); update(step); left -= step; }
     draw();
+    if (paused) { ctx.fillStyle = 'rgba(10,8,16,.55)'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#f1ecff'; ctx.font = '700 28px "Pixelify Sans", monospace'; ctx.textAlign = 'center'; ctx.fillText('PAUSED', W / 2, H / 2); ctx.font = '600 14px Nunito, sans-serif'; ctx.fillText('Press P or Resume', W / 2, H / 2 + 26); ctx.textAlign = 'left'; }
     uiT += raw; saveT += raw;
     if (uiT > 0.15) { uiT = 0; renderHud(); }
     if (saveT > 5) { saveT = 0; save(); }
