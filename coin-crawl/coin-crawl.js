@@ -423,14 +423,14 @@
   const freshSk = () => ({ spin: 1, bolt: 1, heal: 1, rush: 1, frenzy: 1, meteor: 1, stop: 1, clone: 1 });
   const freshAllies = () => ({ knight: 0, wizard: 0, bard: 0, raccoon: 0, frog: 0, crab: 0 });
   const freshLife = () => ({ parries: 0, rares: 0, guardians: 0, ults: 0, expeds: 0, ascends: 0, fastBoss: 0, bestDps: 0, bestPull: -1, first: {}, merges: 0, summons: 0, mythics: 0, kills: 0, bosses: 0, chests: 0, taps: 0, bestCombo: 0, goldEarned: 0, skills: 0, time: 0, goblins: 0, elites: 0, variants: 0, deaths: 0, legendaries: 0, quests: 0, dungeons: 0, enchants: 0, mythic: 0, trials: 0, beasts: {} });
-  const freshSet = () => ({ cloudauto: true, numfmt: 'short', shake: true, nums: true, autobuy: false, autoclaim: false, autoboss: false, particles: true, skip: true, pin: true, autoeq: true, vol: 0.7, music: true, reserve: 0, compact: false, cb: false, autolevel: false, autosummon: false, autodungeon: false, autoretire: false, banter: true });
+  const freshSet = () => ({ cloudauto: true, numfmt: 'short', shake: true, nums: true, autobuy: false, autoclaim: false, autoboss: false, particles: true, skip: true, pin: true, autoeq: true, vol: 0.7, music: true, reserve: 0, compact: false, cb: false, autolevel: false, autosummon: false, autodungeon: false, autoretire: false, tips: true, banter: true });
   const fresh = () => ({
     gold: 0, gems: 0, runes: 0, shards: 0, floor: 1, kill: 0, maxFloor: 1, deepest: 1, tales: 0, runs: 0, cls: 'peasant', rank: 0,
     lv: freshLv(), sk: freshSk(), allies: freshAllies(), weapon: null, wlv: 0, ench: [null, null, null], locks: [false, false, false],
     relics: {}, book: {}, ach: {}, life: freshLife(), quests: [], keys: { vault: 3, mine: 3, forge: 3, grotto: 1 }, keyT: Date.now(),
     summon: { lv: 1, xp: 0 }, daily: { last: '', streak: 0 }, set: freshSet(),
     amt: '1', auto: true, farm: false, bossReady: false, evo: {}, pevo: {}, eq: freshEq(), prefix: { pre: 'Plain', pm: 1 }, tab: 'train', gps: 0, lastSeen: 0, muted: false, dev: false,
-    evMonth: 0, evoPath: {}, tal: {}, chal: null, chDone: {}, lshop: {}, ltok: 0, heir: null, camp: null, pass: null, maps: 0, fish: null, dailyCh: null, skOwn: {}, skCp: {}, skLv: {}, evTok: 0, sock: [null, null, null, null], gemInv: {}, look: { weapon: -1 }, cos: { hat: 'none', cape: 'none' }, cosOwn: {}, stars: 0, abyssBest: 0, rushBest: 0, abyssT: 0, rushT: 0, grottoT: Date.now(), exped: null, loadout: ['spin', 'bolt', 'heal', 'rush', 'frenzy'], weekly: null, unl: {}, lab: {}, labJobs: [], mileDone: 0, seenVer: 0, eqSel: { weapon: 0, armor: 0, acc: 0, pet: 0 }, eqCat: 'weapon'
+    evMonth: 0, evoPath: {}, tal: {}, chal: null, chDone: {}, lshop: {}, ltok: 0, heir: null, camp: null, pass: null, maps: 0, fish: null, dailyCh: null, skOwn: {}, skCp: {}, skLv: {}, evTok: 0, sock: [null, null, null, null], gemInv: {}, look: { weapon: -1 }, cos: { hat: 'none', cape: 'none' }, cosOwn: {}, stars: 0, abyssBest: 0, rushBest: 0, abyssT: 0, rushT: 0, grottoT: Date.now(), exped: null, loadout: ['spin', 'bolt', 'heal', 'rush', 'frenzy'], weekly: null, unl: {}, tutQ: [], lab: {}, labJobs: [], mileDone: 0, seenVer: 0, eqSel: { weapon: 0, armor: 0, acc: 0, pet: 0 }, eqCat: 'weapon'
   });
   function migrate(o) {
     const s = Object.assign(fresh(), o);
@@ -457,14 +457,54 @@
     s.prefix = o.prefix || (o.weapon && o.weapon.pm ? { pre: o.weapon.pre || 'Plain', pm: o.weapon.pm } : { pre: 'Plain', pm: 1 });
     s.book = {}; s.weapon = null;
     if (s.tab === 'gear') s.tab = 'train';
-    if (!Array.isArray(s.sock) || s.sock.length !== 4) s.sock = [null, null, null, null]; s.gemInv = s.gemInv || {}; s.look = Object.assign({ weapon: -1 }, s.look || {}); s.cos = Object.assign({ hat: 'none', cape: 'none' }, s.cos || {}); s.cosOwn = s.cosOwn || {}; s.skOwn = s.skOwn || {}; s.skCp = s.skCp || {}; s.skLv = s.skLv || {}; s.evoPath = s.evoPath || {}; s.tal = s.tal || {}; s.chDone = s.chDone || {}; s.lshop = s.lshop || {}; s.unl = s.unl || {}; s.lab = s.lab || {}; s.labJobs = Array.isArray(s.labJobs) ? s.labJobs : [];
-    for (const k of CATS) { const E = s.eq[k]; if (!Array.isArray(E.st)) E.st = Array(24).fill(0); if (!E.pity) E.pity = 0; if (!Array.isArray(E.x)) E.x = [-1, -1]; }
+    if (!Array.isArray(s.sock) || s.sock.length !== 4) s.sock = [null, null, null, null]; s.gemInv = s.gemInv || {}; s.look = Object.assign({ weapon: -1 }, s.look || {}); s.cos = Object.assign({ hat: 'none', cape: 'none' }, s.cos || {}); s.cosOwn = s.cosOwn || {}; s.skOwn = s.skOwn || {}; s.skCp = s.skCp || {}; s.skLv = s.skLv || {}; s.evoPath = s.evoPath || {}; s.tal = s.tal || {}; s.chDone = s.chDone || {}; s.lshop = s.lshop || {}; s.unl = s.unl || {}; s.lab = s.lab || {}; s.labJobs = Array.isArray(s.labJobs) ? s.labJobs : []; s.tutQ = Array.isArray(s.tutQ) ? s.tutQ : [];
+    for (const k of CATS) {
+      const E = s.eq[k], arr = (v, d) => Array.isArray(v) && v.length === 24 ? v.map(x => (typeof x === 'number' && isFinite(x) && x >= 0 ? x : d)) : Array(24).fill(d);
+      E.c = arr(E.c, 0); E.l = arr(E.l, 1); E.s = arr(E.s, 0); E.st = arr(E.st, 0);
+      if (!Array.isArray(E.x) || E.x.length !== 2) E.x = [-1, -1];
+      for (const v of ['on', 'sl', 'sx', 'pity']) if (typeof E[v] !== 'number' || !isFinite(E[v])) E[v] = v === 'on' ? -1 : v === 'sl' ? 1 : 0;
+      E.on = Math.max(-1, Math.min(23, Math.floor(E.on)));
+    }
+    if (!s.set || typeof s.set !== 'object') s.set = freshSet();
+    if (!s.keys || typeof s.keys !== 'object') s.keys = { vault: 3, mine: 3, forge: 3, grotto: 1 };
+    s.labJobs = (Array.isArray(s.labJobs) ? s.labJobs : []).filter(j => j && typeof j.k === 'string' && isFinite(j.end));
     if (s.weapon && !s.weapon.pm) { s.weapon.pm = 1; s.weapon.pre = s.weapon.name.split(' ')[0]; }
     return s;
   }
+  // Numbers in a save must be finite: NaN or Infinity would spread into every
+  // stat. Bad values become 0 (or a huge cap for overflowing currencies).
+  const NUMS = ['gold', 'gems', 'runes', 'shards', 'floor', 'kill', 'maxFloor', 'deepest', 'tales', 'runs', 'rank', 'wlv', 'stars', 'abyssBest', 'rushBest', 'ltok', 'maps', 'evTok', 'mileDone', 'gps', 'keyT', 'grottoT', 'abyssT', 'rushT'];
+  function sane(o) {
+    for (const k of NUMS) { const v = o[k]; if (typeof v !== 'number' || Number.isNaN(v)) o[k] = 0; else if (!isFinite(v)) o[k] = v > 0 ? 1e300 : 0; }
+    for (const k of ['floor', 'maxFloor', 'deepest']) o[k] = Math.max(1, Math.floor(o[k]));
+    for (const box of [o.lv, o.sk, o.allies, o.skLv, o.lab, o.tal]) if (box) for (const k in box) { const v = box[k]; if (typeof v !== 'number' || !isFinite(v) || v < 0) box[k] = 0; }
+    if (o.life) for (const k in o.life) if (typeof o.life[k] === 'number' && !isFinite(o.life[k])) o.life[k] = 0;
+    return o;
+  }
   S = fresh();
-  try { const raw = localStorage.getItem(KEY); if (raw) S = migrate(JSON.parse(raw)); } catch (e) {}
-  function save() { S.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  let loadErr = '';
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      try { S = sane(migrate(JSON.parse(raw))); }
+      catch (e) {
+        // Keep the broken save aside instead of overwriting it, then fall back to the backup.
+        loadErr = 'Your save could not be read, so the last backup was loaded.';
+        try { localStorage.setItem(KEY + '.broken', raw); } catch (e2) {}
+        try { const bak = localStorage.getItem(KEY + '.bak'); S = bak ? sane(migrate(JSON.parse(bak))) : fresh(); } catch (e3) { S = fresh(); loadErr = 'Your save could not be read and there was no backup, so a new game started. The old save is kept under coincrawl.v1.broken.'; }
+      }
+    }
+  } catch (e) {}
+  let bakT = 0;
+  function save() {
+    S.lastSeen = Date.now();
+    try {
+      for (const k of ['gold', 'gems', 'runes', 'shards']) if (!isFinite(S[k])) S[k] = Number.isNaN(S[k]) ? 0 : 1e300;
+      const json = JSON.stringify(S);
+      localStorage.setItem(KEY, json);
+      if (Date.now() - bakT > 60000) { bakT = Date.now(); localStorage.setItem(KEY + '.bak', json); }
+    } catch (e) {}
+  }
 
   /* ================= balance + stats ================= */
   const hpM = f => 16 * Math.pow(BAL.hpGrowth, f - 1);
@@ -650,6 +690,7 @@
   function addGems(n, why) { S.gems += n; log(`+${n} gem${n > 1 ? 's' : ''} ${why}.`, 'p'); tone(1175, 1760, 0.15, 'sine', 0.05); }
   const shakeIt = v => { if (S.set.shake && !reduceMotion) shake = Math.max(shake, v); };
 
+  let lastStopT = -1;
   const SRC_COL = { tap: '#ff7ad9', pet: '#c7a6ff', skill: '#62d2c4', ally: '#ff9a5a', auto: '#f1ecff' };
   function hit(e, base, src) {
     if (!e || e.dead || fainted) return;
@@ -664,7 +705,7 @@
     if (st.leech && src !== 'pet') hero.hp = Math.min(st.maxHp, hero.hp + Math.min(amt * st.leech, st.maxHp * 0.05));
     shakeIt(crit ? 5 : src === 'skill' ? 4 : 2);
     dmgFloat(e, amt, crit, src);
-    if (crit && (e.boss || e.special)) hitStop = Math.max(hitStop, 0.03);
+    if (crit && (e.boss || e.special) && (src === 'tap' || src === 'auto') && t - lastStopT > 0.3) { lastStopT = t; hitStop = Math.max(hitStop, 0.03); }
     sndHit(crit);
     if (e.boss && e.mechs.includes('enrage') && !e.enraged && e.hp < e.max * 0.5) { e.enraged = true; e.int *= 0.55; e.dmg *= 1.3; addFloat(e.wx, gy - PX * 18, 'ENRAGED!', '#ff5d73', 20, true); tone(90, 60, 0.4, 'sawtooth', 0.05); }
     if (e.special) { specialHit(e); return; }
@@ -913,7 +954,7 @@
     const now = Date.now();
     const std = DUNGEONS.filter(d => d.id !== 'grotto');
     if (std.every(d => S.keys[d.id] >= 3)) S.keyT = now;
-    else while (now - S.keyT >= keyMs()) { S.keyT += keyMs(); for (const d of std) if (S.keys[d.id] < 3) S.keys[d.id]++; }
+    else { const ms = keyMs(), n = Math.floor((now - S.keyT) / ms); if (n > 0 && isFinite(n)) { const add = Math.min(n, 3); for (const d of std) S.keys[d.id] = Math.min(3, S.keys[d.id] + add); S.keyT = n > 3 ? now : S.keyT + n * ms; } else if (!isFinite(S.keyT)) S.keyT = now; }
     if (S.keys.grotto >= 1) S.grottoT = now; else if (now - S.grottoT >= GROTTO_MS) { S.keys.grotto = 1; S.grottoT = now; }
   }
   function startRun(type, silent) {
@@ -1216,7 +1257,7 @@
       let f = list[0];
       hero.running = !f || !inRange(f);
       if (hero.running) hero.wx += RUN * dt;
-      const atkInt = st.atkInt / (frenzyT > 0 ? frenzyVal : 1) * (f && f.variant === 'frozen' ? 1.3 : 1);
+      const atkInt = Math.max(0.03, (st.atkInt || 1) / (frenzyT > 0 ? frenzyVal : 1) * (f && f.variant === 'frozen' ? 1.3 : 1));
       if (f && inRange(f)) {
         hero.atkT -= dt;
         while (hero.atkT <= 0 && f && !f.dead && enemies.includes(f)) { hero.atkT += atkInt; if (S.chal !== 'taponly') { hero.lunge = 1; hit(f, st.dmg * (cloneT > 0 ? 2 : 1), 'auto'); } }
@@ -1243,7 +1284,7 @@
       } else hero.atkT = Math.min(hero.atkT, 0.15);
       f = front();
       if (f && !fainted) {
-        if (st.petRate && onScreen(f)) { petT += dt * st.petRate; while (petT >= 1 && f && !f.dead) { petT -= 1; hit(f, st.tap * BAL.petHit, 'pet'); f = front(); } }
+        if (st.petRate && onScreen(f)) { petT = Math.min(5, petT + dt * st.petRate); while (petT >= 1 && f && !f.dead) { petT -= 1; hit(f, st.tap * BAL.petHit, 'pet'); f = front(); } }
         f = front();
         const kL = st.al.knight, wL = st.al.wizard;
         if (kL && f) { allyT.knight -= dt; if (allyT.knight <= 0 && inRange(f)) { allyT.knight = 1.2; allyLunge.knight = 1; hit(f, st.dmg * BAL.knight * kL * allyMul('knight') * st.allyMult, 'ally'); } }
@@ -2069,6 +2110,7 @@
     ['autosummon', 'Auto-summon', 'Does a ×35 summon whenever you have 210+ gems'],
     ['autodungeon', 'Auto-dungeon', 'Runs a side dungeon whenever its keys are full'],
     ['autoretire', 'Auto-retire', 'Retires on its own when a run stalls for 3 minutes and the tales are worth it (keeps your class)'],
+    ['tips', 'Tips', 'Shows a short tutorial card when a new feature unlocks'],
     ['compact', 'Compact menus', 'Hides descriptions to fit more on screen'],
     ['light', 'Light menus', 'Light colors for the menus (the dungeon stays dark)'],
     ['cloudauto', 'Auto cloud save', 'Saves to your cloud slot every 10 minutes (inside Claude)'],
@@ -2531,7 +2573,7 @@
     if (autoOn('autosummon') && S.gems >= 210) { const k = CATS.slice().sort((a, b) => S.eq[a].sl - S.eq[b].sl)[0]; summonEq(k, 35, true); }
     if (autoOn('autodungeon') && mode === 'main' && !fainted && S.deepest >= 5) { const d = DUNGEONS.find(q => S.keys[q.id] >= keyMax(q.id)); if (d) startRun(d.id, true); }
     if (S.exped && Date.now() >= S.exped.end && !S.exped.told) { S.exped.told = 1; log(`<b>${allyName(ALLIES.find(a => a.id === S.exped.id))}</b> is back from the expedition! Collect the loot in Allies.`, 'c'); markTab('allies'); }
-    weeklyCheck(); applyLocks(); labTick(); autoRetireTick();
+    weeklyCheck(); applyLocks(); labTick(); autoRetireTick(); if ($('#tutCard').hidden) showTut();
     const ti = titleNow(); if (ti !== lastTitle) { if (lastTitle) log(`New title: <b>${ti}</b>.`, 'g'); lastTitle = ti; }
   }
 
@@ -2735,7 +2777,7 @@
     if (ascendArm < performance.now()) { ascendArm = performance.now() + 4000; xRenderLegacy(); return; }
     ascendArm = 0;
     const life = S.life; life.ascends = (life.ascends || 0) + 1;
-    const keep = { unl: S.unl, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, tal: S.tal, chDone: S.chDone, lshop: S.lshop, ltok: S.ltok, heir: S.heir, evoPath: S.evoPath, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars + g, rank: S.rank, life, ach: S.ach, relics: S.relics, gems: S.gems, runes: S.runes, shards: S.shards, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, evo: S.evo, set: S.set, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, keys: S.keys, keyT: S.keyT, daily: S.daily, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, quests: S.quests, runs: S.runs };
+    const keep = { unl: S.unl, tutQ: S.tutQ, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, tal: S.tal, chDone: S.chDone, lshop: S.lshop, ltok: S.ltok, heir: S.heir, evoPath: S.evoPath, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars + g, rank: S.rank, life, ach: S.ach, relics: S.relics, gems: S.gems, runes: S.runes, shards: S.shards, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, evo: S.evo, set: S.set, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, keys: S.keys, keyT: S.keyT, daily: S.daily, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, quests: S.quests, runs: S.runs };
     resetRun(keep);
     log(`Ascended! +${g} stars (${S.stars} total). Everything is ×${Math.pow(1.5, S.stars).toFixed(1)} stronger forever.`, 'p');
     banner = { text: 'ASCENDED', sub: `${S.stars} stars`, life: 3 }; flashT = 0.6; jingle(); save(); refreshAll();
@@ -2894,7 +2936,7 @@
     $('#titleModal').hidden = false;
     setTimeout(() => $('#titleGo').focus({ preventScroll: true }), 30);
   }
-  $('#titleGo').addEventListener('click', () => { audio(); S.seenVer = VER; $('#titleModal').hidden = true; save(); startMusic(); });
+  $('#titleGo').addEventListener('click', () => { audio(); S.seenVer = VER; $('#titleModal').hidden = true; if (!S.life.kills && !(S.unl && S.unl.start)) { S.unl.start = 1; queueTut('start'); } save(); startMusic(); });
   const MPAT = [[0, -1, 2, -1, 4, 2, -1, 1], [0, 2, 4, 5, 4, 2, 0, -1], [4, -1, 3, 2, 0, -1, 2, -1], [0, 0, 4, -1, 5, 4, 2, -1], [2, 4, 6, 4, 2, -1, 0, -1]];
   let musicOn = false, mStep = 0;
   function startMusic() { if (musicOn) return; musicOn = true; setInterval(musicTick, 190); }
@@ -3315,7 +3357,7 @@
   ];
   const ls = k => (S.lshop && S.lshop[k]) || 0;
   function retireKeep(gain) {
-    return { tales: S.tales + gain, runs: S.runs + (gain ? 1 : 0), rank: S.rank, relics: S.relics, deepest: S.deepest, gems: S.gems, runes: S.runes, shards: S.shards, book: S.book, ach: S.ach, life: S.life, quests: S.quests, keys: S.keys, keyT: S.keyT, summon: S.summon, daily: S.daily, set: S.set, evo: S.evo, evoPath: S.evoPath, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, tal: S.tal, chDone: S.chDone, lshop: S.lshop, unl: S.unl, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, ltok: (S.ltok || 0) + (gain ? Math.ceil(gain / 4) + 1 : 0), heir: S.heir, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls };
+    return { tales: S.tales + gain, runs: S.runs + (gain ? 1 : 0), rank: S.rank, relics: S.relics, deepest: S.deepest, gems: S.gems, runes: S.runes, shards: S.shards, book: S.book, ach: S.ach, life: S.life, quests: S.quests, keys: S.keys, keyT: S.keyT, summon: S.summon, daily: S.daily, set: S.set, evo: S.evo, evoPath: S.evoPath, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, tal: S.tal, chDone: S.chDone, lshop: S.lshop, unl: S.unl, tutQ: S.tutQ, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, ltok: (S.ltok || 0) + (gain ? Math.ceil(gain / 4) + 1 : 0), heir: S.heir, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls };
   }
   function afterRetire(prevGold, gain, prevLv) {
     const start = Math.min(1 + 5 * ls('head'), Math.max(1, S.deepest));
@@ -3598,7 +3640,7 @@
       if (S.unl[k] || !isOpen(k)) continue;
       S.unl[k] = 1;
       if (!lockInit) continue;
-      log(`Unlocked: <b>${UNLOCKS[k][0]}</b>!`, 'p'); banner = { text: 'UNLOCKED', sub: UNLOCKS[k][0], life: 2.2 }; tone(784, 1175, 0.2, 'triangle', 0.05);
+      queueTut(k); log(`Unlocked: <b>${UNLOCKS[k][0]}</b>!`, 'p'); banner = { text: 'UNLOCKED', sub: UNLOCKS[k][0], life: 2.2 }; tone(784, 1175, 0.2, 'triangle', 0.05);
       if (k.startsWith('tab:')) markTab(k.slice(4));
       else { const el = document.querySelector(`[data-lock="${k}"]`), pn = el && el.closest('.tabpanel'); if (pn) markTab(pn.id.slice(6)); }
     }
@@ -3638,7 +3680,7 @@
     const now = Date.now(), done = S.labJobs.filter(j => now >= j.end);
     if (!done.length) return;
     S.labJobs = S.labJobs.filter(j => now < j.end);
-    for (const j of done) { S.lab[j.k] = labL(j.k) + 1; S.life.labs = (S.life.labs || 0) + 1; const r = LAB.find(x => x[0] === j.k); log(`Research done: <b>${r[1]}</b> level ${labL(j.k)} (${r[4](labV(j.k))}).`, 'p'); banner = { text: 'RESEARCH DONE', sub: r[1], life: 2.2 }; markTab('legacy'); }
+    for (const j of done) { const r = LAB.find(x => x[0] === j.k); if (!r) continue; S.lab[j.k] = labL(j.k) + 1; S.life.labs = (S.life.labs || 0) + 1; log(`Research done: <b>${r[1]}</b> level ${labL(j.k)} (${r[4](labV(j.k))}).`, 'p'); banner = { text: 'RESEARCH DONE', sub: r[1], life: 2.2 }; markTab('legacy'); }
     recalc(); save();
   }
   function renderLab() {
@@ -3684,6 +3726,79 @@
     if (gain > 0 && t - lastFloorT > 180 && gain >= Math.max(10, S.tales * 0.5)) { log('Auto-retire: the run stalled, so your hero retired.', 'c'); retireAs(S.cls); }
   }
 
+  // Tutorials: a short tip card when something new unlocks. "Show me" opens
+  // the right tab and highlights the feature.
+  const TUTS = {
+    start: ['Welcome to Coin Crawl', 'Your hero fights on their own. Tap the dungeon (or press Space) to hit harder, and keep tapping for a combo. Spend gold in Train, starting with Sword Practice and Armor. New tabs open as you go deeper.', 'train', '#parts'],
+    'tab:quests': ['Quests', 'Quests pay gems. Finish one, claim it and a new one takes its place. Open the daily chest every day to grow your streak.', 'quests', '#questList'],
+    'tab:skills': ['Skills', 'Skills fire on their own while Auto skills is on, or tap them under the dungeon (keys 1 to 5). Level them up here with gold. More skills unlock deeper.', 'skills', '#skillList'],
+    'tab:allies': ['Allies', 'Hire helpers with gold. They walk behind you and fight, and they evolve at levels 10 and 25. They go home when you retire.', 'allies', '#allyList'],
+    'tab:equip': ['Equipment', 'Spend gems to summon gear and pets. Every piece you own gives a small bonus forever, even when not equipped. Merge 5 copies into a better piece and level pieces with shards.', 'equip', '#sum11'],
+    'tab:trials': ['Rank trials', 'Beat a rank examiner in 40 seconds to promote: +20% damage and health and +10% gold forever. Trials are free to retry.', 'trials', '#trialBtn'],
+    'tab:book': ['Book', 'Every new piece of equipment you discover is +1% damage. Defeat 100 of a monster type to master it for +5% gold.', 'book', '#bookGrid'],
+    'tab:forge': ['Forge', 'Enhance your weapon slot with shards. It can fail, but nothing breaks. Reforge rerolls the weapon prefix for runes.', 'forge', '#enhanceBtn'],
+    'tab:hero': ['Hero', 'Your class lives here. Training parts evolve at level 100 for a big boost, paid with gold and shards. Check Training evolutions when a part hits its cap.', 'hero', '#pevoList'],
+    'tab:legacy': ['Retiring', 'Retire to restart stronger. You earn tales (+10% damage and gold each, forever) and pick a class. Retire when progress slows down, not before.', 'legacy', '#retireBtn'],
+    dung: ['Side dungeons', '30-second runs against a huge monster. The more health bars you break, the bigger the reward. Each run costs a key, and keys refill over time.', 'trials', '#dungList'],
+    gemshop: ['Gem shop', 'Spend gems on boosts like Time Warp (30 minutes of gold now), rune and shard pouches, and relic boxes.', 'quests', '#gemList'],
+    ench: ['Enchants', 'Reroll enchant lines on your weapon with runes. Lock a line you like so rerolls keep it. More lines open at floors 15 and 30.', 'forge', '#rerollBtn'],
+    fish: ['Fishing', '5 casts a day. Press Reel in while the marker is in the green zone. The closer to the middle, the better the fish.', 'quests', '[data-lock="fish"]'],
+    sockets: ['Gem sockets', 'Craft gems with shards and runes, then socket them for bonuses. Fuse 3 of the same gem into a stronger one.', 'forge', '#sockets'],
+    wardrobe: ['Wardrobe', 'Hats, capes and weapon looks for your hero. Pure style. Achievements and events unlock more.', 'hero', '#wardrobe'],
+    weekly: ['Weekly quest', 'One bigger quest every week with a big payout of gems, runes and shards.', 'quests', '#weeklyBox'],
+    event: ['Monthly event', 'Each month has an event currency and a pass. You earn pass XP just by playing. Claim tier rewards and spend tokens in the event shop.', 'quests', '#eventBox'],
+    maps: ['Treasure maps', 'Shiny and rare monsters drop treasure maps. Each map lets you dig 3 of 16 spots for loot.', 'trials', '[data-lock="maps"]'],
+    exped: ['Expeditions', 'Send an ally away for a few hours to bring back loot. They do not fight while they are gone.', 'allies', '#expBox'],
+    dailyc: ['Daily challenge', 'A special run with the same twists for everyone, once a day. Go as far as you can for rewards.', 'trials', '#dailyChBtn'],
+    camp: ['Camp', 'Camp buildings make resources over time, even while you are away. Collect and upgrade them here.', 'allies', '#campBox'],
+    evo: ['Class evolution', 'Evolve your class with gems and runes for big permanent bonuses. Each step offers two paths, and the choice is permanent for that class.', 'hero', '#evoBtn'],
+    abyss: ['Endless Abyss', 'One life, endless depth. Each depth is harder and pays more. You can dive every 15 minutes.', 'trials', '#abyssBtn'],
+    rush: ['Boss Rush', 'Beat 10 bosses in 90 seconds. Once an hour.', 'trials', '#rushBtn'],
+    talents: ['Talents', 'Talent points come from ranks, stars, every 25 floors and achievements. Talents stay forever, and resetting them is free.', 'hero', '#talents'],
+    sksum: ['Skill summon', 'Summon 18 extra skills with gems. Duplicate copies level them up. Put your favorites in the skill bar.', 'skills', '#skSum1'],
+    lshop: ['Legacy shop', 'Retiring gives legacy tokens. Spend them on head starts and discounts. Pick an heirloom to keep 10% of one part\'s levels when you retire.', 'legacy', '#lshop'],
+    ascend: ['Ascending', 'A bigger reset: tales and floors go, but you earn stars. Each star is ×1.5 damage, health and gold forever. More tales give more stars, so retire a few times first.', 'legacy', '#ascBtn'],
+    chal: ['Challenges', 'Start a new hero with a handicap. Reach the goal floor to win a permanent reward.', 'legacy', '#challenges'],
+    lab: ['Research lab', 'Research takes real time and keeps going while you are away. Pay runes and shards to start a project. You get a second slot at your first star.', 'legacy', '#labBox'],
+    'auto:autobuy': ['Auto-buy', 'The Auto-buy button in Train buys the cheapest training upgrade twice a second.', 'train', '#autobuyBtn'],
+    'auto:autoboss': ['Auto retry boss', 'Turn it on in Settings: while farming, you try the boss again every 3 loops.', 'settings', ''],
+    'auto:autolevel': ['Auto-level gear', 'Turn it on in Settings: spare shards level up your equipped gear.', 'settings', ''],
+    'auto:autodungeon': ['Auto-dungeon', 'Turn it on in Settings: side dungeons run whenever their keys are full.', 'settings', ''],
+    'auto:autosummon': ['Auto-summon', 'Turn it on in Settings: a ×35 summon happens whenever you have 210+ gems.', 'settings', ''],
+    'auto:autoretire': ['Auto-retire', 'Turn it on in Settings: your hero retires when a run stalls for 3 minutes and the tales are worth it.', 'settings', '']
+  };
+  const overlayOpen = () => !!document.querySelector('.overlay:not([hidden])');
+  function queueTut(k) {
+    if (!TUTS[k] || S.set.tips === false) return;
+    S.tutQ = (S.tutQ || []).filter(x => x !== k).concat([k]);
+    showTut();
+  }
+  function showTut() {
+    const c = $('#tutCard'), q = (S.tutQ || []).filter(k => TUTS[k]);
+    S.tutQ = q;
+    if (!q.length || S.set.tips === false) { c.hidden = true; return; }
+    if (overlayOpen()) return;
+    const [n, body] = TUTS[q[0]];
+    setHTML(c, `<div class="tuthead"><b>${n}</b>${q.length > 1 ? `<span class="lbl">1 of ${q.length}</span>` : ''}</div><p>${body}</p><div class="row"><button type="button" class="act ok gem" data-tut="show">Show me</button><button type="button" class="pill" data-tut="ok">Got it</button><button type="button" class="linkbtn" data-tut="off">Turn off tips</button></div>`);
+    c.hidden = false;
+  }
+  $('#tutCard').addEventListener('click', e => {
+    const b = e.target.closest('[data-tut]'); if (!b) return;
+    const k = (S.tutQ || [])[0], act = b.dataset.tut;
+    S.tutQ = (S.tutQ || []).slice(1);
+    if (act === 'off') { S.set.tips = false; S.tutQ = []; log('Tips are off. Turn them back on in Settings.', 'c'); }
+    if (act === 'show' && TUTS[k]) {
+      const [, , tab, sel] = TUTS[k];
+      if (tab === 'settings') openModal('setModal');
+      else {
+        showTab(tab); save();
+        const el = sel && document.querySelector(sel);
+        if (el) { el.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' }); el.classList.remove('tutHi'); void el.offsetWidth; el.classList.add('tutHi'); setTimeout(() => el.classList.remove('tutHi'), 3200); }
+      }
+    }
+    save(); showTut();
+  });
+
   ACHS.push(
     ['unlock10', 'Grand Tour', 'Unlock 20 features', () => Object.keys(S.unl || {}).length >= 20],
     ['unlockall', 'Seen It All', 'Unlock every feature', () => Object.keys(UNLOCKS).every(isOpen)],
@@ -3704,13 +3819,24 @@
   weeklyCheck(); lastMax = S.maxFloor;
   save();
   showTitle(awayMsg);
+  if (loadErr) log(loadErr, 'r');
   // Balance simulator hook (scripts/sim.js). Only active with ?sim in the URL:
   // it steps the game without drawing and exposes the internals to the bot.
   const SIM = /[?&]sim\b/.test(location.search);
   if (SIM) window.__cc = { ev: c => eval(c), step(sec) { for (let k = 0; k < sec * 10; k++) { window.__simT = (window.__simT || 0) + 0.1; update(0.1); } } };
   let last = performance.now(), uiT = 0, saveT = 0, fps = 60;
+  let errN = 0;
+  function frameErr(e) {
+    errN++;
+    console.error('Coin Crawl error', e);
+    if (errN <= 3) { try { log(`Something went wrong (${String(e && e.message || e).slice(0, 80)}). The game kept running. If this keeps happening, export your save in Settings.`, 'r'); } catch (e2) {} }
+  }
   function frame(now) {
     if (SIM) return;
+    requestAnimationFrame(frame);
+    try { frameBody(now); } catch (e) { frameErr(e); }
+  }
+  function frameBody(now) {
     const raw = Math.min(0.05, (now - last) / 1000); last = now;
     fps = fps * 0.95 + (1 / Math.max(raw, 0.001)) * 0.05;
     let left = raw * dev.speed * (slowmo > 0 ? 0.3 : 1);
@@ -3721,7 +3847,6 @@
     uiT += raw; saveT += raw;
     if (uiT > 0.15) { uiT = 0; renderHud(); }
     if (saveT > 5) { saveT = 0; save(); }
-    requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 })();

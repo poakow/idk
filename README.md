@@ -26,6 +26,7 @@ orbit-hop/
 scripts/build.js        Builds dist/ for normal web hosting
 scripts/sim.js          Balance simulator: a bot plays Coin Crawl for hours of game time
 tests/smoke.js          Playwright smoke test of the built site
+tests/stress.js         Crash and freeze test: extreme and broken saves plus random clicking
 .github/workflows/
   ci.yml                Builds and tests every push and pull request
   pages.yml             Deploys dist/ to GitHub Pages from the default branch
@@ -45,6 +46,7 @@ npx playwright install chromium          # once, for the smoke test
 npm run build                            # write dist/
 npm test                                 # build, then run the smoke test
 npm run serve                            # build and serve dist/ on port 8080
+npm run stress                           # crash and freeze test (about 3 minutes)
 npm run sim -- 8 active                  # simulate 8 hours of play (see Balance)
 ```
 

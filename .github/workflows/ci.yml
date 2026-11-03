@@ -25,3 +25,5 @@ jobs:
         run: node -e "for (const f of ['coin-crawl/coin-crawl.js']) new Function(require('fs').readFileSync(f, 'utf8')); console.log('scripts parse')"
       - name: Build and run smoke test
         run: npm test
+      - name: Crash and freeze test
+        run: node tests/stress.js

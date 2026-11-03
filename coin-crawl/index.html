@@ -124,6 +124,14 @@ kbd{font-family:var(--pixel);font-size:12px;background:var(--stone);border:1px s
 [data-lock].locked.quiet{display:none}
 [data-lock].locked::before{content:"\1F512  " attr(data-need);display:block;font-family:var(--pixel);font-size:11px;color:var(--mute);padding:6px 4px}
 .toggle.locked{opacity:.45;cursor:not-allowed}
+.tutcard{position:fixed;right:16px;bottom:16px;z-index:40;width:min(360px,calc(100vw - 32px));box-sizing:border-box;background:var(--wall);border:1px solid var(--gold);border-radius:12px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.45);display:flex;flex-direction:column;gap:8px;animation:tutin .25s ease}
+.tutcard[hidden]{display:none}
+.tutcard p{margin:0;color:var(--mute);font-size:14px;line-height:1.45}
+.tuthead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--pixel);color:var(--gold)}
+@keyframes tutin{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+.tutHi{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px;animation:tutp 1s ease 3}
+@keyframes tutp{50%{outline-color:transparent}}
+@media (prefers-reduced-motion: reduce){.tutcard,.tutHi{animation:none}}
 .lab{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px;border:1px solid var(--edge);border-radius:8px}
 .lab .qbar{grid-column:1/-1;margin:0}
 .mile{display:flex;gap:6px;flex-wrap:wrap}
@@ -638,6 +646,7 @@ body.cb .eqc::after{content:attr(data-g);position:absolute;left:3px;bottom:1px;f
   </div>
 </div>
 
+<div class="tutcard" id="tutCard" role="status" aria-live="polite" hidden></div>
 <div class="overlay" id="setModal" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="setTitle">
     <div class="mhead"><h2 id="setTitle">Settings</h2><button class="pill" type="button" data-close="setModal">Close</button></div>
