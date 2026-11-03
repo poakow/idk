@@ -223,6 +223,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .chip.unknown{color:var(--mute);border-style:dashed}
 .chip.got{border-color:var(--gold)}
 .chip.got::before{content:"★ ";color:var(--gold)}
+#abCats{gap:6px}#abCats .chip{font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--mute);padding:5px 12px}#abCats .chip.got{color:var(--text);border-color:var(--heal)}#abCats .chip.got::before{content:"✓ ";color:var(--heal)}
 .bigbtn{font:inherit;font-weight:800;background:var(--heal);color:var(--ink);border:0;border-radius:8px;padding:10px 14px;cursor:pointer}
 .bigbtn:disabled{background:var(--edge);color:var(--mute);cursor:not-allowed}
 .lifestats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
@@ -431,7 +432,8 @@ h3{font-size:17px}
           </div>
         </div>
         <div class="row"><button class="pill" id="autobuyBtn" type="button" aria-pressed="false">Auto-buy: off</button><button class="pill" id="buyCheap" type="button">Buy cheapest</button><button class="pill" id="focusBtn" type="button">Focus: cheapest</button></div>
-        <p class="hint">Auto-buy and Buy cheapest also evolve parts when you can afford it (evolving costs gold and shards). <b>Hold</b> any buy button to keep buying. Every 25 levels multiplies the stat by 1.6. At levels 100, 250, 500 and 1000 a part <b>evolves</b> into something much stronger.</p>
+        <div class="row chips" id="abCats"></div>
+        <p class="hint">Auto-buy and Buy cheapest pick the cheapest upgrade across training, skills and allies (switch each one on or off above), and save up gold to evolve parts (evolving costs gold and shards). <b>Hold</b> any buy button to keep buying. Every 25 levels multiplies the stat by 1.6. At levels 100, 250, 500 and 1000 a part <b>evolves</b> into something much stronger.</p>
         <div class="list" id="parts"></div>
       </div>
 

@@ -423,7 +423,7 @@
   const freshSk = () => ({ spin: 1, bolt: 1, heal: 1, rush: 1, frenzy: 1, meteor: 1, stop: 1, clone: 1 });
   const freshAllies = () => ({ knight: 0, wizard: 0, bard: 0, raccoon: 0, frog: 0, crab: 0 });
   const freshLife = () => ({ parries: 0, rares: 0, guardians: 0, ults: 0, expeds: 0, ascends: 0, fastBoss: 0, bestDps: 0, bestPull: -1, first: {}, merges: 0, summons: 0, mythics: 0, kills: 0, bosses: 0, chests: 0, taps: 0, bestCombo: 0, goldEarned: 0, skills: 0, time: 0, goblins: 0, elites: 0, variants: 0, deaths: 0, legendaries: 0, quests: 0, dungeons: 0, enchants: 0, mythic: 0, trials: 0, beasts: {} });
-  const freshSet = () => ({ cloudauto: true, numfmt: 'short', shake: true, nums: true, autobuy: false, autoclaim: false, autoboss: false, particles: true, skip: true, pin: true, autoeq: true, vol: 0.7, music: true, reserve: 0, compact: false, cb: false, autolevel: false, autosummon: false, autodungeon: false, autoretire: false, tips: true, banter: true });
+  const freshSet = () => ({ cloudauto: true, numfmt: 'short', shake: true, nums: true, autobuy: false, autoclaim: false, autoboss: false, particles: true, skip: true, pin: true, autoeq: true, vol: 0.7, music: true, reserve: 0, compact: false, cb: false, autolevel: false, autosummon: false, autodungeon: false, autoretire: false, automerge: false, autotrial: false, autolab: false, autoevo: false, tips: true, banter: true });
   const fresh = () => ({
     gold: 0, gems: 0, runes: 0, shards: 0, floor: 1, kill: 0, maxFloor: 1, deepest: 1, tales: 0, runs: 0, cls: 'peasant', rank: 0,
     lv: freshLv(), sk: freshSk(), allies: freshAllies(), weapon: null, wlv: 0, ench: [null, null, null], locks: [false, false, false],
@@ -656,7 +656,7 @@
   function spawnWave() {
     if (S.farm && S.kill >= 9) {
       S.kill = 0; farmLoops++;
-      if (autoOn('autoboss') && farmLoops >= 3) { farmLoops = 0; S.farm = false; S.kill = 9; log('Auto boss: trying the boss again.', 'c'); }
+      if ((autoOn('autoboss') || bestDeep() < 10) && farmLoops >= 3) { farmLoops = 0; S.farm = false; S.kill = 9; log('Auto boss: trying the boss again.', 'c'); }
     }
     const boss = S.kill >= 9;
     if (boss) S.bossReady = true;
@@ -1717,13 +1717,30 @@
     if (st.maxHp > oldMax) hero.hp += st.maxHp - oldMax;
     return true;
   }
+  // Auto-buy and Buy cheapest: picks the cheapest upgrade across training,
+  // skills and allies (each can be switched off), weighted by the focus.
+  // Evolutions count as 8x cheaper than they are, so gold is saved up for
+  // them instead of being spent on small upgrades forever.
+  const abOn = k => !S.set.ab || S.set.ab[k] !== false;
+  function buyOptions() {
+    const o = [];
+    if (abOn('train')) for (const p of PARTS) {
+      if (atCap(p)) { const c = pevoCost(p); if (ptier(p.id) < PEVO_AT.length && S.shards >= c.shards) o.push({ w: c.gold / 8 * focusW(p), cost: c.gold, buy: () => evolvePart(p) }); }
+      else o.push({ w: costOf(p.base, p.r, S.lv[p.id], 1) * focusW(p), cost: costOf(p.base, p.r, S.lv[p.id], 1), buy: () => buyPart(p, 1) });
+    }
+    const fw = S.set.buyfocus === 'damage' ? 1 : S.set.buyfocus && S.set.buyfocus !== 'cheapest' ? 4 : 1;
+    if (abOn('skills') && isOpen('tab:skills')) for (const sk of SKILLS) if (sk.gacha === undefined && unlocked(sk)) { const c = skillCost(sk); o.push({ w: c * 1.5 * fw, cost: c, buy: () => { if (S.gold < c) return false; S.gold -= c; S.sk[sk.id]++; return true; } }); }
+    if (abOn('allies') && isOpen('tab:allies') && S.chal !== 'noally') for (const a of ALLIES) if (S.deepest >= a.unlock) { const c = allyCost(a); o.push({ w: c * fw, cost: c, buy: () => { if (S.gold < c) return false; const first = !S.allies[a.id]; S.gold -= c; S.allies[a.id]++; recalc(); if (first) log(`<b>${a.name}</b> joined your party!`, 'c'); if (S.allies[a.id] === 10 || S.allies[a.id] === 25) log(`${ALLY_EVO[a.id][allyTier(a.id) - 1]} evolved into <b>${allyName(a)}</b>! Much stronger.`, 'p'); return true; } }); }
+    return o.filter(x => isFinite(x.w) && x.cost > 0);
+  }
   function buyCheapest(silent) {
     let bought = 0;
-    for (const p of PARTS) if (atCap(p) && evolvePart(p)) bought++;
+    if (abOn('train')) for (const p of PARTS) if (atCap(p) && evolvePart(p)) bought++;
     for (let k = 0; k < 40; k++) {
-      let best = null, bc = Infinity;
-      for (const p of PARTS) { if (atCap(p)) continue; const c = costOf(p.base, p.r, S.lv[p.id], 1) * focusW(p); if (c < bc) { bc = c; best = p; } }
-      if (!best || !buyPart(best, 1)) { if (best && focusW(best) > 1) break; break; }
+      const o = buyOptions();
+      if (!o.length) break;
+      let best = o[0]; for (const x of o) if (x.w < best.w) best = x;
+      if (S.gold < best.cost || !best.buy()) break;
       bought++;
     }
     if (bought && !silent) tone(523, 784, 0.1, 'triangle', 0.05);
@@ -1785,6 +1802,7 @@
   }
 
   function renderTrain() {
+    setHTML($('#abCats'), isOpen('auto:autobuy') ? `<span class="lbl">Auto-buy and Buy cheapest cover</span>${[['train', 'Training'], ['skills', 'Skills'], ['allies', 'Allies']].map(([k, n]) => `<button type="button" class="chip${abOn(k) ? ' got' : ''}" data-ab="${k}" aria-pressed="${abOn(k)}">${n}</button>`).join('')}` : '');
     for (const p of PARTS) {
       const L = S.lv[p.id], tier = ptier(p.id), nm = PART_NAMES[p.id][tier];
       if (atCap(p)) {
@@ -2118,6 +2136,10 @@
     ['autolevel', 'Auto-level gear', 'Levels your equipped gear with spare shards'],
     ['autosummon', 'Auto-summon', 'Does a ×35 summon whenever you have 210+ gems'],
     ['autodungeon', 'Auto-dungeon', 'Runs a side dungeon whenever its keys are full'],
+    ['automerge', 'Auto-merge gear', 'Merges 5 copies into the next piece and equips the best one'],
+    ['autotrial', 'Auto rank trial', 'Takes a rank trial as soon as one opens (retries every 2 minutes if you lose)'],
+    ['autolab', 'Auto-research', 'Starts the cheapest research you can afford whenever a lab slot is free'],
+    ['autoevo', 'Auto class evolution', 'Evolves your class as soon as you can afford it, taking path A'],
     ['autoretire', 'Auto-retire', 'Retires on its own when a run stalls for 3 minutes and the tales are worth it (keeps your class)'],
     ['tips', 'Tips', 'Shows a short tutorial card when a new feature unlocks'],
     ['compact', 'Compact menus', 'Hides descriptions to fit more on screen'],
@@ -2145,6 +2167,7 @@
   $('#openSettings').addEventListener('click', () => openModal('setModal'));
   $('#autobuyBtn').addEventListener('click', () => { S.set.autobuy = !S.set.autobuy; save(); renderTrain(); });
   $('#buyCheap').addEventListener('click', () => { audio(); if (buyCheapest(false)) save(); });
+  $('#abCats').addEventListener('click', e => { const b = e.target.closest('[data-ab]'); if (!b) return; S.set.ab = Object.assign({}, S.set.ab); S.set.ab[b.dataset.ab] = !abOn(b.dataset.ab); save(); renderTrain(); });
   $('#autoclaimBtn').addEventListener('click', () => { S.set.autoclaim = !S.set.autoclaim; save(); renderQuests(); });
   holdable($('#enhanceBtn'), enhance);
   $('#evoBtn').addEventListener('click', evolveClass);
@@ -2582,7 +2605,7 @@
     if (autoOn('autosummon') && S.gems >= 210) { const k = CATS.slice().sort((a, b) => S.eq[a].sl - S.eq[b].sl)[0]; summonEq(k, 35, true); }
     if (autoOn('autodungeon') && mode === 'main' && !fainted && S.deepest >= 5) { const d = DUNGEONS.find(q => S.keys[q.id] >= keyMax(q.id)); if (d) startRun(d.id, true); }
     if (S.exped && Date.now() >= S.exped.end && !S.exped.told) { S.exped.told = 1; log(`<b>${allyName(ALLIES.find(a => a.id === S.exped.id))}</b> is back from the expedition! Collect the loot in Allies.`, 'c'); markTab('allies'); }
-    weeklyCheck(); applyLocks(); labTick(); autoRetireTick(); if ($('#tutCard').hidden) showTut();
+    weeklyCheck(); applyLocks(); labTick(); autoMoreTick(); autoRetireTick(); if ($('#tutCard').hidden) showTut();
     const ti = titleNow(); if (ti !== lastTitle) { if (lastTitle) log(`New title: <b>${ti}</b>.`, 'g'); lastTitle = ti; }
   }
 
@@ -2935,7 +2958,7 @@
     if (g > 0) banner = { text: 'WELCOME BACK', sub: `+${fmt(g)} gold while you were away`, life: 3 };
     return msg;
   }
-  const CHANGES = ['Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
+  const CHANGES = ['Auto-buy now covers training, skills and allies (pick which) and saves up for evolutions', 'New automation: auto-merge, auto rank trial, auto-research and auto class evolution', 'New players retry bosses on their own until floor 10', 'Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
   function showTitle(report) {
     const returning = S.life.kills > 0, isNew = (S.seenVer || 0) < VER && returning;
     $('#titleHero').src = heroIcon(S.cls);
@@ -3637,7 +3660,7 @@
     sksum: ['Skill summon', ...atR(1)], lshop: ['Legacy shop', ...atR(1)], ascend: ['Ascend', ...atR(2)],
     chal: ['Challenges', ...atR(3)], lab: ['Research lab', ...atR(3)],
     'auto:autobuy': ['Auto-buy', ...atF(8)], 'auto:autoboss': ['Auto retry boss', ...atF(10)], 'auto:autolevel': ['Auto-level gear', ...atF(15)],
-    'auto:autodungeon': ['Auto-dungeon', ...atF(20)], 'auto:autosummon': ['Auto-summon', ...atR(1)], 'auto:autoretire': ['Auto-retire', ...atR(5)]
+    'auto:autodungeon': ['Auto-dungeon', ...atF(20)], 'auto:automerge': ['Auto-merge gear', ...atF(12)], 'auto:autotrial': ['Auto rank trial', ...atF(25)], 'auto:autolab': ['Auto-research', ...atR(4)], 'auto:autoevo': ['Auto class evolution', ...atF(45)], 'auto:autosummon': ['Auto-summon', ...atR(1)], 'auto:autoretire': ['Auto-retire', ...atR(5)]
   };
   const isOpen = k => !UNLOCKS[k] || UNLOCKS[k][1]();
   const autoOn = k => !!S.set[k] && isOpen('auto:' + k);
@@ -3729,6 +3752,21 @@
   $('#mileBox').addEventListener('click', e => { if (e.target.closest('#mileBtn')) { audio(); claimMiles(); } });
 
   // Auto-retire: when a run has stalled for 3 minutes and the tales are worth it.
+  let autoTrialT = -999;
+  function autoMoreTick() {
+    if (autoOn('automerge') && mode === 'main' && Math.floor(t) % 5 === 0) {
+      let n = 0;
+      for (const k of CATS) { const E = S.eq[k]; for (let i = 0; i < 23; i++) while (E.c[i] >= 5) { mergeOne(k, i); n++; } if (n && k !== 'pet' && S.set.autoeq) E.on = Math.max(E.on, E.s.lastIndexOf(1)); }
+      if (n) { recalc(); log(`Auto-merge: merged ${n} time${n > 1 ? 's' : ''}.`, 'p'); }
+    }
+    const next = RANKS[S.rank + 1];
+    if (autoOn('autotrial') && mode === 'main' && !fainted && next && S.deepest >= next.need && t - autoTrialT > 120) { autoTrialT = t; startRun('trial', true); }
+    if (autoOn('autoevo') && mode === 'main' && evoReady()) evolveClass('A');
+    if (autoOn('autolab') && isOpen('lab') && (S.labJobs || []).length < labSlots()) {
+      const opts = LAB.filter(r => labL(r[0]) < LAB_MAX && !(S.labJobs || []).some(j => j.k === r[0])).sort((a, b) => labL(a[0]) - labL(b[0]));
+      for (const r of opts) { const c = labCost(labL(r[0])); if (S.runes >= c.runes + 20 && S.shards >= c.shards + 20) { startLab(r[0]); break; } }
+    }
+  }
   function autoRetireTick() {
     if (!autoOn('autoretire') || mode !== 'main' || fainted || S.chal) return;
     const gain = talesFor(S.maxFloor);
@@ -3774,6 +3812,10 @@
     'auto:autolevel': ['Auto-level gear', 'Turn it on in Settings: spare shards level up your equipped gear.', 'settings', ''],
     'auto:autodungeon': ['Auto-dungeon', 'Turn it on in Settings: side dungeons run whenever their keys are full.', 'settings', ''],
     'auto:autosummon': ['Auto-summon', 'Turn it on in Settings: a ×35 summon happens whenever you have 210+ gems.', 'settings', ''],
+    'auto:automerge': ['Auto-merge gear', 'Turn it on in Settings: copies merge into better pieces by themselves and your best piece is equipped.', 'settings', ''],
+    'auto:autotrial': ['Auto rank trial', 'Turn it on in Settings: you take each rank trial as soon as it opens.', 'settings', ''],
+    'auto:autolab': ['Auto-research', 'Turn it on in Settings: the lab starts the cheapest research you can afford when a slot frees up.', 'settings', ''],
+    'auto:autoevo': ['Auto class evolution', 'Turn it on in Settings: your class evolves as soon as you can afford it, taking path A (damage).', 'settings', ''],
     'auto:autoretire': ['Auto-retire', 'Turn it on in Settings: your hero retires when a run stalls for 3 minutes and the tales are worth it.', 'settings', '']
   };
   const overlayOpen = () => !!document.querySelector('.overlay:not([hidden])');
