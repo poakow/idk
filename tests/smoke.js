@@ -60,9 +60,23 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   let s = await state();
   check(s.floor >= 3, `fresh game makes progress (floor ${s.floor} after 45s)`);
   check(s.floor <= 15, `fresh game does not run away (floor ${s.floor} after 45s, limit 15)`);
+  const forgeLocked = await page.evaluate(() => document.querySelector('#tab-forge').classList.contains('locked'));
+  check(forgeLocked === (s.floor < 8), `Forge tab lock matches progress (floor ${s.floor}, locked ${forgeLocked})`);
+  await ctx.close();
+
+  // 3b. A seasoned save: every tab and feature is open, nothing re-locks
+  ({ ctx, page, state } = await open('coin-crawl/index.html', { floor: 70, maxFloor: 70, deepest: 70, runs: 6, rank: 5, seenVer: 99, life: { kills: 1 } }));
+  await page.click('#titleGo');
   for (const tab of ['train', 'equip', 'forge', 'hero', 'skills', 'allies', 'trials', 'quests', 'book', 'legacy']) await page.click('#tab-' + tab);
-  check(true, 'every Coin Crawl tab opens');
+  check(true, 'every Coin Crawl tab opens on a seasoned save');
+  check(await page.evaluate(() => document.querySelectorAll('[data-lock].locked').length) === 0, 'every feature is unlocked on a seasoned save');
+  check(await page.isVisible('#labBox .lab'), 'research lab shows its projects');
   check(/inside Claude|works when/.test(await page.textContent('#boardBox')), 'leaderboard explains it needs Claude when hosted elsewhere');
+  await page.click('#tab-quests');
+  check(await page.isVisible('#mileBtn'), 'floor milestones can be claimed');
+  await page.click('#mileBtn');
+  s = await state();
+  check(s.mileDone === 70 && s.gems > 0, `claiming milestones pays out (up to floor ${s.mileDone})`);
   await ctx.close();
 
   // 4. Old save from before equipment existed upgrades cleanly

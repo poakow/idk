@@ -117,6 +117,19 @@ kbd{font-family:var(--pixel);font-size:12px;background:var(--stone);border:1px s
 .tabs button:hover{color:var(--text)}
 .tabs button[aria-selected="true"]{background:var(--edge);color:var(--text)}
 .tabs button[aria-selected="true"] img{opacity:1}
+.tabs button.locked{opacity:.38;cursor:not-allowed}
+.tabs button.locked .badge{display:none}
+[data-lock].locked>*{display:none!important}
+[data-lock].locked{min-height:0;border:1px dashed var(--edge);border-radius:10px}
+[data-lock].locked.quiet{display:none}
+[data-lock].locked::before{content:"\1F512  " attr(data-need);display:block;font-family:var(--pixel);font-size:11px;color:var(--mute);padding:6px 4px}
+.toggle.locked{opacity:.45;cursor:not-allowed}
+.lab{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px;border:1px solid var(--edge);border-radius:8px}
+.lab .qbar{grid-column:1/-1;margin:0}
+.mile{display:flex;gap:6px;flex-wrap:wrap}
+.mile span{font-size:11px;padding:3px 6px;border-radius:6px;border:1px solid var(--edge);color:var(--mute)}
+.mile span.got{color:var(--heal);border-color:var(--heal)}
+.mile span.next{color:var(--text);border-color:var(--gold)}
 .tabs .tl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .tabs .dot{position:absolute;top:4px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--combo)}
 .tabs .badge{position:absolute;top:2px;right:3px;min-width:16px;height:16px;border-radius:8px;background:var(--gold);color:var(--ink);font:800 10px/16px var(--body);padding:0 4px;box-sizing:border-box;text-align:center}
@@ -371,7 +384,7 @@ body.cb .eqc::after{content:attr(data-g);position:absolute;left:3px;bottom:1px;f
           </div>
         </div>
         <div class="row"><button class="pill" id="autobuyBtn" type="button" aria-pressed="false">Auto-buy: off</button><button class="pill" id="buyCheap" type="button">Buy cheapest</button><button class="pill" id="focusBtn" type="button">Focus: cheapest</button></div>
-        <p class="hint">Auto-buy and Buy cheapest also evolve parts when you can afford it (evolving costs gold and shards). <b>Hold</b> any buy button to keep buying. Every 25 levels doubles the stat. At levels 100, 250, 500 and 1000 a part <b>evolves</b> into something much stronger.</p>
+        <p class="hint">Auto-buy and Buy cheapest also evolve parts when you can afford it (evolving costs gold and shards). <b>Hold</b> any buy button to keep buying. Every 25 levels multiplies the stat by 1.6. At levels 100, 250, 500 and 1000 a part <b>evolves</b> into something much stronger.</p>
         <div class="list" id="parts"></div>
       </div>
 
@@ -399,14 +412,14 @@ body.cb .eqc::after{content:attr(data-g);position:absolute;left:3px;bottom:1px;f
           <div class="row"><button class="act shard" id="enhanceBtn" type="button">Enhance</button><button class="act rune" id="reforgeBtn" type="button">Reforge prefix</button></div>
           <p class="hint">Hold Enhance to keep trying.</p>
         </div>
-        <div class="box">
+        <div class="box" data-lock="sockets">
           <div class="shophead"><h3>Gem sockets</h3><span class="lbl">Tap a socket to take its gem out</span></div>
           <div class="sockets" id="sockets"></div>
           <div class="chips" id="gemInv"></div>
           <div class="row"><button class="act shard" id="craftGem" type="button">Craft a random gem (25 shards, 10 runes)</button></div>
           <p class="hint">Tap a gem to socket it. Fuse 3 of the same gem and level into 1 of the next level (up to 10). Sockets open at floor 10, Copper rank, Silver rank and your first star.</p>
         </div>
-        <div class="box">
+        <div class="box" data-lock="ench">
           <div class="shophead"><h3>Enchants</h3><span class="lbl">Lock lines to keep them</span></div>
           <div class="list" id="enchList"></div>
           <div class="row"><button class="act rune" id="rerollBtn" type="button">Reroll enchants</button><span class="hint" id="enchHint"></span></div>
@@ -415,7 +428,7 @@ body.cb .eqc::after{content:attr(data-g);position:absolute;left:3px;bottom:1px;f
 
       <div class="tabpanel" id="panel-hero" role="tabpanel" hidden>
         <div class="card" id="clsCard"></div>
-        <div class="box">
+        <div class="box" data-lock="evo">
           <div class="shophead"><h3>Class evolution</h3><span class="lbl">Permanent, kept when you retire</span></div>
           <div class="evochain" id="evoChain"></div>
           <p id="evoText"></p>
@@ -423,8 +436,8 @@ body.cb .eqc::after{content:attr(data-g);position:absolute;left:3px;bottom:1px;f
           <div class="row" id="evoPick"></div>
           <p class="hint">Each evolution offers two paths: A adds damage, B adds the class's specialty. The choice is permanent for that class.</p>
         </div>
-        <div class="box"><h3>Talents</h3><div id="talents"></div></div>
-        <div class="box">
+        <div class="box" data-lock="talents"><h3>Talents</h3><div id="talents"></div></div>
+        <div class="box" data-lock="wardrobe">
           <h3>Wardrobe</h3>
           <div id="wardrobe"></div>
         </div>
@@ -443,7 +456,7 @@ body.cb .eqc::after{content:attr(data-g);position:absolute;left:3px;bottom:1px;f
       <div class="tabpanel" id="panel-skills" role="tabpanel" hidden>
         <div class="shophead"><h2>Skills</h2><span class="lbl">Unlock by reaching floors</span></div>
         <p class="hint">Skills fire on their own while Auto skills is on. Tap a skill under the dungeon, or press its number key, to fire it yourself. Hold to level up fast.</p>
-        <div class="box"><div class="shophead"><h3>Skill summon</h3><span class="lbl">18 more skills</span></div><p class="hint" id="skSumTxt"></p><div class="row"><button class="act gem" id="skSum1" type="button">×1</button><button class="act gem" id="skSum11" type="button">×11</button></div></div>
+        <div class="box" data-lock="sksum"><div class="shophead"><h3>Skill summon</h3><span class="lbl">18 more skills</span></div><p class="hint" id="skSumTxt"></p><div class="row"><button class="act gem" id="skSum1" type="button">×1</button><button class="act gem" id="skSum11" type="button">×11</button></div></div>
         <div class="shophead"><h3>Skill bar</h3><span class="lbl">Pick up to 5</span></div>
         <div class="chips" id="loadout"></div>
         <div class="list" id="skillList"></div>
@@ -453,35 +466,40 @@ body.cb .eqc::after{content:attr(data-g);position:absolute;left:3px;bottom:1px;f
         <div class="shophead"><h2>Allies</h2><span class="lbl">They follow you down</span></div>
         <p class="hint">Hire helpers with gold. They walk behind your hero and pitch in. They go home when you retire.</p>
         <div class="list" id="allyList"></div>
-        <div class="box"><h3>Expeditions</h3><div id="expBox"></div></div>
-        <div class="box"><h3>Camp</h3><div id="campBox" class="list"></div></div>
+        <div class="box" data-lock="exped"><h3>Expeditions</h3><div id="expBox"></div></div>
+        <div class="box" data-lock="camp"><h3>Camp</h3><div id="campBox" class="list"></div></div>
       </div>
 
       <div class="tabpanel" id="panel-trials" role="tabpanel" hidden>
         <div class="shophead"><h2>Rank trials</h2><span class="lbl" id="rankLbl">Rookie</span></div>
-        <p class="hint">Beat a rank examiner to promote. Every rank is permanent: +30% damage, +30% health, +10% gold. Ranks stay when you retire.</p>
+        <p class="hint">Beat a rank examiner to promote. Every rank is permanent: +20% damage, +20% health, +10% gold. Ranks stay when you retire.</p>
         <div class="ranks" id="ranks"></div>
         <div class="box"><p id="trialText"></p><div class="row"><button class="act heal" id="trialBtn" type="button">Start trial</button></div></div>
-        <div class="box"><div class="shophead"><h3>Endless Abyss</h3><span class="lbl">One life</span></div><p id="abyssText"></p><div class="row"><button class="act heal" id="abyssBtn" type="button">Dive in</button></div></div>
-        <div class="box"><div class="shophead"><h3>Boss Rush</h3><span class="lbl">10 bosses, 90 seconds</span></div><p id="rushText"></p><div class="row"><button class="act heal" id="rushBtn" type="button">Start Boss Rush</button></div></div>
-        <div class="box"><div class="shophead"><h3>Daily challenge</h3><span class="lbl">Once a day</span></div><p id="dailyChText"></p><div class="row"><button class="act heal" id="dailyChBtn" type="button">Start today's challenge</button></div></div>
-        <div class="box"><div class="shophead"><h3>Treasure maps</h3><span class="lbl">From shiny and rare monsters</span></div><p>Each map lets you dig 3 of 16 spots for gold, gems, runes, shards or gear.</p><div class="row"><button class="act gold" id="mapBtn2" type="button">Dig up a map</button></div></div>
+        <div class="box" data-lock="abyss"><div class="shophead"><h3>Endless Abyss</h3><span class="lbl">One life</span></div><p id="abyssText"></p><div class="row"><button class="act heal" id="abyssBtn" type="button">Dive in</button></div></div>
+        <div class="box" data-lock="rush"><div class="shophead"><h3>Boss Rush</h3><span class="lbl">10 bosses, 90 seconds</span></div><p id="rushText"></p><div class="row"><button class="act heal" id="rushBtn" type="button">Start Boss Rush</button></div></div>
+        <div class="box" data-lock="dailyc"><div class="shophead"><h3>Daily challenge</h3><span class="lbl">Once a day</span></div><p id="dailyChText"></p><div class="row"><button class="act heal" id="dailyChBtn" type="button">Start today's challenge</button></div></div>
+        <div class="box" data-lock="maps"><div class="shophead"><h3>Treasure maps</h3><span class="lbl">From shiny and rare monsters</span></div><p>Each map lets you dig 3 of 16 spots for gold, gems, runes, shards or gear.</p><div class="row"><button class="act gold" id="mapBtn2" type="button">Dig up a map</button></div></div>
+        <div data-lock="dung">
         <div class="shophead"><h2>Side dungeons</h2><span class="lbl" id="keyTimer"></span></div>
         <p class="hint">30-second runs against a huge monster. The more health bars you break (up to 25), the bigger the reward. Each costs a key. Keys refill over time, even while you're away.</p>
         <div class="list" id="dungList"></div>
+        </div>
       </div>
 
       <div class="tabpanel" id="panel-quests" role="tabpanel" hidden>
         <div class="box"><div class="shophead"><h3>Daily chest</h3><span class="lbl" id="dailyLbl"></span></div><p id="dailyText"></p><div class="row"><button class="act heal" id="dailyBtn" type="button">Open daily chest</button></div></div>
-        <div class="box" id="weeklyBox"></div>
-        <div class="box" id="eventBox"></div>
-        <div class="box" id="passBox"></div>
-        <div class="box"><h3>Fishing pond</h3><div id="fishBox"></div></div>
+        <div class="box" id="mileBox"></div>
+        <div class="box" id="weeklyBox" data-lock="weekly"></div>
+        <div class="box" id="eventBox" data-lock="event"></div>
+        <div class="box quiet" id="passBox" data-lock="event"></div>
+        <div class="box" data-lock="fish"><h3>Fishing pond</h3><div id="fishBox"></div></div>
         <div class="shophead"><h2>Quests</h2><button class="pill" id="autoclaimBtn" type="button" aria-pressed="false">Auto-claim: off</button></div>
         <div class="list" id="questList"></div>
         <div class="box"><p>Equipment summons for weapons, armor, accessories and pets live in the <b>Equip</b> tab.</p><div class="row"><button class="act ok gem" type="button" id="goEquip">Go to Equip</button></div></div>
+        <div data-lock="gemshop">
         <div class="shophead"><h2>Gem shop</h2><span class="lbl">Gems stay when you retire</span></div>
         <div class="list" id="gemList"></div>
+        </div>
       </div>
 
       <div class="tabpanel" id="panel-book" role="tabpanel" hidden>
@@ -499,9 +517,10 @@ body.cb .eqc::after{content:attr(data-g);position:absolute;left:3px;bottom:1px;f
           <p>Reach floor 10 to retire. Your hero earns <b style="color:var(--heal)">tales</b> (+10% damage and gold each, forever), then you pick a class for your next hero. Gold, training, skills, allies and floor reset. Your equipment, weapon forge and enchants, ranks, class evolutions, relics, gems, runes, shards, tales, the book and achievements stay.</p>
           <button id="retireBtn" class="bigbtn" type="button" disabled>Reach floor 10 to retire</button>
         </div>
-        <div class="box"><h2>Legacy shop</h2><div id="lshop" class="list"></div></div>
-        <div class="box"><h2>Challenges</h2><p>A challenge starts a new hero with a handicap. Reach its goal floor to win a permanent reward. Starting one retires you (you still get tales).</p><div id="challenges" class="list"></div></div>
-        <div class="box"><h2>Ascend</h2><p id="ascText"></p><button id="ascBtn" class="bigbtn" type="button" disabled>Reach floor 80</button></div>
+        <div class="box" data-lock="lshop"><h2>Legacy shop</h2><div id="lshop" class="list"></div></div>
+        <div class="box" data-lock="chal"><h2>Challenges</h2><p>A challenge starts a new hero with a handicap. Reach its goal floor to win a permanent reward. Starting one retires you (you still get tales).</p><div id="challenges" class="list"></div></div>
+        <div class="box" data-lock="lab"><div class="shophead"><h2>Research lab</h2><span class="lbl" id="labLbl"></span></div><div id="labBox" class="list"></div></div>
+        <div class="box" data-lock="ascend"><h2>Ascend</h2><p id="ascText"></p><button id="ascBtn" class="bigbtn" type="button" disabled>Reach floor 80</button></div>
         <div class="box"><div class="shophead"><h2>Leaderboard</h2><span class="lbl">Everyone who plays this game</span></div><div id="boardBox" class="list"></div></div>
         <div class="shophead"><h2>Records</h2><span class="lbl" id="titleLine"></span></div>
         <div class="lifestats" id="records"></div>

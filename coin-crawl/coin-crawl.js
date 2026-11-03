@@ -235,13 +235,13 @@
     { id: 'map', name: 'Map Drawn in Crayon', fx: 'chest', v: 0.50, text: '+50% chest chance' }
   ];
   const PARTS = [
-    { id: 'sword', name: 'Sword Practice', base: 10, r: 1.15, fx: (s, n) => `Hits for ${fmt(s.dmg)} <span class="up">→ ${fmt(n.dmg)}</span>` },
-    { id: 'armor', name: 'Armor', base: 12, r: 1.16, fx: (s, n) => `${fmt(s.maxHp)} health <span class="up">→ ${fmt(n.maxHp)}</span>` },
-    { id: 'boots', name: 'Boots', base: 30, r: 1.24, fx: (s, n) => `${(1 / s.atkInt).toFixed(2)} swings/s <span class="up">→ ${(1 / n.atkInt).toFixed(2)}</span>` },
-    { id: 'ring', name: 'Lucky Ring', base: 50, r: 1.21, fx: (s, n) => `${pct1(s.crit)} crit, ×${s.ringGold.toFixed(2)} gold <span class="up">→ ${pct1(n.crit)}, ×${n.ringGold.toFixed(2)}</span>` },
-    { id: 'gaunt', name: 'Gauntlets', base: 15, r: 1.16, fx: (s, n) => `Taps hit for ${fmt(s.tap)} <span class="up">→ ${fmt(n.tap)}</span>` },
-    { id: 'torch', name: 'Combo Torch', base: 60, r: 1.35, fx: (s, n) => `Combo up to ×${s.comboMax.toFixed(2)} <span class="up">→ ×${n.comboMax.toFixed(2)}</span>` },
-    { id: 'pet', name: 'Pet Bat', base: 120, r: 1.2, fx: (s, n) => s.petRate ? `Bites ${s.petRate.toFixed(1)}/s for you <span class="up">→ ${n.petRate.toFixed(1)}/s</span>` : `Hire a bat that taps for you <span class="up">→ ${n.petRate.toFixed(1)}/s</span>` }
+    { id: 'sword', name: 'Sword Practice', base: 10, r: 1.19, fx: (s, n) => `Hits for ${fmt(s.dmg)} <span class="up">→ ${fmt(n.dmg)}</span>` },
+    { id: 'armor', name: 'Armor', base: 12, r: 1.19, fx: (s, n) => `${fmt(s.maxHp)} health <span class="up">→ ${fmt(n.maxHp)}</span>` },
+    { id: 'boots', name: 'Boots', base: 30, r: 1.28, fx: (s, n) => `${(1 / s.atkInt).toFixed(2)} swings/s <span class="up">→ ${(1 / n.atkInt).toFixed(2)}</span>` },
+    { id: 'ring', name: 'Lucky Ring', base: 50, r: 1.25, fx: (s, n) => `${pct1(s.crit)} crit, ×${s.ringGold.toFixed(2)} gold <span class="up">→ ${pct1(n.crit)}, ×${n.ringGold.toFixed(2)}</span>` },
+    { id: 'gaunt', name: 'Gauntlets', base: 15, r: 1.2, fx: (s, n) => `Taps hit for ${fmt(s.tap)} <span class="up">→ ${fmt(n.tap)}</span>` },
+    { id: 'torch', name: 'Combo Torch', base: 60, r: 1.4, fx: (s, n) => `Combo up to ×${s.comboMax.toFixed(2)} <span class="up">→ ×${n.comboMax.toFixed(2)}</span>` },
+    { id: 'pet', name: 'Pet Bat', base: 120, r: 1.25, fx: (s, n) => s.petRate ? `Bites ${s.petRate.toFixed(1)}/s for you <span class="up">→ ${n.petRate.toFixed(1)}/s</span>` : `Hire a bat that taps for you <span class="up">→ ${n.petRate.toFixed(1)}/s</span>` }
   ];
   const SKILLS = [
     { id: 'spin', short: 'Spin', name: 'Spin Slash', unlock: 3, cd: 8, base: 60, r: 1.45, val: L => 2 + L, fx: L => `Hits every monster on screen for ${2 + L}× damage` },
@@ -253,20 +253,26 @@
     { id: 'stop', short: 'Stop', name: 'Time Out', unlock: 45, cd: 35, base: 2e6, r: 1.55, val: L => 4 + 0.5 * L, fx: L => `Freezes every monster for ${(4 + 0.5 * L).toFixed(1)} seconds` },
     { id: 'clone', short: 'Clone', name: 'Clone Buddy', unlock: 60, cd: 40, base: 5e7, r: 1.6, val: L => 8 + L, fx: L => `A clone doubles your swings for ${8 + L} seconds` }
   ];
+  // Central balance knobs. scripts/sim.js plays the game with a bot to check
+  // that changes here keep the pace sane (see README, Balance).
+  const BAL = {
+    knight: 0.12, wizard: 0.3, splash: 0.4, crab: 0.35, allyTier: [1, 1.6, 2.5], allyTierU: [1, 1.4, 1.9],
+    bardSpd: 0.02, bardGold: 0.03, racSteal: 0.1, racChest: 0.003, chestCap: 0.2, ringGold: 0.04, torchCap: 2, petRate: 0.02, petHit: 0.5, hpGrowth: 1.55, lvGrowth: 1.04, mile: 1.6, rankDmg: 1.2, bossDrop: 0.35
+  };
   const block = L => L ? Math.min(0.6, 0.1 + 0.04 * L) : 0;
   const ALLIES = [
-    { id: 'knight', name: 'Sir Intern', unlock: 4, base: 150, r: 1.22, fx: L => `Blocks ${pct(block(L))} of hits and pokes for ${(0.3 * L).toFixed(1)}× damage` },
-    { id: 'wizard', name: 'Grumpy Wizard', unlock: 8, base: 900, r: 1.24, fx: L => `Fireball every 2.2s for ${(0.8 * L).toFixed(1)}× damage, splashes the rest` },
-    { id: 'bard', name: 'Kevin the Bard', unlock: 12, base: 4000, r: 1.26, fx: L => `Plays bangers: +${5 * L}% swing speed, +${6 * L}% gold` },
-    { id: 'raccoon', name: 'Raccoon Thief', unlock: 16, base: 15000, r: 1.28, fx: L => `Steals extra gold on 20% of kills (×${(1 + 0.3 * L).toFixed(1)}), +${(1.5 * L).toFixed(1)}% chest chance` },
-    { id: 'frog', name: 'Healer Frog', unlock: 25, base: 6e4, r: 1.3, fx: L => `Heals you for ${(1 + 0.4 * L).toFixed(1)}% health every second` },
-    { id: 'crab', name: 'Cannon Crab', unlock: 35, base: 3e5, r: 1.32, fx: L => `Fires a cannonball every 3s that hits everything for ${(1 * L).toFixed(1)}× damage` }
+    { id: 'knight', name: 'Sir Intern', unlock: 4, base: 150, r: 1.25, fx: L => `Blocks ${pct(block(L))} of hits and pokes for ${(BAL.knight * L).toFixed(1)}× damage` },
+    { id: 'wizard', name: 'Grumpy Wizard', unlock: 8, base: 900, r: 1.27, fx: L => `Fireball every 2.2s for ${(BAL.wizard * L).toFixed(1)}× damage, splashes the rest` },
+    { id: 'bard', name: 'Kevin the Bard', unlock: 12, base: 4000, r: 1.29, fx: L => `Plays bangers: +${Math.round(BAL.bardSpd * 100 * L)}% swing speed, +${Math.round(BAL.bardGold * 100 * L)}% gold` },
+    { id: 'raccoon', name: 'Raccoon Thief', unlock: 16, base: 15000, r: 1.31, fx: L => `Steals extra gold on 20% of kills (×${(1 + BAL.racSteal * L).toFixed(1)}), +${(BAL.racChest * 100 * L).toFixed(1)}% chest chance` },
+    { id: 'frog', name: 'Healer Frog', unlock: 25, base: 6e4, r: 1.33, fx: L => `Heals you for ${(1 + 0.4 * L).toFixed(1)}% health every second` },
+    { id: 'crab', name: 'Cannon Crab', unlock: 35, base: 3e5, r: 1.35, fx: L => `Fires a cannonball every 3s that hits everything for ${(BAL.crab * L).toFixed(1)}× damage` }
   ];
   const ALLY_EVO = { knight: ['Sir Intern', 'Sir Manager', 'Sir CEO'], wizard: ['Grumpy Wizard', 'Furious Archwizard', 'Wizard of Pure Rage'], bard: ['Kevin the Bard', 'Kevin the Rockstar', 'Kevin the Legend'], raccoon: ['Raccoon Thief', 'Raccoon Kingpin', 'Raccoon Overlord'], frog: ['Healer Frog', 'Doctor Frog', 'Frog of Miracles'], crab: ['Cannon Crab', 'Artillery Crab', 'Battleship Crab'] };
   const allyTier = id => S.allies[id] >= 25 ? 2 : S.allies[id] >= 10 ? 1 : 0;
   const allyName = a => ALLY_EVO[a.id][allyTier(a.id)];
-  const allyMul = id => [1, 2, 4][allyTier(id)];
-  const allyMulU = id => [1, 1.5, 2.25][allyTier(id)];
+  const allyMul = id => BAL.allyTier[allyTier(id)];
+  const allyMulU = id => BAL.allyTierU[allyTier(id)];
   const BANTER = ['Is it lunch yet?', 'I parked the cart outside.', 'That slime looked at me funny.', 'Ten more floors and I retire too.', 'Who keeps leaving bananas here?', 'My feet hurt.', 'Do monsters pay taxes?', 'I heard the boss is nice, actually.', 'Has anyone seen my other sock?', 'This dungeon needs better lighting.', 'I could do this all day. Please do not make me.', 'Gold! Shiny gold!', 'We are a team. A weird team.', 'Next time I pick the music.']
   const ALLY_BLURB = { frog: 'Heals you every second', crab: 'Shoots cannonballs that hit every monster', knight: 'Blocks hits for you and pokes things', wizard: 'Throws fireballs that splash every monster', bard: 'Makes you swing faster and earn more gold', raccoon: 'Steals bonus gold and sniffs out chests' };
   const CLASSES = {
@@ -303,7 +309,7 @@
     torch: ['Combo Torch', 'Combo Lantern', 'Combo Bonfire', 'Combo Sun', 'Combo Supernova'],
     pet: ['Pet Bat', 'Vampire Bat', 'Bat Swarm', 'Bat Kaiju', 'Bat God']
   };
-  const PEVO_FX = { sword: '×3 damage', armor: '×3 health', boots: '+25% swing speed', ring: '+5% crit, ×1.5 gold', gaunt: '×2 tap damage', torch: '+20 combo cap', pet: '×2 bites' };
+  const PEVO_FX = { sword: '×3 damage', armor: '×3 health', boots: '+25% swing speed', ring: '+5% crit, ×1.5 gold', gaunt: '×2 tap damage', torch: '+20 combo cap', pet: '×1.5 bites' };
   const ptier = id => (S.pevo && S.pevo[id]) || 0;
   const pcap = id => ptier(id) < PEVO_AT.length ? PEVO_AT[ptier(id)] : Infinity;
   const RANKS = [
@@ -417,14 +423,14 @@
   const freshSk = () => ({ spin: 1, bolt: 1, heal: 1, rush: 1, frenzy: 1, meteor: 1, stop: 1, clone: 1 });
   const freshAllies = () => ({ knight: 0, wizard: 0, bard: 0, raccoon: 0, frog: 0, crab: 0 });
   const freshLife = () => ({ parries: 0, rares: 0, guardians: 0, ults: 0, expeds: 0, ascends: 0, fastBoss: 0, bestDps: 0, bestPull: -1, first: {}, merges: 0, summons: 0, mythics: 0, kills: 0, bosses: 0, chests: 0, taps: 0, bestCombo: 0, goldEarned: 0, skills: 0, time: 0, goblins: 0, elites: 0, variants: 0, deaths: 0, legendaries: 0, quests: 0, dungeons: 0, enchants: 0, mythic: 0, trials: 0, beasts: {} });
-  const freshSet = () => ({ cloudauto: true, numfmt: 'short', shake: true, nums: true, autobuy: false, autoclaim: false, autoboss: false, particles: true, skip: true, pin: true, autoeq: true, vol: 0.7, music: true, reserve: 0, compact: false, cb: false, autolevel: false, autosummon: false, autodungeon: false, banter: true });
+  const freshSet = () => ({ cloudauto: true, numfmt: 'short', shake: true, nums: true, autobuy: false, autoclaim: false, autoboss: false, particles: true, skip: true, pin: true, autoeq: true, vol: 0.7, music: true, reserve: 0, compact: false, cb: false, autolevel: false, autosummon: false, autodungeon: false, autoretire: false, banter: true });
   const fresh = () => ({
     gold: 0, gems: 0, runes: 0, shards: 0, floor: 1, kill: 0, maxFloor: 1, deepest: 1, tales: 0, runs: 0, cls: 'peasant', rank: 0,
     lv: freshLv(), sk: freshSk(), allies: freshAllies(), weapon: null, wlv: 0, ench: [null, null, null], locks: [false, false, false],
     relics: {}, book: {}, ach: {}, life: freshLife(), quests: [], keys: { vault: 3, mine: 3, forge: 3, grotto: 1 }, keyT: Date.now(),
     summon: { lv: 1, xp: 0 }, daily: { last: '', streak: 0 }, set: freshSet(),
     amt: '1', auto: true, farm: false, bossReady: false, evo: {}, pevo: {}, eq: freshEq(), prefix: { pre: 'Plain', pm: 1 }, tab: 'train', gps: 0, lastSeen: 0, muted: false, dev: false,
-    evMonth: 0, evoPath: {}, tal: {}, chal: null, chDone: {}, lshop: {}, ltok: 0, heir: null, camp: null, pass: null, maps: 0, fish: null, dailyCh: null, skOwn: {}, skCp: {}, skLv: {}, evTok: 0, sock: [null, null, null, null], gemInv: {}, look: { weapon: -1 }, cos: { hat: 'none', cape: 'none' }, cosOwn: {}, stars: 0, abyssBest: 0, rushBest: 0, abyssT: 0, rushT: 0, grottoT: Date.now(), exped: null, loadout: ['spin', 'bolt', 'heal', 'rush', 'frenzy'], weekly: null, seenVer: 0, eqSel: { weapon: 0, armor: 0, acc: 0, pet: 0 }, eqCat: 'weapon'
+    evMonth: 0, evoPath: {}, tal: {}, chal: null, chDone: {}, lshop: {}, ltok: 0, heir: null, camp: null, pass: null, maps: 0, fish: null, dailyCh: null, skOwn: {}, skCp: {}, skLv: {}, evTok: 0, sock: [null, null, null, null], gemInv: {}, look: { weapon: -1 }, cos: { hat: 'none', cape: 'none' }, cosOwn: {}, stars: 0, abyssBest: 0, rushBest: 0, abyssT: 0, rushT: 0, grottoT: Date.now(), exped: null, loadout: ['spin', 'bolt', 'heal', 'rush', 'frenzy'], weekly: null, unl: {}, lab: {}, labJobs: [], mileDone: 0, seenVer: 0, eqSel: { weapon: 0, armor: 0, acc: 0, pet: 0 }, eqCat: 'weapon'
   });
   function migrate(o) {
     const s = Object.assign(fresh(), o);
@@ -451,7 +457,7 @@
     s.prefix = o.prefix || (o.weapon && o.weapon.pm ? { pre: o.weapon.pre || 'Plain', pm: o.weapon.pm } : { pre: 'Plain', pm: 1 });
     s.book = {}; s.weapon = null;
     if (s.tab === 'gear') s.tab = 'train';
-    if (!Array.isArray(s.sock) || s.sock.length !== 4) s.sock = [null, null, null, null]; s.gemInv = s.gemInv || {}; s.look = Object.assign({ weapon: -1 }, s.look || {}); s.cos = Object.assign({ hat: 'none', cape: 'none' }, s.cos || {}); s.cosOwn = s.cosOwn || {}; s.skOwn = s.skOwn || {}; s.skCp = s.skCp || {}; s.skLv = s.skLv || {}; s.evoPath = s.evoPath || {}; s.tal = s.tal || {}; s.chDone = s.chDone || {}; s.lshop = s.lshop || {};
+    if (!Array.isArray(s.sock) || s.sock.length !== 4) s.sock = [null, null, null, null]; s.gemInv = s.gemInv || {}; s.look = Object.assign({ weapon: -1 }, s.look || {}); s.cos = Object.assign({ hat: 'none', cape: 'none' }, s.cos || {}); s.cosOwn = s.cosOwn || {}; s.skOwn = s.skOwn || {}; s.skCp = s.skCp || {}; s.skLv = s.skLv || {}; s.evoPath = s.evoPath || {}; s.tal = s.tal || {}; s.chDone = s.chDone || {}; s.lshop = s.lshop || {}; s.unl = s.unl || {}; s.lab = s.lab || {}; s.labJobs = Array.isArray(s.labJobs) ? s.labJobs : [];
     for (const k of CATS) { const E = s.eq[k]; if (!Array.isArray(E.st)) E.st = Array(24).fill(0); if (!E.pity) E.pity = 0; if (!Array.isArray(E.x)) E.x = [-1, -1]; }
     if (s.weapon && !s.weapon.pm) { s.weapon.pm = 1; s.weapon.pre = s.weapon.name.split(' ')[0]; }
     return s;
@@ -461,9 +467,9 @@
   function save() { S.lastSeen = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
   /* ================= balance + stats ================= */
-  const hpM = f => 16 * Math.pow(1.38, f - 1);
+  const hpM = f => 16 * Math.pow(BAL.hpGrowth, f - 1);
   const dmgM = f => 2 * Math.pow(1.28, f - 1);
-  const goldM = f => 2.5 * Math.pow(1.23, f - 1);
+  const goldM = f => 2.5 * Math.pow(1.22, f - 1);
   const relicKinds = () => RELICS.filter(r => S.relics[r.id]).length;
   const bookCount = () => CATS.reduce((a, k) => a + S.eq[k].s.reduce((x, y) => x + (y ? 1 : 0), 0), 0);
   const fmt2 = v => v < 100 ? v.toFixed(2) : fmt(v);
@@ -492,32 +498,32 @@
     const PP = pathPerks(), CH = k => S.chDone && S.chDone[k];
     const necroOwn = C === 'necro' ? [1, 1.5, 2, 3][T] : 1;
     const wpn = eqEquip('weapon') * (S.prefix.pm || 1) * (1 + 0.12 * S.wlv) * (1 + ownedSum('weapon') + ownedSum('pet') * necroOwn);
-    const perm = (1 + 0.03 * achCount()) * (1 + 0.01 * bookCount()) * Math.pow(1.3, rk) * star * setM;
-    const mile = L => Math.pow(2, Math.floor(L / 25));
+    const perm = (1 + 0.03 * achCount()) * (1 + 0.01 * bookCount()) * Math.pow(BAL.rankDmg, rk) * star * setM;
+    const mile = L => Math.pow(BAL.mile, Math.floor(L / 25));
     const pe = id => ptier(id);
     const folk = C === 'peasant' ? [1, 1.15, 1.35, 1.7][T] : 1;
     const cDmg = (C === 'berserker' ? [1.4, 1.8, 2.4, 3.5][T] : 1) * folk;
     const cHp = (C === 'knight' ? [1.3, 1.6, 2.0, 2.7][T] : C === 'berserker' ? [0.8, 0.85, 0.9, 0.95][T] : 1) * folk;
-    const dmg = (1 + gem('ruby')) * 3 * (1 + 0.6 * lv.sword) * Math.pow(1.05, lv.sword) * mile(lv.sword) * Math.pow(3, pe('sword')) * tale * rel('dmg') * wpn * perm * cDmg * (1 + ench('dmg')) * PP.dmg * (1 + 0.08 * tal('p1')) * (CH('noally') ? 1.15 : 1);
-    const maxHp = 30 * (1 + 0.5 * lv.armor) * Math.pow(1.05, lv.armor) * mile(lv.armor) * Math.pow(3, pe('armor')) * rel('hp') * Math.pow(1.3, rk) * star * setM * cHp * PP.hp * (1 + 0.1 * tal('t4')) * (S.chal === 'glass' ? 0.2 : 1) * (1 + ench('hp')) * eqEquip('armor') * (1 + ownedSum('armor')) * eqEquip('helm') * (1 + gem('sapphire'));
-    const combo = 20 + 10 * lv.torch + 20 * pe('torch') + (C === 'monk' ? [20, 40, 60, 90][T] : 0);
+    const dmg = (1 + labV('whet')) * (1 + gem('ruby')) * 3 * (1 + 0.6 * lv.sword) * Math.pow(BAL.lvGrowth, lv.sword) * mile(lv.sword) * Math.pow(3, pe('sword')) * tale * rel('dmg') * wpn * perm * cDmg * (1 + ench('dmg')) * PP.dmg * (1 + 0.08 * tal('p1')) * (CH('noally') ? 1.15 : 1);
+    const maxHp = 30 * (1 + labV('mail')) * (1 + 0.5 * lv.armor) * Math.pow(BAL.lvGrowth, lv.armor) * mile(lv.armor) * Math.pow(3, pe('armor')) * rel('hp') * Math.pow(BAL.rankDmg, rk) * star * setM * cHp * PP.hp * (1 + 0.1 * tal('t4')) * (S.chal === 'glass' ? 0.2 : 1) * (1 + ench('hp')) * eqEquip('armor') * (1 + ownedSum('armor')) * eqEquip('helm') * (1 + gem('sapphire'));
+    const combo = 20 + labV('rhythm') + BAL.torchCap * lv.torch + 20 * pe('torch') + (C === 'monk' ? [20, 40, 60, 90][T] : 0);
     const rawCrit = Math.min(0.6, 0.05 + 0.02 * lv.ring) + 0.05 * pe('ring') + (C === 'rogue' ? [0.1, 0.15, 0.2, 0.25][T] : 0) + ench('crit') + (eqOn('acc') >= 0 ? EQ.acc.crit(eqOn('acc')) : 0);
     const bardU = al.bard * allyMulU('bard') * (C === 'minstrel' ? [2, 3, 4.5, 7][T] : 1);
     return {
       dmg, maxHp,
       regen: (maxHp * 0.02 + 0.5 * lv.armor) * rel('regen') * (C === 'knight' && T >= 2 ? 2 : 1),
-      atkInt: Math.max(0.1, 1 / Math.min(12, (1 + 0.08 * lv.boots) * (1 + 0.25 * pe('boots')) * rel('spd') * (1 + 0.05 * bardU) * (1 + ench('spd')) * eqEquip('boots') * (1 + 0.04 * tal('t1')) * (CH('speed') ? 1.1 : 1))),
+      atkInt: Math.max(0.1, 1 / Math.min(12, (1 + 0.08 * lv.boots) * (1 + 0.25 * pe('boots')) * rel('spd') * (1 + BAL.bardSpd * bardU) * (1 + ench('spd')) * eqEquip('boots') * (1 + 0.04 * tal('t1')) * (CH('speed') ? 1.1 : 1))),
       crit: Math.min(0.9, rawCrit < 0.6 ? rawCrit : 0.6 + (rawCrit - 0.6) * 0.5),
       critMult: 2 * rel('critm') + ench('critm') + (C === 'rogue' && T >= 2 ? T - 1 : 0) + ownedSum('boots') + gem('topaz') + 0.15 * tal('p2') + (CH('glass') ? 0.5 : 0),
-      ringGold: (1 + 0.08 * lv.ring) * Math.pow(1.5, pe('ring')),
-      goldMult: (1 + 0.08 * lv.ring) * Math.pow(1.5, pe('ring')) * tale * rel('gold') * (C === 'rogue' ? [1.25, 1.5, 2, 2.8][T] : 1) * (C === 'minstrel' ? [1.1, 1.2, 1.35, 1.6][T] : 1) * folk * (1 + 0.06 * bardU) * (1 + 0.05 * beastsMastered()) * Math.pow(1.1, rk) * star * setM * (1 + ench('gold')) * eqEquip('acc') * (1 + ownedSum('acc')) * (1 + gem('emerald')) * PP.gold * (1 + 0.08 * tal('f1')) * (CH('broke') ? 1.25 : 1) * (S.chal === 'broke' ? 0.3 : 1),
+      ringGold: (1 + BAL.ringGold * lv.ring) * Math.pow(1.5, pe('ring')),
+      goldMult: (1 + labV('greed')) * (1 + BAL.ringGold * lv.ring) * Math.pow(1.5, pe('ring')) * tale * rel('gold') * (C === 'rogue' ? [1.25, 1.5, 2, 2.8][T] : 1) * (C === 'minstrel' ? [1.1, 1.2, 1.35, 1.6][T] : 1) * folk * (1 + BAL.bardGold * bardU) * (1 + 0.05 * beastsMastered()) * Math.pow(1.1, rk) * star * setM * (1 + ench('gold')) * eqEquip('acc') * (1 + ownedSum('acc')) * (1 + gem('emerald')) * PP.gold * (1 + 0.08 * tal('f1')) * (CH('broke') ? 1.25 : 1) * (S.chal === 'broke' ? 0.3 : 1),
       tap: dmg * (0.4 + 0.02 * lv.gaunt) * Math.pow(2, pe('gaunt')) * rel('tap') * PP.tap * (CH('taponly') ? 1.5 : 1) * (C === 'monk' ? [1.6, 2.2, 3, 4.5][T] : 1) * (1 + ench('tap')),
       comboCap: combo,
       comboMax: 1 + 0.025 * combo,
       hold: (0.8 + 0.1 * lv.torch) * (1 + 0.1 * tal('t3')) * rel('hold') * (C === 'monk' ? [1.3, 1.5, 1.8, 2.2][T] : 1),
-      petRate: 0.8 * lv.pet * rel('pet') * Math.pow(2, pe('pet')),
-      boss: rel('boss') + ench('boss') + gem('onyx') + 0.1 * tal('p3'),
-      chest: 0.05 * rel('chest') + 0.015 * al.raccoon + 0.01 * tal('f2'),
+      petRate: lv.pet ? (1 + BAL.petRate * lv.pet) * rel('pet') * Math.pow(1.5, pe('pet')) : 0,
+      boss: rel('boss') + labV('anat') + ench('boss') + gem('onyx') + 0.1 * tal('p3'),
+      chest: Math.min(BAL.chestCap, 0.05 * rel('chest') + BAL.racChest * al.raccoon + 0.01 * tal('f2')),
       taken: (1 - block(al.knight)) * (C === 'knight' ? [0.85, 0.75, 0.65, 0.55][T] : 1),
       skillMult: (C === 'mage' ? [1.5, 2.2, 3, 4.5][T] : 1) * (1 + ench('skill')) * (1 + ownedSum('helm')) * (1 + gem('amethyst')) * (1 + 0.15 * tal('p4')),
       cdMult: (C === 'mage' ? [0.75, 0.65, 0.55, 0.45][T] : 1) * PP.cd * (1 - 0.04 * tal('t2')),
@@ -610,7 +616,7 @@
   function spawnWave() {
     if (S.farm && S.kill >= 9) {
       S.kill = 0; farmLoops++;
-      if (S.set.autoboss && farmLoops >= 3) { farmLoops = 0; S.farm = false; S.kill = 9; log('Auto boss: trying the boss again.', 'c'); }
+      if (autoOn('autoboss') && farmLoops >= 3) { farmLoops = 0; S.farm = false; S.kill = 9; log('Auto boss: trying the boss again.', 'c'); }
     }
     const boss = S.kill >= 9;
     if (boss) S.bossReady = true;
@@ -689,7 +695,7 @@
     }
     const rac = st.al.raccoon * allyMulU('raccoon');
     if (rac && Math.random() < 0.2) {
-      const sg = e.gold * goldNow() * (1 + 0.3 * rac);
+      const sg = e.gold * goldNow() * (1 + BAL.racSteal * rac);
       earn(sg); addFloat(e.wx, y - PX * 9, `STOLEN +${fmt(sg)}`, '#c9cfe0', 14);
     }
     if (e.elite) {
@@ -706,7 +712,7 @@
       const fightT = t - (e.engT || t), prevMax = S.maxFloor, prevDeep = S.deepest;
       let skip = 0;
       const steady = dpsLog.filter(d => d[2] !== 'skill' && d[2] !== 'tap' && d[0] > t - 5).reduce((a, d) => a + d[1], 0) / 5;
-      if (S.set.skip && fightT < 2 && steady * 2 > e.max) skip = clamp(Math.floor(Math.log(steady * 2 / e.max) / Math.log(1.38)), 0, 10);
+      if (S.set.skip && fightT < 2 && steady * 2 > e.max) skip = clamp(Math.floor(Math.log(steady * 2 / e.max) / Math.log(BAL.hpGrowth)), 0, 10);
       if (skip > 0) {
         let g = 0;
         for (let k = 1; k <= skip; k++) g += goldM(S.floor + k) * 19 * 0.25;
@@ -718,7 +724,7 @@
       S.deepest = Math.max(S.deepest, S.floor);
       const crossed = n => prevMax < n && S.maxFloor >= n, crossedDeep = n => prevDeep < n && S.deepest >= n;
       banner = { text: skip ? `+${skip + 1} FLOORS` : `FLOOR ${S.floor}`, sub: skip ? `Floor ${S.floor} · ${themeName(S.floor)}` : themeName(S.floor), life: 1.8 };
-      if (Math.random() < 0.6) dropEq();
+      if (Math.random() < BAL.bossDrop) dropEq();
       if (Math.random() < 0.2 || S.floor % 10 === 1) dropRelic();
       if (Math.random() < 0.25 + 0.03 * tal('f3')) addGems(1, 'from the boss');
       const sh = randi(1, 3) + skip; S.shards += sh;
@@ -907,7 +913,7 @@
     const now = Date.now();
     const std = DUNGEONS.filter(d => d.id !== 'grotto');
     if (std.every(d => S.keys[d.id] >= 3)) S.keyT = now;
-    else while (now - S.keyT >= KEY_MS) { S.keyT += KEY_MS; for (const d of std) if (S.keys[d.id] < 3) S.keys[d.id]++; }
+    else while (now - S.keyT >= keyMs()) { S.keyT += keyMs(); for (const d of std) if (S.keys[d.id] < 3) S.keys[d.id]++; }
     if (S.keys.grotto >= 1) S.grottoT = now; else if (now - S.grottoT >= GROTTO_MS) { S.keys.grotto = 1; S.grottoT = now; }
   }
   function startRun(type, silent) {
@@ -948,7 +954,7 @@
       const over = -e.hp;
       run.tier++; e.tier = run.tier;
       const df = Math.max(1, S.deepest);
-      if (e.special === 'vault') { const g = 25 * goldM(df) * st.goldMult * Math.pow(1.3, run.tier - 1); earn(g); run.got += g; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${fmt(g)} gold`, '#f5b942', 18, true); }
+      if (e.special === 'vault') { const g = goldM(df) * st.goldMult * (2 + 0.5 * run.tier); earn(g); run.got += g; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${fmt(g)} gold`, '#f5b942', 18, true); }
       if (e.special === 'mine') { const r = 1 + Math.ceil(run.tier * 0.8); S.runes += r; run.got += r; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${r} runes`, '#6fd6ff', 18, true); }
       if (e.special === 'grotto' && run.tier % 3 === 0) { S.gems += 1; run.got += 1; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +1 gem`, '#b98cff', 18, true); }
       if (e.special === 'forge') { const r = 3 + run.tier; S.shards += r; run.got += r; addFloat(e.wx, groundY() - PX * 18, `BAR ${run.tier}! +${r} shards`, '#ff9a5a', 18, true); }
@@ -964,7 +970,7 @@
     if (r.type === 'abyss' || r.type === 'rush') { xEndRun(r, win); run = null; mode = 'main'; enemies = []; hero.hp = st.maxHp; buildPips(); save(); return; }
     if (r.type === 'trial') {
       S.life.trials++;
-      if (win) { S.rank = r.rank; recalc(); log(`Promoted to <b>${RANKS[S.rank].n}</b>! +30% damage, +30% health, +10% gold forever.`, 't'); banner = { text: 'PROMOTED', sub: RANKS[S.rank].n + ' rank', life: 2.6 }; jingle(); tone(1046, 2093, 0.4, 'sine', 0.05, 0.3); }
+      if (win) { S.rank = r.rank; recalc(); log(`Promoted to <b>${RANKS[S.rank].n}</b>! +20% damage, +20% health, +10% gold forever.`, 't'); banner = { text: 'PROMOTED', sub: RANKS[S.rank].n + ' rank', life: 2.6 }; jingle(); tone(1046, 2093, 0.4, 'sine', 0.05, 0.3); }
       else log('Trial failed. Train up and try again, it is free.', 'r');
     } else {
       S.life.dungeons++; questEvent('dungeon', 1);
@@ -1237,10 +1243,10 @@
       } else hero.atkT = Math.min(hero.atkT, 0.15);
       f = front();
       if (f && !fainted) {
-        if (st.petRate && onScreen(f)) { petT += dt * st.petRate; while (petT >= 1 && f && !f.dead) { petT -= 1; hit(f, st.tap, 'pet'); f = front(); } }
+        if (st.petRate && onScreen(f)) { petT += dt * st.petRate; while (petT >= 1 && f && !f.dead) { petT -= 1; hit(f, st.tap * BAL.petHit, 'pet'); f = front(); } }
         f = front();
         const kL = st.al.knight, wL = st.al.wizard;
-        if (kL && f) { allyT.knight -= dt; if (allyT.knight <= 0 && inRange(f)) { allyT.knight = 1.2; allyLunge.knight = 1; hit(f, st.dmg * 0.3 * kL * allyMul('knight') * st.allyMult, 'ally'); } }
+        if (kL && f) { allyT.knight -= dt; if (allyT.knight <= 0 && inRange(f)) { allyT.knight = 1.2; allyLunge.knight = 1; hit(f, st.dmg * BAL.knight * kL * allyMul('knight') * st.allyMult, 'ally'); } }
         f = front();
         if (wL && f) {
           allyT.wizard -= dt;
@@ -1249,8 +1255,8 @@
             fx.push({ type: 'fire', from: allySX('wizard'), to: sx(f.wx), life: 0.3 });
             tone(300, 150, 0.15, 'sawtooth', 0.03);
             const others = alive().filter(e => e !== f && onScreen(e));
-            hit(f, st.dmg * 0.8 * wL * allyMul('wizard') * st.allyMult, 'ally');
-            for (const e of others) hit(e, st.dmg * 0.32 * wL * allyMul('wizard') * st.allyMult, 'ally');
+            hit(f, st.dmg * BAL.wizard * wL * allyMul('wizard') * st.allyMult, 'ally');
+            for (const e of others) hit(e, st.dmg * BAL.wizard * BAL.splash * wL * allyMul('wizard') * st.allyMult, 'ally');
           }
         }
       }
@@ -1295,7 +1301,7 @@
     slowT += dt;
     if (slowT >= 1) { slowT = 0; checkAch(); regenKeys(); if (S.set.autoclaim) S.quests.forEach((q, i) => { if (q.done) claimQuest(i); }); }
     autoT += dt;
-    if (S.set.autobuy && autoT >= 0.5) { autoT = 0; buyCheapest(true); }
+    if (autoOn('autobuy') && autoT >= 0.5) { autoT = 0; buyCheapest(true); }
     while (dpsLog.length && dpsLog[0][0] < t - 5) dpsLog.shift();
   }
 
@@ -1704,7 +1710,7 @@
       if (S.deepest < a.unlock || S.gold < c || S.chal === 'noally') return;
       const first = !S.allies[a.id];
       S.gold -= c; S.allies[a.id]++; recalc();
-      if (S.allies[a.id] === 10 || S.allies[a.id] === 25) { log(`${ALLY_EVO[a.id][allyTier(a.id) - 1]} evolved into <b>${allyName(a)}</b>! Twice as strong.`, 'p'); jingle(); }
+      if (S.allies[a.id] === 10 || S.allies[a.id] === 25) { log(`${ALLY_EVO[a.id][allyTier(a.id) - 1]} evolved into <b>${allyName(a)}</b>! Much stronger.`, 'p'); jingle(); }
       if (first) { log(`<b>${a.name}</b> joined your party!`, 'c'); jingle(); } else tone(659, 988, 0.12, 'triangle', 0.05);
       save();
     }, '', true);
@@ -1845,7 +1851,7 @@
   }
   function renderTrials() {
     setHTML($('#ranks'), RANKS.map((r, i) => `<span class="rk${i <= S.rank ? ' on' : i === S.rank + 1 ? ' next' : ''}" title="Needs floor ${r.need}">${r.n}</span>`).join(''));
-    setText($('#rankLbl'), `${RANKS[S.rank].n} · ×${Math.pow(1.3, S.rank).toFixed(2)} damage`);
+    setText($('#rankLbl'), `${RANKS[S.rank].n} · ×${Math.pow(BAL.rankDmg, S.rank).toFixed(2)} damage`);
     const next = RANKS[S.rank + 1], tb = $('#trialText'), btn = $('#trialBtn');
     if (!next) { setText(tb, 'You hold the highest rank. Legend.'); btn.disabled = true; btn.classList.remove('ok'); }
     else {
@@ -1862,7 +1868,7 @@
       setText(r.bc, S.deepest < 5 ? 'Floor 5' : mode === 'run' ? 'Busy' : `${k} key${k === 1 ? '' : 's'}`);
     }
     const full = DUNGEONS.every(d => S.keys[d.id] >= keyMax(d.id));
-    setText($('#keyTimer'), full ? 'Keys full' : (DUNGEONS.some(d => d.id !== 'grotto' && S.keys[d.id] < 3) ? `Next key in ${mmss(Math.max(0, (KEY_MS - (Date.now() - S.keyT)) / 1000))}` : 'Keys full') + (S.keys.grotto < 1 ? ` · Grotto key in ${mmss(Math.max(0, (GROTTO_MS - (Date.now() - S.grottoT)) / 1000))}` : ''));
+    setText($('#keyTimer'), full ? 'Keys full' : (DUNGEONS.some(d => d.id !== 'grotto' && S.keys[d.id] < 3) ? `Next key in ${mmss(Math.max(0, (keyMs() - (Date.now() - S.keyT)) / 1000))}` : 'Keys full') + (S.keys.grotto < 1 ? ` · Grotto key in ${mmss(Math.max(0, (GROTTO_MS - (Date.now() - S.grottoT)) / 1000))}` : ''));
   }
   function renderQuests() {
     fillQuests();
@@ -1907,7 +1913,7 @@
     btn.disabled = gain <= 0 || mode !== 'main';
     setText(btn, gain <= 0 ? `Reach floor 10 to retire (now ${S.maxFloor})` : `Retire for +${gain} tales`);
   }
-  const RENDER = { train: () => { renderTrain(); setText($('#focusBtn'), 'Focus: ' + (S.set.buyfocus || 'cheapest')); }, equip: renderEquip, forge: () => { renderForge(); renderSockets(); }, hero: () => { renderHero(); renderEvoBranches(); renderTalents(); renderWardrobe(); }, skills: () => { renderSkills(); xRenderSkills(); }, allies: () => { renderAllies(); xRenderAllies(); renderCamp(); }, trials: () => { renderTrials(); xRenderTrials(); renderTrials2(); }, quests: () => { renderQuests(); xRenderQuests(); renderEventPass(); }, book: renderBook, legacy: () => { renderLegacy(); xRenderLegacy(); renderLegacyShop(); renderChallenges(); } };
+  const RENDER = { train: () => { renderTrain(); setText($('#focusBtn'), 'Focus: ' + (S.set.buyfocus || 'cheapest')); }, equip: renderEquip, forge: () => { renderForge(); renderSockets(); }, hero: () => { renderHero(); renderEvoBranches(); renderTalents(); renderWardrobe(); }, skills: () => { renderSkills(); xRenderSkills(); }, allies: () => { renderAllies(); xRenderAllies(); renderCamp(); }, trials: () => { renderTrials(); xRenderTrials(); renderTrials2(); }, quests: () => { renderMiles(); renderQuests(); xRenderQuests(); renderEventPass(); }, book: renderBook, legacy: () => { renderLegacy(); xRenderLegacy(); renderLegacyShop(); renderChallenges(); renderLab(); } };
   let boardRendered = 0; const _rl = RENDER.legacy; RENDER.legacy = () => { _rl(); if (performance.now() - boardRendered > 5000) { boardRendered = performance.now(); renderOnline(); } };
 
   const skBtns = {};
@@ -1970,6 +1976,10 @@
   }
   $('#farmBtn').addEventListener('click', toggleFarm);
   function showTab(id) {
+    if (!isOpen('tab:' + id)) {
+      if (S.tab !== id && RENDER[S.tab] && isOpen('tab:' + S.tab)) { log(`<b>${UNLOCKS['tab:' + id][0]}</b> opens when you ${UNLOCKS['tab:' + id][2].toLowerCase()}.`, 'c'); return; }
+      id = 'train';
+    }
     S.tab = id;
     for (const b of document.querySelectorAll('.tabs button')) {
       const on = b.dataset.tab === id;
@@ -1986,7 +1996,7 @@
   }
   for (const b of document.querySelectorAll('.tabs button')) b.addEventListener('click', () => { showTab(b.dataset.tab); save(); });
 
-  const talesFor = f => f < 10 ? 0 : Math.floor(2 + Math.pow(f / 5, 2));
+  const talesFor = f => f < 10 ? 0 : Math.floor((2 + Math.pow(f / 5, 2)) * (1 + labV('story')));
   function renderHud() {
     setText($('#gold'), fmt(Math.floor(S.gold)));
     setText($('#gems'), fmt(S.gems)); setText($('#runes'), fmt(S.runes)); setText($('#shards'), fmt(S.shards));
@@ -2020,16 +2030,21 @@
     const b = e.target.closest('.cls'); if (!b) return;
     const gain = talesFor(S.maxFloor);
     if (gain <= 0) return;
-    const cls = b.dataset.cls;
+    retireAs(b.dataset.cls);
+  });
+  function retireAs(cls) {
+    const gain = talesFor(S.maxFloor);
+    if (gain <= 0 || mode !== 'main') return;
     const keep = Object.assign(retireKeep(gain), { cls }); keep.chal = null;
     const prevGold = S.gold, prevLv = Object.assign({}, S.lv);
     resetRun(keep);
     afterRetire(prevGold, gain, prevLv);
     $('#classModal').hidden = true;
+    lastMax = S.maxFloor; lastFloorT = t;
     log(`Retired! +${gain} tales. A new <b>${clsName(cls)}</b> enters the Damp Cellar.`, 't');
     banner = { text: 'NEW HERO', sub: `${clsName(cls)} · ${S.tales} tales`, life: 2.4 };
     jingle(); save(); refreshAll();
-  });
+  }
   $('#cancelRetire').addEventListener('click', () => { $('#classModal').hidden = true; });
   $('#retireBtn').addEventListener('click', () => { audio(); openRetire(); });
   function resetRun(keep) {
@@ -2053,6 +2068,7 @@
     ['autolevel', 'Auto-level gear', 'Levels your equipped gear with spare shards'],
     ['autosummon', 'Auto-summon', 'Does a ×35 summon whenever you have 210+ gems'],
     ['autodungeon', 'Auto-dungeon', 'Runs a side dungeon whenever its keys are full'],
+    ['autoretire', 'Auto-retire', 'Retires on its own when a run stalls for 3 minutes and the tales are worth it (keeps your class)'],
     ['compact', 'Compact menus', 'Hides descriptions to fit more on screen'],
     ['light', 'Light menus', 'Light colors for the menus (the dungeon stays dark)'],
     ['cloudauto', 'Auto cloud save', 'Saves to your cloud slot every 10 minutes (inside Claude)'],
@@ -2061,12 +2077,12 @@
   ];
   function renderSettings() {
     $('#setGrid').innerHTML = SETTINGS.map(([k, n, d]) => {
-      const on = k === 'numfmt' ? S.set.numfmt === 'sci' : !!S.set[k];
-      return `<button type="button" class="toggle" data-set="${k}" aria-pressed="${on}"><span><span style="display:block;font-weight:800">${n}</span><span class="hint">${d}</span></span><b>${k === 'numfmt' ? (on ? 'Scientific' : 'Short') : on ? 'On' : 'Off'}</b></button>`;
+      const on = k === 'numfmt' ? S.set.numfmt === 'sci' : !!S.set[k], lk = UNLOCKS['auto:' + k] && !isOpen('auto:' + k);
+      return `<button type="button" class="toggle${lk ? ' locked' : ''}" data-set="${k}" aria-pressed="${on}"${lk ? ' disabled' : ''}><span><span style="display:block;font-weight:800">${n}</span><span class="hint">${lk ? UNLOCKS['auto:' + k][2] + ' to unlock' : d}</span></span><b>${k === 'numfmt' ? (on ? 'Scientific' : 'Short') : on ? 'On' : 'Off'}</b></button>`;
     }).join('');
   }
   $('#setGrid').addEventListener('click', e => {
-    const b = e.target.closest('[data-set]'); if (!b) return;
+    const b = e.target.closest('[data-set]'); if (!b || b.disabled) return;
     const k = b.dataset.set;
     if (k === 'numfmt') S.set.numfmt = S.set.numfmt === 'sci' ? 'short' : 'sci'; else S.set[k] = !S.set[k];
     save(); renderSettings(); applyPin(); renderHud();
@@ -2343,14 +2359,14 @@
     };
     for (const k in badges) { const v = n[k] || ''; setText(badges[k], v === 0 ? '' : v); badges[k].classList.toggle('hotb', v === '!'); }
   }
-  function refreshAll() { buildPips(); buildSkillbar(); syncAmt(); syncMute(); showTab(RENDER[S.tab] ? S.tab : 'train'); renderHud(); }
+  function refreshAll() { applyLocks(); buildPips(); buildSkillbar(); syncAmt(); syncMute(); showTab(RENDER[S.tab] ? S.tab : 'train'); renderHud(); }
   function syncAmt() { for (const b of document.querySelectorAll('.amt button')) b.setAttribute('aria-pressed', String(b.dataset.amt === S.amt)); }
   for (const b of document.querySelectorAll('.amt button')) b.addEventListener('click', () => { S.amt = b.dataset.amt; syncAmt(); renderTrain(); save(); });
   function syncMute() { $('#mute').textContent = S.muted ? 'Sound off' : 'Sound on'; $('#mute').setAttribute('aria-pressed', String(!S.muted)); }
   $('#mute').addEventListener('click', () => { audio(); S.muted = !S.muted; syncMute(); save(); if (!S.muted) tone(660, 880, 0.08, 'triangle', 0.05); });
 
   /* ================= expansion: modes, pets, allies, QoL, feel ================= */
-  const VER = 9;
+  const VER = 10;
   const FLAVOR = ['Smells faintly of victory.', 'Previously owned by a very small hero.', 'It hums when nobody is looking.', 'Comes with a tiny warranty.', 'Surprisingly heavy for its size.', 'Found under a couch on floor 3.', 'Has a name. It will not say it.', 'Makes a sound like a happy kettle.', 'Polished by three generations of goblins.', 'Glows a little in the dark.', 'Rated five stars by a slime.', 'Was in a museum, briefly.', 'Whispers advice. Mostly bad advice.', 'Forged during a thunderstorm on a Tuesday.', 'Leaves sparkles everywhere. Everywhere.', 'Bosses get nervous when they see it.', 'Said to be cut from a falling star.', 'The dragon wants it back.', 'Sings in a key that does not exist.', 'Older than the dungeon itself.', 'Reality bends politely around it.', 'Nobody knows who made it. It knows.', 'Contains exactly one small universe.', 'The last of its kind. Probably.'];
   const TITLES = [
     ['Legend of the Deep', () => S.deepest >= 200], ['Starborn', () => S.stars >= 1], ['Abyss Walker', () => S.abyssBest >= 30], ['Mythic Collector', () => S.life.mythics >= 1],
@@ -2485,7 +2501,7 @@
     const f = front(), al = st.al;
     if (!fainted) {
       if (al.frog) hero.hp = Math.min(st.maxHp, hero.hp + st.maxHp * (0.01 + 0.004 * al.frog) * allyMulU('frog') * Math.min(3, st.allyMult) * dt);
-      if (al.crab && f) { crabT -= dt; if (crabT <= 0 && onScreen(f)) { crabT = 3; fx.push({ type: 'cannon', from: allySX('crab'), life: 0.4 }); tone(120, 60, 0.25, 'square', 0.05); for (const e of alive().filter(onScreen)) hit(e, st.dmg * al.crab * allyMul('crab') * st.allyMult, 'ally'); shakeIt(4); } }
+      if (al.crab && f) { crabT -= dt; if (crabT <= 0 && onScreen(f)) { crabT = 3; fx.push({ type: 'cannon', from: allySX('crab'), life: 0.4 }); tone(120, 60, 0.25, 'square', 0.05); for (const e of alive().filter(onScreen)) hit(e, st.dmg * BAL.crab * al.crab * allyMul('crab') * st.allyMult, 'ally'); shakeIt(4); } }
     }
     if (f && f.boss && !f.special && inRange(f) && !fainted && !(freezeT > 0)) {
       if (f.wind > 0) {
@@ -2511,11 +2527,11 @@
     if (S.maxFloor > lastMax) { lastMax = S.maxFloor; lastFloorT = t; }
     const dps = dpsLog.reduce((a, b) => a + b[1], 0) / 5; if (dps > S.life.bestDps) S.life.bestDps = dps;
     if (mode === 'main' && t - lastFloorT > 1200 && t - stuckT > 600) { stuckT = t; const sg = suggestions()[0]; log(`Stuck? Tip: ${sg ? sg.text : 'retire for tales, then push again'}.`, 'c'); }
-    if (S.set.autolevel) for (const k of CATS) { const E = S.eq[k]; const list = k === 'pet' ? equippedPets().map(p => p.i) : [E.on]; for (const i of list) if (i >= 0) for (let n = 0; n < 5 && levelEq(k, i); n++); }
-    if (S.set.autosummon && S.gems >= 210) { const k = CATS.slice().sort((a, b) => S.eq[a].sl - S.eq[b].sl)[0]; summonEq(k, 35, true); }
-    if (S.set.autodungeon && mode === 'main' && !fainted && S.deepest >= 5) { const d = DUNGEONS.find(q => S.keys[q.id] >= keyMax(q.id)); if (d) startRun(d.id, true); }
+    if (autoOn('autolevel')) for (const k of CATS) { const E = S.eq[k]; const list = k === 'pet' ? equippedPets().map(p => p.i) : [E.on]; for (const i of list) if (i >= 0) for (let n = 0; n < 5 && levelEq(k, i); n++); }
+    if (autoOn('autosummon') && S.gems >= 210) { const k = CATS.slice().sort((a, b) => S.eq[a].sl - S.eq[b].sl)[0]; summonEq(k, 35, true); }
+    if (autoOn('autodungeon') && mode === 'main' && !fainted && S.deepest >= 5) { const d = DUNGEONS.find(q => S.keys[q.id] >= keyMax(q.id)); if (d) startRun(d.id, true); }
     if (S.exped && Date.now() >= S.exped.end && !S.exped.told) { S.exped.told = 1; log(`<b>${allyName(ALLIES.find(a => a.id === S.exped.id))}</b> is back from the expedition! Collect the loot in Allies.`, 'c'); markTab('allies'); }
-    weeklyCheck();
+    weeklyCheck(); applyLocks(); labTick(); autoRetireTick();
     const ti = titleNow(); if (ti !== lastTitle) { if (lastTitle) log(`New title: <b>${ti}</b>.`, 'g'); lastTitle = ti; }
   }
 
@@ -2712,14 +2728,14 @@
   });
 
   /* ---------- ascend ---------- */
-  const ascendGain = () => S.deepest < 80 ? 0 : Math.max(1, Math.floor(S.deepest / 40) + Math.floor(S.tales / 150));
+  const ascendGain = () => S.deepest < 80 ? 0 : Math.max(1, Math.floor(0.4 * Math.log(1 + 0.1 * S.tales) / Math.log(1.5) + (S.deepest - 80) / 100));
   let ascendArm = 0;
   function ascend() {
     const g = ascendGain(); if (!g || mode !== 'main') return;
     if (ascendArm < performance.now()) { ascendArm = performance.now() + 4000; xRenderLegacy(); return; }
     ascendArm = 0;
     const life = S.life; life.ascends = (life.ascends || 0) + 1;
-    const keep = { evMonth: S.evMonth, tal: S.tal, chDone: S.chDone, lshop: S.lshop, ltok: S.ltok, heir: S.heir, evoPath: S.evoPath, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars + g, life, ach: S.ach, relics: S.relics, gems: S.gems, runes: S.runes, shards: S.shards, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, evo: S.evo, set: S.set, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, keys: S.keys, keyT: S.keyT, daily: S.daily, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, quests: S.quests, runs: S.runs };
+    const keep = { unl: S.unl, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, tal: S.tal, chDone: S.chDone, lshop: S.lshop, ltok: S.ltok, heir: S.heir, evoPath: S.evoPath, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars + g, rank: S.rank, life, ach: S.ach, relics: S.relics, gems: S.gems, runes: S.runes, shards: S.shards, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, evo: S.evo, set: S.set, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, keys: S.keys, keyT: S.keyT, daily: S.daily, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, quests: S.quests, runs: S.runs };
     resetRun(keep);
     log(`Ascended! +${g} stars (${S.stars} total). Everything is ×${Math.pow(1.5, S.stars).toFixed(1)} stronger forever.`, 'p');
     banner = { text: 'ASCENDED', sub: `${S.stars} stars`, life: 3 }; flashT = 0.6; jingle(); save(); refreshAll();
@@ -2727,7 +2743,7 @@
   $('#ascBtn').addEventListener('click', () => { audio(); ascend(); });
   function xRenderLegacy() {
     const g = ascendGain(), b = $('#ascBtn'), armed = ascendArm > performance.now();
-    setText($('#ascText'), S.deepest < 80 ? `Reach floor 80 to unlock Ascending (deepest ${S.deepest}). Ascending is a bigger reset: tales, ranks and floors go too, but you get stars. Each star is ×1.5 damage, health and gold forever. You keep equipment, relics, class evolutions, achievements, gems, runes and shards.${S.stars ? ` You have ${S.stars} stars.` : ''}` : `Ascend now for +${g} star${g > 1 ? 's' : ''} (you have ${S.stars}). Resets tales, ranks and floors as well as everything a retire resets. Keeps equipment, relics, class evolutions, achievements and currencies.`);
+    setText($('#ascText'), S.deepest < 80 ? `Reach floor 80 to unlock Ascending (deepest ${S.deepest}). Ascending is a bigger reset: your tales and floors go too, but you get stars. More tales and a deeper floor give more stars. Each star is ×1.5 damage, health and gold forever. You keep ranks, equipment, relics, class evolutions, achievements, gems, runes and shards.${S.stars ? ` You have ${S.stars} stars.` : ''}` : `Ascend now for +${g} star${g > 1 ? 's' : ''} (you have ${S.stars}). Resets tales and floors as well as everything a retire resets. Keeps ranks, equipment, relics, class evolutions, achievements and currencies. More tales give more stars, so retire a few times first.`);
     b.disabled = !g || mode !== 'main'; b.classList.toggle('armed', armed);
     setText(b, !g ? 'Reach floor 80' : armed ? `Tap again to ascend for +${g} stars` : `Ascend for +${g} stars`);
     setHTML($('#records'), [['Fastest boss', S.life.fastBoss ? S.life.fastBoss.toFixed(2) + 's' : '—'], ['Best DPS', fmt(S.life.bestDps)], ['Best pull', S.life.bestPull >= 0 ? `${GRADES[Math.floor(S.life.bestPull / 4)].n} ${TIERN[S.life.bestPull % 4]}` : '—'], ['Abyss depth', S.abyssBest], ['Boss Rush', S.rushBest + '/10'], ['Parries', S.life.parries], ['Rare monsters', S.life.rares], ['Guardians', S.life.guardians], ['Ascends', S.life.ascends || 0]].map(([l, v]) => `<div><span class="lbl">${l}</span><b>${v}</b></div>`).join(''));
@@ -2799,10 +2815,10 @@
     showTab(s[0].tab);
   }
   function breakdown() {
-    const lv = S.lv, C = S.cls, T = clsTier(C), mile = L => Math.pow(2, Math.floor(L / 25));
-    const sw = 3 * (1 + 0.6 * lv.sword) * Math.pow(1.05, lv.sword) * mile(lv.sword) * Math.pow(3, ptier('sword'));
+    const lv = S.lv, C = S.cls, T = clsTier(C), mile = L => Math.pow(BAL.mile, Math.floor(L / 25));
+    const sw = 3 * (1 + 0.6 * lv.sword) * Math.pow(BAL.lvGrowth, lv.sword) * mile(lv.sword) * Math.pow(3, ptier('sword'));
     const D = [['Sword training', sw], ['Tales', 1 + 0.1 * S.tales], ['Relics', rel('dmg')], ['Weapon piece', eqEquip('weapon')], ['Weapon prefix', S.prefix.pm || 1], ['Weapon forge', 1 + 0.12 * S.wlv],
-      ['Owned weapons and pets', 1 + ownedSum('weapon') + ownedSum('pet') * (C === 'necro' ? [1, 1.5, 2, 3][T] : 1)], ['Achievements', 1 + 0.03 * achCount()], ['Collection', 1 + 0.01 * bookCount()], ['Rank', Math.pow(1.3, S.rank)],
+      ['Owned weapons and pets', 1 + ownedSum('weapon') + ownedSum('pet') * (C === 'necro' ? [1, 1.5, 2, 3][T] : 1)], ['Achievements', 1 + 0.03 * achCount()], ['Collection', 1 + 0.01 * bookCount()], ['Rank', Math.pow(BAL.rankDmg, S.rank)],
       ['Stars', Math.pow(1.5, S.stars || 0)], ['Set bonus', setInfo().mul], ['Class', (C === 'berserker' ? [1.4, 1.8, 2.4, 3.5][T] : 1) * (C === 'peasant' ? [1, 1.15, 1.35, 1.7][T] : 1)], ['Enchants', 1 + ench('dmg')]];
     const G = [['Lucky Ring', st.ringGold], ['Tales', 1 + 0.1 * S.tales], ['Relics', rel('gold')], ['Accessory', eqEquip('acc')], ['Owned accessories', 1 + ownedSum('acc')], ['Rank', Math.pow(1.1, S.rank)], ['Stars', Math.pow(1.5, S.stars || 0)], ['Set bonus', setInfo().mul], ['Bestiary', 1 + 0.05 * beastsMastered()], ['Enchants', 1 + ench('gold')]];
     const row = (n, v, base) => `<div class="brow"><span>${n}</span><b>${base ? fmt(v) : '×' + fmt2(v)}</b></div>`;
@@ -2868,7 +2884,7 @@
     if (g > 0) banner = { text: 'WELCOME BACK', sub: `+${fmt(g)} gold while you were away`, life: 3 };
     return msg;
   }
-  const CHANGES = ['Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
+  const CHANGES = ['Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
   function showTitle(report) {
     const returning = S.life.kills > 0, isNew = (S.seenVer || 0) < VER && returning;
     $('#titleHero').src = heroIcon(S.cls);
@@ -2966,11 +2982,13 @@
   });
 
   const GUIDE = [
+    ['Unlocking things', 'You start with just Train. New tabs and features open as you reach deeper floors and retire, and a dashed box shows what opens each locked one. Auto-buy opens at floor 8, retiring and the Hero tab at floor 10, and the Research lab after 3 retires.'],
     ['The basics', 'Your hero runs and fights on their own. Tap the dungeon to hit harder, and keep tapping for a combo. Spend gold in Train. Every 10 kills is a boss with a 30-second timer. Lose, and you farm that floor until you press Fight boss.'],
     ['Getting stronger', 'Train upgrades your stats with gold. Equip gives you weapons, armor, helmets, boots, accessories and pets from gem summons. Forge enhances your weapon slot and holds enchants and gem sockets. Skills fire on their own, and you pick which 5 sit on your bar.'],
     ['Permanent progress', 'Retire (Legacy) for tales and legacy tokens, then pick a class. Rank trials (Trials) multiply everything forever. Class evolutions branch two ways at each step. Talents, achievements, relics, the collection and the bestiary all stack up. Ascend at floor 80 for stars, the biggest multiplier.'],
     ['Things to do every day', 'Daily chest and quests (Quests), the daily challenge, the Abyss every 15 minutes, Boss Rush every hour, side dungeons with keys, 5 fishing casts, camp collection, expeditions, and the monthly event and pass.'],
     ['Combat tips', 'Tap a boss when the red ! appears to parry its smash. Your ultimate (U) charges from taps and kills. Shiny, rare and mini-boss monsters drop the best stuff. Floor events like Gold Rush or Blood Moon change the rules for one floor.'],
+    ['Research and milestones', 'The Research lab (Legacy) runs timed projects for runes and shards, even while you are away. You get a second slot at your first star. Floor milestones (Quests) pay once for your best floor ever, with a Legendary piece every 50 floors.'],
     ['Stuck?', 'Press "What should I do next?" under the dungeon. Check Stat breakdown to see where your power comes from. Usually the answer is: retire for tales, take a rank trial, or merge and level your gear.']
   ];
   function openGuide() { setHTML($('#guideBody'), GUIDE.map(([h2, p]) => `<h3>${h2}</h3><p>${p}</p>`).join('')); $('#guideModal').hidden = false; }
@@ -3297,7 +3315,7 @@
   ];
   const ls = k => (S.lshop && S.lshop[k]) || 0;
   function retireKeep(gain) {
-    return { tales: S.tales + gain, runs: S.runs + (gain ? 1 : 0), rank: S.rank, relics: S.relics, deepest: S.deepest, gems: S.gems, runes: S.runes, shards: S.shards, book: S.book, ach: S.ach, life: S.life, quests: S.quests, keys: S.keys, keyT: S.keyT, summon: S.summon, daily: S.daily, set: S.set, evo: S.evo, evoPath: S.evoPath, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, tal: S.tal, chDone: S.chDone, lshop: S.lshop, evMonth: S.evMonth, ltok: (S.ltok || 0) + (gain ? Math.ceil(gain / 4) + 1 : 0), heir: S.heir, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls };
+    return { tales: S.tales + gain, runs: S.runs + (gain ? 1 : 0), rank: S.rank, relics: S.relics, deepest: S.deepest, gems: S.gems, runes: S.runes, shards: S.shards, book: S.book, ach: S.ach, life: S.life, quests: S.quests, keys: S.keys, keyT: S.keyT, summon: S.summon, daily: S.daily, set: S.set, evo: S.evo, evoPath: S.evoPath, eq: S.eq, prefix: S.prefix, wlv: S.wlv, ench: S.ench, locks: S.locks, skOwn: S.skOwn, skCp: S.skCp, skLv: S.skLv, evTok: S.evTok, sock: S.sock, gemInv: S.gemInv, look: S.look, cos: S.cos, cosOwn: S.cosOwn, stars: S.stars, abyssBest: S.abyssBest, rushBest: S.rushBest, abyssT: S.abyssT, rushT: S.rushT, grottoT: S.grottoT, loadout: S.loadout, weekly: S.weekly, seenVer: S.seenVer, eqSel: S.eqSel, eqCat: S.eqCat, tal: S.tal, chDone: S.chDone, lshop: S.lshop, unl: S.unl, lab: S.lab, labJobs: S.labJobs, mileDone: S.mileDone, evMonth: S.evMonth, ltok: (S.ltok || 0) + (gain ? Math.ceil(gain / 4) + 1 : 0), heir: S.heir, camp: S.camp, pass: S.pass, maps: S.maps, fish: S.fish, dailyCh: S.dailyCh, muted: S.muted, amt: S.amt, auto: S.auto, tab: S.tab, dev: S.dev, cls: S.cls };
   }
   function afterRetire(prevGold, gain, prevLv) {
     const start = Math.min(1 + 5 * ls('head'), Math.max(1, S.deepest));
@@ -3548,6 +3566,132 @@
     save(); renderWardrobe();
   });
 
+  /* ================= expansion 3: unlocks, research lab, milestones, auto-retire ================= */
+  // Features open up as you progress. Tests use your best floor ever (kept
+  // through ascending), retires, rank and stars, so nothing re-locks.
+  const bestDeep = () => Math.max(S.deepest, (S.life && S.life.best) || 0);
+  const atF = n => [() => bestDeep() >= n, `Reach floor ${n}`];
+  const atR = n => [() => (S.runs || 0) >= n, n === 1 ? 'Retire once' : `Retire ${n} times`];
+  const UNLOCKS = {
+    'tab:quests': ['Quests', ...atF(2)], 'tab:skills': ['Skills', ...atF(3)], 'tab:allies': ['Allies', ...atF(4)],
+    'tab:equip': ['Equip', ...atF(5)], 'tab:trials': ['Trials', ...atF(5)], 'tab:book': ['Book', ...atF(6)],
+    'tab:forge': ['Forge', ...atF(8)], 'tab:hero': ['Hero', ...atF(10)], 'tab:legacy': ['Legacy', ...atF(10)],
+    dung: ['Side dungeons', ...atF(5)], gemshop: ['Gem shop', ...atF(8)], ench: ['Enchants', ...atF(8)],
+    fish: ['Fishing pond', ...atF(10)], sockets: ['Gem sockets', ...atF(10)], wardrobe: ['Wardrobe', ...atF(10)],
+    weekly: ['Weekly quest', ...atF(12)], event: ['Monthly event and pass', ...atF(15)], maps: ['Treasure maps', ...atF(15)],
+    exped: ['Expeditions', ...atF(20)], dailyc: ['Daily challenge', ...atF(25)], camp: ['Camp', ...atF(30)],
+    evo: ['Class evolution', ...atF(35)], abyss: ['Endless Abyss', ...atF(40)],
+    rush: ['Boss Rush', () => bestDeep() >= 60 || S.stars > 0, 'Reach floor 60'],
+    talents: ['Talents', () => S.rank >= 1 || S.stars > 0, 'Reach Copper rank'],
+    sksum: ['Skill summon', ...atR(1)], lshop: ['Legacy shop', ...atR(1)], ascend: ['Ascend', ...atR(2)],
+    chal: ['Challenges', ...atR(3)], lab: ['Research lab', ...atR(3)],
+    'auto:autobuy': ['Auto-buy', ...atF(8)], 'auto:autoboss': ['Auto retry boss', ...atF(10)], 'auto:autolevel': ['Auto-level gear', ...atF(15)],
+    'auto:autodungeon': ['Auto-dungeon', ...atF(20)], 'auto:autosummon': ['Auto-summon', ...atR(1)], 'auto:autoretire': ['Auto-retire', ...atR(5)]
+  };
+  const isOpen = k => !UNLOCKS[k] || UNLOCKS[k][1]();
+  const autoOn = k => !!S.set[k] && isOpen('auto:' + k);
+  const lockNeed = k => `${UNLOCKS[k][0]}: ${UNLOCKS[k][2].toLowerCase()} to unlock`;
+  let lockInit = false;
+  function applyLocks() {
+    S.life.best = bestDeep(); S.unl = S.unl || {};
+    for (const k in UNLOCKS) {
+      if (S.unl[k] || !isOpen(k)) continue;
+      S.unl[k] = 1;
+      if (!lockInit) continue;
+      log(`Unlocked: <b>${UNLOCKS[k][0]}</b>!`, 'p'); banner = { text: 'UNLOCKED', sub: UNLOCKS[k][0], life: 2.2 }; tone(784, 1175, 0.2, 'triangle', 0.05);
+      if (k.startsWith('tab:')) markTab(k.slice(4));
+      else { const el = document.querySelector(`[data-lock="${k}"]`), pn = el && el.closest('.tabpanel'); if (pn) markTab(pn.id.slice(6)); }
+    }
+    lockInit = true;
+    for (const b of document.querySelectorAll('.tabs button')) { const k = 'tab:' + b.dataset.tab, lk = !isOpen(k); b.classList.toggle('locked', lk); b.setAttribute('aria-disabled', String(lk)); b.title = lk ? lockNeed(k) : ''; }
+    for (const el of document.querySelectorAll('[data-lock]')) { const k = el.dataset.lock, lk = !isOpen(k); el.classList.toggle('locked', lk); if (lk) el.dataset.need = lockNeed(k); }
+    $('#autobuyBtn').hidden = !isOpen('auto:autobuy');
+  }
+
+  // Research lab: slow, timed projects paid with runes and shards. Runs on the
+  // real clock, so it keeps going while you're away.
+  const LAB = [
+    ['whet', 'Whetstone Science', 'damage', 0.05, v => `+${pct(v)} damage`],
+    ['mail', 'Chainmail Weaving', 'health', 0.05, v => `+${pct(v)} health`],
+    ['greed', 'Applied Greed', 'gold', 0.04, v => `+${pct(v)} gold`],
+    ['anat', 'Boss Anatomy', 'boss', 0.05, v => `+${pct(v)} boss damage`],
+    ['rhythm', 'Combo Theory', 'combo', 2, v => `+${v} combo cap`],
+    ['story', 'Storytelling', 'tales', 0.03, v => `+${pct(v)} tales when you retire`],
+    ['lock', 'Locksmithing', 'keys', 0.04, v => `dungeon keys refill ${pct(v)} faster`]
+  ];
+  const LAB_MAX = 10;
+  const labL = k => (S.lab && S.lab[k]) || 0;
+  function labV(k) { const r = LAB.find(x => x[0] === k); return r ? labL(k) * r[3] : 0; }
+  const labCost = L => ({ runes: 15 + 10 * L, shards: 20 + 15 * L });
+  const labTime = L => 300 * Math.pow(1.7, L);
+  const labSlots = () => 1 + (S.stars > 0 ? 1 : 0);
+  const keyMs = () => KEY_MS / (1 + labV('lock'));
+  function startLab(k) {
+    const L = labL(k), c = labCost(L), jobs = S.labJobs || [];
+    if (!isOpen('lab') || L >= LAB_MAX || jobs.length >= labSlots() || jobs.some(j => j.k === k) || S.runes < c.runes || S.shards < c.shards) return;
+    S.runes -= c.runes; S.shards -= c.shards;
+    S.labJobs = jobs.concat([{ k, end: Date.now() + labTime(L) * 1000 }]);
+    log(`Research started: <b>${LAB.find(x => x[0] === k)[1]}</b> (${dur(labTime(L))}).`, 'u'); tone(600, 900, 0.1, 'triangle', 0.05); save(); renderLab();
+  }
+  function labTick() {
+    if (!S.labJobs || !S.labJobs.length) return;
+    const now = Date.now(), done = S.labJobs.filter(j => now >= j.end);
+    if (!done.length) return;
+    S.labJobs = S.labJobs.filter(j => now < j.end);
+    for (const j of done) { S.lab[j.k] = labL(j.k) + 1; S.life.labs = (S.life.labs || 0) + 1; const r = LAB.find(x => x[0] === j.k); log(`Research done: <b>${r[1]}</b> level ${labL(j.k)} (${r[4](labV(j.k))}).`, 'p'); banner = { text: 'RESEARCH DONE', sub: r[1], life: 2.2 }; markTab('legacy'); }
+    recalc(); save();
+  }
+  function renderLab() {
+    const jobs = S.labJobs || [], now = Date.now();
+    setText($('#labLbl'), `${jobs.length}/${labSlots()} running${labSlots() < 2 ? ' · 2nd slot at your first star' : ''}`);
+    setHTML($('#labBox'), LAB.map(([k, n, , , fx]) => {
+      const L = labL(k), c = labCost(L), j = jobs.find(x => x.k === k), max = L >= LAB_MAX;
+      const can = !j && !max && jobs.length < labSlots() && S.runes >= c.runes && S.shards >= c.shards;
+      const prog = j ? 1 - (j.end - now) / (labTime(L) * 1000) : 0;
+      return `<div class="lab"><div style="min-width:0"><div class="pname">${n} <span class="lv">Lv ${L}/${LAB_MAX}</span></div><div class="pfx">${L ? fx(labV(k)) : 'Not researched yet'}${max ? '' : ` <span class="up">→ ${fx((L + 1) * LAB.find(x => x[0] === k)[3])}</span>`}</div></div>` +
+        `<button type="button" class="buy${can ? ' ok' : ''}" data-lab="${k}"${j || max ? ' disabled' : ''}><span class="bn">${max ? 'Max' : j ? dur(Math.max(0, (j.end - now) / 1000)) + ' left' : 'Research'}</span><span class="bc">${max || j ? '—' : `${c.runes} runes, ${c.shards} shards · ${dur(labTime(L))}`}</span></button>` +
+        (j ? `<div class="qbar"><i style="width:${(prog * 100).toFixed(1)}%"></i></div>` : '') + '</div>';
+    }).join(''));
+  }
+  $('#labBox').addEventListener('click', e => { const b = e.target.closest('[data-lab]'); if (b) { audio(); startLab(b.dataset.lab); } });
+
+  // Floor milestones: one-time rewards for your best floor ever.
+  const MILES = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 250, 300, 400, 500];
+  const mileReward = f => ({ gems: 10 + Math.floor(f / 2), runes: 10 + Math.floor(f / 3), shards: 15 + Math.floor(f / 2), piece: f % 50 === 0 });
+  const mileText = f => { const r = mileReward(f); return `${r.gems} gems, ${r.runes} runes, ${r.shards} shards${r.piece ? ' and a Legendary piece' : ''}`; };
+  const milesReady = () => MILES.filter(f => f > (S.mileDone || 0) && bestDeep() >= f);
+  function claimMiles() {
+    const list = milesReady(); if (!list.length) return;
+    for (const f of list) {
+      const r = mileReward(f); S.gems += r.gems; S.runes += r.runes; S.shards += r.shards;
+      if (r.piece) { const cat = pick(['weapon', 'armor', 'helm', 'boots', 'acc']), i = 16 + randi(0, 3); giveItem(cat, i); log(`Milestone gift: ${itemLabel(cat, i)}!`, 'p'); }
+      S.mileDone = f;
+    }
+    log(`Claimed ${list.length} floor milestone${list.length > 1 ? 's' : ''} (up to floor ${S.mileDone}).`, 'p'); jingle(); recalc(); save(); renderMiles();
+  }
+  function renderMiles() {
+    const next = MILES.find(f => f > (S.mileDone || 0)), ready = milesReady();
+    setHTML($('#mileBox'), `<div class="shophead"><h3>Floor milestones</h3><span class="lbl">Best floor ${bestDeep()}</span></div><div class="mile">${MILES.map(f => `<span class="${f <= (S.mileDone || 0) ? 'got' : f === next ? 'next' : ''}">${f}</span>`).join('')}</div>` +
+      `<p class="hint" style="display:block">${next ? `Floor ${next}: ${mileText(next)}.` : 'Every milestone claimed. Wow.'}</p>` +
+      (ready.length ? `<div class="row"><button type="button" class="act ok gem" id="mileBtn">Claim ${ready.length} milestone${ready.length > 1 ? 's' : ''}</button></div>` : ''));
+  }
+  $('#mileBox').addEventListener('click', e => { if (e.target.closest('#mileBtn')) { audio(); claimMiles(); } });
+
+  // Auto-retire: when a run has stalled for 3 minutes and the tales are worth it.
+  function autoRetireTick() {
+    if (!autoOn('autoretire') || mode !== 'main' || fainted || S.chal) return;
+    const gain = talesFor(S.maxFloor);
+    if (gain > 0 && t - lastFloorT > 180 && gain >= Math.max(10, S.tales * 0.5)) { log('Auto-retire: the run stalled, so your hero retired.', 'c'); retireAs(S.cls); }
+  }
+
+  ACHS.push(
+    ['unlock10', 'Grand Tour', 'Unlock 20 features', () => Object.keys(S.unl || {}).length >= 20],
+    ['unlockall', 'Seen It All', 'Unlock every feature', () => Object.keys(UNLOCKS).every(isOpen)],
+    ['lab5', 'Mad Scientist', 'Finish 5 research projects', () => (S.life.labs || 0) >= 5],
+    ['labmax', 'Nobel Prize', 'Max a research project', () => LAB.some(r => labL(r[0]) >= LAB_MAX)],
+    ['mile100', 'Milestone Maniac', 'Claim the floor 100 milestone', () => (S.mileDone || 0) >= 100]
+  );
+
   /* ================= boot ================= */
   applyPin();
   buildEquip();
@@ -3560,8 +3704,13 @@
   weeklyCheck(); lastMax = S.maxFloor;
   save();
   showTitle(awayMsg);
+  // Balance simulator hook (scripts/sim.js). Only active with ?sim in the URL:
+  // it steps the game without drawing and exposes the internals to the bot.
+  const SIM = /[?&]sim\b/.test(location.search);
+  if (SIM) window.__cc = { ev: c => eval(c), step(sec) { for (let k = 0; k < sec * 10; k++) { window.__simT = (window.__simT || 0) + 0.1; update(0.1); } } };
   let last = performance.now(), uiT = 0, saveT = 0, fps = 60;
   function frame(now) {
+    if (SIM) return;
     const raw = Math.min(0.05, (now - last) / 1000); last = now;
     fps = fps * 0.95 + (1 / Math.max(raw, 0.001)) * 0.05;
     let left = raw * dev.speed * (slowmo > 0 ? 0.3 : 1);

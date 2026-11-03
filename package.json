@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node scripts/build.js",
     "test": "node scripts/build.js && node tests/smoke.js",
-    "serve": "node scripts/build.js && npx --yes http-server@14.1.1 dist -p 8080 -c-1"
+    "serve": "node scripts/build.js && npx --yes http-server@14.1.1 dist -p 8080 -c-1",
+    "sim": "node scripts/build.js && node scripts/sim.js"
   },
   "devDependencies": {
     "playwright": "1.63.0"

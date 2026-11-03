@@ -4,7 +4,7 @@ Two small browser games. No install, no account, no build tools needed to play.
 
 | Game | What it is |
 | --- | --- |
-| **[Coin Crawl](coin-crawl/)** | An idle dungeon crawler. Your hero runs and fights on their own while you tap for combos, summon gear, pets and skills, evolve your class down branching paths, and push through 22 areas, the Endless Abyss and Boss Rush. |
+| **[Coin Crawl](coin-crawl/)** | An idle dungeon crawler. Your hero runs and fights on their own while you tap for combos, summon gear, pets and skills, evolve your class down branching paths, and push through 22 areas, the Endless Abyss and Boss Rush. Features unlock as you go deeper and retire, and a research lab and floor milestones give long-term goals. |
 | **[Orbit Hop](orbit-hop/)** | A one-button space game. Let go of your orbit at the right moment and get caught by the next planet. |
 
 ## Play
@@ -24,6 +24,7 @@ coin-crawl/
 orbit-hop/
   index.html            Orbit Hop (single file)
 scripts/build.js        Builds dist/ for normal web hosting
+scripts/sim.js          Balance simulator: a bot plays Coin Crawl for hours of game time
 tests/smoke.js          Playwright smoke test of the built site
 .github/workflows/
   ci.yml                Builds and tests every push and pull request
@@ -44,6 +45,7 @@ npx playwright install chromium          # once, for the smoke test
 npm run build                            # write dist/
 npm test                                 # build, then run the smoke test
 npm run serve                            # build and serve dist/ on port 8080
+npm run sim -- 8 active                  # simulate 8 hours of play (see Balance)
 ```
 
 The smoke test checks that:
@@ -53,9 +55,36 @@ The smoke test checks that:
 - Orbit Hop starts a run
 - a fresh Coin Crawl game makes steady progress without running away (about 8 taps a second for 45 seconds)
 - old saves upgrade cleanly
-- every tab opens
+- locked tabs match the player's progress, and a seasoned save has every tab and feature open
+- the research lab shows and floor milestones pay out
 - the phone layout fits 390px
 - no page throws an error
+
+### Balance
+
+Coin Crawl's tuning knobs live in one table, `BAL`, near the top of `coin-crawl/coin-crawl.js`. The rule that keeps the game from running away: monster health grows faster per floor (×1.55) than everything you can buy with that floor's gold. Your power then always meets a wall, and retiring, ranks, research and ascending move the wall instead of breaking it.
+
+To check a change, run the simulator. It loads the built game with `?sim`, which exposes the game internals to a bot and steps time without drawing:
+
+```sh
+npm run sim -- 24 active    # taps about 5 times a second, buys, summons, retires, ascends
+npm run sim -- 4 idle       # never taps
+```
+
+It prints your deepest floor, tales, rank, stars and the main multipliers at fixed times. Current targets (best floor reached):
+
+| Time | Active | Idle |
+| --- | --- | --- |
+| 10 min | about 45 | about 20 |
+| 1 hour | about 95 | about 80 |
+| 4 hours | about 115 | about 115 |
+| 24 hours | about 300 | |
+
+The bot plays better than most people, so treat these as upper bounds. Runs are random, so compare a few runs rather than single numbers.
+
+### Unlocks
+
+You start with only Train. Tabs, features and auto toggles open as your best floor rises and as you retire. The table is `UNLOCKS` in `coin-crawl.js`. A locked feature shows a dashed box that says what opens it. Unlocks use your best floor ever, so ascending never locks anything again.
 
 ### Coin Crawl developer menu
 
