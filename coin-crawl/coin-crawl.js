@@ -1796,7 +1796,7 @@
       partRows[p.id].btn.classList.remove('evo');
       const n = amountFor(p), cost = costOf(p.base, p.r, L, n);
       const nextMile = (Math.floor(L / 25) + 1) * 25;
-      const extra = ['sword', 'armor', 'gaunt'].includes(p.id) ? (nextMile >= pcap(p.id) ? ` · evolves at ${pcap(p.id)}` : ` · ×2 at ${nextMile}`) : (pcap(p.id) < Infinity ? ` · evolves at ${pcap(p.id)}` : '');
+      const extra = ['sword', 'armor'].includes(p.id) ? (nextMile >= pcap(p.id) ? ` · evolves at ${pcap(p.id)}` : ` · ×${BAL.mile} at ${nextMile}`) : (pcap(p.id) < Infinity ? ` · evolves at ${pcap(p.id)}` : '');
       setRow(partRows[p.id], { name: nm + (tier ? ' ' + '★'.repeat(tier) : ''), lv: 'Lv ' + L + extra, fx: p.fx(st, stats(Object.assign({}, S.lv, { [p.id]: L + n }))), bn: 'Buy ×' + n + (L + n >= pcap(p.id) ? ' (cap)' : '') + (S.gold < cost && S.gps > 0 ? ' · ' + dur((cost - S.gold) / S.gps) : ''), bc: fmt(Math.ceil(cost)) + 'g', ok: S.gold >= cost });
     }
     const ab = $('#autobuyBtn'); setText(ab, S.set.autobuy ? 'Auto-buy: on' : 'Auto-buy: off'); ab.setAttribute('aria-pressed', String(S.set.autobuy));
@@ -2035,7 +2035,16 @@
     const b = $('#tab-' + id);
     if (b && !b.querySelector('.dot')) { const d = document.createElement('span'); d.className = 'dot'; b.appendChild(d); }
   }
-  for (const b of document.querySelectorAll('.tabs button')) b.addEventListener('click', () => { showTab(b.dataset.tab); save(); });
+  const phoneNav = () => window.matchMedia && matchMedia('(max-width: 920px)').matches;
+  for (const b of document.querySelectorAll('.tabs button')) b.addEventListener('click', () => {
+    const was = S.tab; showTab(b.dataset.tab); save();
+    if (phoneNav() && S.tab === b.dataset.tab) {
+      const shop = $('.panel.shop'), game = $('.panel.game'), pinned = document.body.classList.contains('pin');
+      shop.style.scrollMarginTop = (pinned ? game.offsetHeight + 8 : 8) + 'px';
+      if (was !== S.tab || shop.getBoundingClientRect().top > innerHeight * 0.6 || shop.getBoundingClientRect().bottom < 0) shop.scrollIntoView({ block: 'start', behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+    b.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+  });
 
   const talesFor = f => f < 10 ? 0 : Math.floor((2 + Math.pow(f / 5, 2)) * (1 + labV('story')));
   function renderHud() {
@@ -2926,7 +2935,7 @@
     if (g > 0) banner = { text: 'WELCOME BACK', sub: `+${fmt(g)} gold while you were away`, life: 3 };
     return msg;
   }
-  const CHANGES = ['Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
+  const CHANGES = ['Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
   function showTitle(report) {
     const returning = S.life.kills > 0, isNew = (S.seenVer || 0) < VER && returning;
     $('#titleHero').src = heroIcon(S.cls);
