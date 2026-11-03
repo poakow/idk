@@ -2198,7 +2198,7 @@
     save(); renderSettings(); applyPin(); renderHud();
   });
   function applyPin() { document.body.classList.toggle('pin', !!S.set.pin); document.body.classList.toggle('compact', !!S.set.compact); document.body.classList.toggle('cb', !!S.set.cb); document.body.classList.toggle('light', !!S.set.light); document.body.classList.toggle('mini', !!S.set.mini); if (typeof placeInfo === 'function' && infoHome) { placeInfo(); requestAnimationFrame(resize); } const mb = $('#miniBtn'); if (mb) { mb.textContent = S.set.mini ? 'Show' : 'Hide'; mb.setAttribute('aria-pressed', String(!!S.set.mini)); } }
-  function openModal(id) { $('#' + id).hidden = false; if (id === 'setModal') { renderSettings(); xSettingsExtra(); renderOnline(); } if (id === 'devModal') { if (!devOK) { $('#devModal').hidden = true; return; } buildDev(); } if (id === 'mapModal') renderMap(); }
+  function openModal(id) { $('#' + id).hidden = false; if (id === 'setModal') { renderSettings(); xSettingsExtra(); renderOnline(); syncXfer(); } if (id === 'devModal') { if (!devOK) { $('#devModal').hidden = true; return; } buildDev(); } if (id === 'mapModal') renderMap(); }
   for (const b of document.querySelectorAll('[data-close]')) b.addEventListener('click', () => { $('#' + b.dataset.close).hidden = true; });
   for (const m of document.querySelectorAll('.overlay')) m.addEventListener('click', e => { if (e.target === m && m.id !== 'classModal') m.hidden = true; });
   $('#openSettings').addEventListener('click', () => openModal('setModal'));
@@ -2217,24 +2217,96 @@
   $('#trialBtn').addEventListener('click', () => startRun('trial'));
   $('#dailyBtn').addEventListener('click', claimDaily);
   const encodeSave = () => btoa(unescape(encodeURIComponent(JSON.stringify(S))));
-  $('#exportBtn').addEventListener('click', () => {
+  // Save codes: deflate-compressed when the browser can ("CC2:" prefix),
+  // the old plain base64 codes still load.
+  async function packSave() {
     save();
-    const code = encodeSave(), ta = $('#saveText');
+    const json = JSON.stringify(S);
+    try {
+      if (window.CompressionStream) {
+        const buf = new Uint8Array(await new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer());
+        let bin = ''; for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
+        return 'CC2:' + btoa(bin);
+      }
+    } catch (e) {}
+    return encodeSave();
+  }
+  async function unpackSave(code) {
+    code = String(code || '').trim().replace(/\s+/g, '');
+    if (code.startsWith('CC2:')) {
+      const bin = atob(code.slice(4)), buf = Uint8Array.from(bin, c => c.charCodeAt(0));
+      return JSON.parse(await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text());
+    }
+    if (code.startsWith('{')) return JSON.parse(code);
+    return JSON.parse(decodeURIComponent(escape(atob(code))));
+  }
+  const saveMsg = m => setText($('#saveMsg'), m);
+  // One place that loads a save from anywhere, after asking.
+  function importSave(o, from) {
+    if (!o || typeof o !== 'object' || (o.floor === undefined && !o.life)) { saveMsg("That isn't a Coin Crawl save."); return false; }
+    const deep = o.deepest || o.floor || 1, runs = o.runs || 0;
+    if (!window.confirm(`Load the save from ${from}?\n\nFloor ${o.floor || 1}, best floor ${deep}${runs ? `, retired ${runs} times` : ''}.\n\nThis replaces the game on this device.`)) { saveMsg('Nothing changed.'); return false; }
+    S = sane(migrate(o)); recalc(); hero.hp = st.maxHp; enemies = []; mode = 'main'; run = null; save();
+    saveMsg('Save loaded. Welcome back!'); log(`Loaded a save from ${from}.`, 't'); refreshAll();
+    return true;
+  }
+  $('#exportBtn').addEventListener('click', async () => {
+    const code = await packSave(), ta = $('#saveText');
     ta.value = code;
-    const done = ok => setText($('#saveMsg'), ok ? 'Copied your save code. Keep it somewhere safe.' : 'Your save code is in the box. Select it and copy it.');
-    try { navigator.clipboard.writeText(code).then(() => done(true), () => { ta.select(); done(false); }); } catch (e) { ta.select(); done(false); }
+    try { await navigator.clipboard.writeText(code); saveMsg(`Copied your save code (${code.length} characters). Paste it on your other device.`); }
+    catch (e) { ta.select(); saveMsg('Your save code is in the box. Select it and copy it.'); }
   });
-  let importArm = 0;
-  $('#importBtn').addEventListener('click', () => {
+  if (navigator.share) $('#shareBtn2').hidden = false;
+  $('#shareBtn2').addEventListener('click', async () => {
+    const code = await packSave(); $('#saveText').value = code;
+    try { await navigator.share({ title: 'Coin Crawl save', text: code }); saveMsg('Shared. Paste the code into Coin Crawl on your other device.'); } catch (e) {}
+  });
+  $('#importBtn').addEventListener('click', async () => {
     const raw = $('#saveText').value.trim();
-    if (!raw) { setText($('#saveMsg'), 'Paste a save code into the box first.'); return; }
-    let o;
-    try { o = JSON.parse(decodeURIComponent(escape(atob(raw)))); } catch (e) { setText($('#saveMsg'), "That code didn't work. Check that you copied all of it."); return; }
-    if (importArm < performance.now()) { importArm = performance.now() + 4000; setText($('#saveMsg'), `Found a save on floor ${o.floor || 1}. Press Load again to replace your current game.`); return; }
-    importArm = 0;
-    S = migrate(o); recalc(); hero.hp = st.maxHp; enemies = []; mode = 'main'; run = null; save();
-    setText($('#saveMsg'), 'Save loaded.'); log('Loaded a save.', 't'); refreshAll();
+    if (!raw) { saveMsg('Paste a save code into the box first.'); return; }
+    let o; try { o = await unpackSave(raw); } catch (e) { saveMsg("That code didn't work. Check that you copied all of it."); return; }
+    importSave(o, 'a save code');
   });
+  $('#fileSave').addEventListener('click', async () => {
+    const code = await packSave(), d = new Date();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([code], { type: 'text/plain' }));
+    a.download = `coin-crawl-save-floor${S.deepest}-${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}.txt`;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    saveMsg('Save file downloaded. Send it to your other device and use Load save file there.');
+  });
+  $('#fileLoad').addEventListener('change', async e => {
+    const f = e.target.files && e.target.files[0]; e.target.value = '';
+    if (!f) return;
+    if (f.size > 2e6) { saveMsg('That file is too big to be a save.'); return; }
+    let o; try { o = await unpackSave(await f.text()); } catch (er) { saveMsg("That file isn't a Coin Crawl save."); return; }
+    importSave(o, `the file ${f.name}`);
+  });
+  // transfer code (website with the online database set up)
+  const xferOn = () => !!(window.IDKBoard && window.IDKBoard.enabled);
+  $('#xferMake').addEventListener('click', async () => {
+    if (!xferOn()) return;
+    setText($('#xferShow'), '…');
+    const code = await window.IDKBoard.sendSave(await packSave());
+    setText($('#xferShow'), code || '');
+    saveMsg(code ? `Type ${code} on your other device within 30 minutes. It works once.` : 'Could not make a transfer code right now. Try the save file instead.');
+  });
+  $('#xferLoad').addEventListener('click', async () => {
+    if (!xferOn()) return;
+    const c = $('#xferIn').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (c.length !== 6) { saveMsg('Transfer codes have 6 letters and numbers.'); return; }
+    saveMsg('Fetching your save…');
+    const data = await window.IDKBoard.takeSave(c);
+    if (!data) { saveMsg('That code is wrong, already used, or older than 30 minutes. Make a new one.'); return; }
+    let o; try { o = await unpackSave(data); } catch (e) { saveMsg('That transfer could not be read.'); return; }
+    if (importSave(o, 'your other device')) $('#xferIn').value = '';
+  });
+  function syncXfer() {
+    const box = $('#xferCode'); if (!box) return;
+    const on = xferOn();
+    box.querySelectorAll('button,input').forEach(el => { el.disabled = !on; });
+    box.querySelector('.hint').textContent = on ? 'Get a 6-character code here, then type it on the other device within 30 minutes.' : (DB ? 'In Claude, use Cloud save below instead: it follows your Claude account to any device.' : 'Available on the website once its owner sets up the online database (see the README). Use the save file or save code for now.');
+  }
   let wipeArm = 0;
   $('#wipe').addEventListener('click', () => {
     if (wipeArm < performance.now()) { wipeArm = performance.now() + 3000; $('#wipe').textContent = 'Tap again to erase everything'; setTimeout(() => { $('#wipe').textContent = 'Erase save'; }, 3000); return; }
@@ -3021,7 +3093,7 @@
     if (g > 0) banner = { text: 'WELCOME BACK', sub: `+${fmt(g)} gold while you were away`, life: 3 };
     return msg;
   }
-  const CHANGES = ['Boosters: free ×2 gold, ×2 damage and ×1.5 speed for 30 minutes, 3 charges each', 'Idle chest: gems, runes and shards pile up while you are away, plus a free Quick loot every day', 'A featured side dungeon pays double every day', 'Achievements now also give 10 gems', 'Gear presets: save and swap equipment loadouts', 'Global leaderboard on the website: pick a name, compare floors, stars, Abyss, Boss Rush and Titan scores, all time or this week', 'Phones now work like other idle RPGs: the dungeon and tabs stay put, only the menu scrolls, and tapping the open tab closes the menu for a full-screen dungeon', 'Menus redone for phone and PC: readable fonts, more room, cards that reflow, two-column lists on wide screens', 'Phones: a slimmer pinned dungeon and a Hide button that shrinks it to a strip while you use the menus', "Titan's Lair: a giant boss every 6 hours that pays every currency and a Legendary piece at 20 bars", '4 new areas and 4 new monsters past floor 110: Jellyfish Lagoon, Scarab Sanctum, Gargoyle Spires and Starship Basement', 'A progress chart in Legacy and 3 new achievements', 'Install the game as an app from the website (works offline)', 'A Ready bar under the dungeon with one-tap shortcuts to everything waiting for you', 'Pause (P), foldable sections, tabs that remember where you scrolled, and more shortcuts (press ?)', 'Retire advice: the Legacy tab tells you when a retire is worth it and how much stronger it makes you', 'Auto-buy now covers training, skills and allies (pick which) and saves up for evolutions', 'New automation: auto-merge, auto rank trial, auto-research and auto class evolution', 'New players retry bosses on their own until floor 10', 'Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
+  const CHANGES = ['Move your save between phone and PC: a 6-character transfer code, a save file, or a shorter save code you can share', 'Boosters: free ×2 gold, ×2 damage and ×1.5 speed for 30 minutes, 3 charges each', 'Idle chest: gems, runes and shards pile up while you are away, plus a free Quick loot every day', 'A featured side dungeon pays double every day', 'Achievements now also give 10 gems', 'Gear presets: save and swap equipment loadouts', 'Global leaderboard on the website: pick a name, compare floors, stars, Abyss, Boss Rush and Titan scores, all time or this week', 'Phones now work like other idle RPGs: the dungeon and tabs stay put, only the menu scrolls, and tapping the open tab closes the menu for a full-screen dungeon', 'Menus redone for phone and PC: readable fonts, more room, cards that reflow, two-column lists on wide screens', 'Phones: a slimmer pinned dungeon and a Hide button that shrinks it to a strip while you use the menus', "Titan's Lair: a giant boss every 6 hours that pays every currency and a Legendary piece at 20 bars", '4 new areas and 4 new monsters past floor 110: Jellyfish Lagoon, Scarab Sanctum, Gargoyle Spires and Starship Basement', 'A progress chart in Legacy and 3 new achievements', 'Install the game as an app from the website (works offline)', 'A Ready bar under the dungeon with one-tap shortcuts to everything waiting for you', 'Pause (P), foldable sections, tabs that remember where you scrolled, and more shortcuts (press ?)', 'Retire advice: the Legacy tab tells you when a retire is worth it and how much stronger it makes you', 'Auto-buy now covers training, skills and allies (pick which) and saves up for evolutions', 'New automation: auto-merge, auto rank trial, auto-research and auto class evolution', 'New players retry bosses on their own until floor 10', 'Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
   function showTitle(report) {
     const returning = S.life.kills > 0, isNew = (S.seenVer || 0) < VER && returning;
     $('#titleHero').src = heroIcon(S.cls);

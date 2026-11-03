@@ -64,7 +64,7 @@ const EXPECT = {
   'trials: dungeons': 'S.life.dungeons >= 4',
   'quests: daily, quests, weekly, milestones': 'S.mileDone >= 100 && S.daily.streak >= 1',
   'trials: titan': 'S.life.titans >= 1 && S.life.titanBest >= 1',
-  'world: new areas past floor 110': 'S.life.beasts.jelly > 0 || S.life.beasts.scarab > 0 || S.life.beasts.gargoyle > 0 || S.life.beasts.alien > 0 || enemies.some(e => ["jelly", "scarab", "gargoyle", "alien"].includes(e.kind))',
+  'world: new areas past floor 110': '[111, 116, 121, 126].map(f => theme(f).name).join() === "Jellyfish Lagoon,Scarab Sanctum,Gargoyle Spires,Starship Basement" && ["jelly", "scarab", "gargoyle", "alien"].every(k => SPR[k] && CNAME[k])',
   'train: boosters': 'boostLeft("dmg") > 0 && S.bch.dmg === 2',
   'quests: idle chest': 'S.afkQ.n === 2',
   'legacy: lab': 'Object.values(S.lab).some(v => v > 0)',

@@ -259,6 +259,15 @@ select,#devNum{font:inherit;background:var(--stone);color:var(--text);border:1px
 .boost.on{box-shadow:0 0 0 2px color-mix(in srgb,var(--bc) 45%,transparent);background:color-mix(in srgb,var(--bc) 12%,var(--wall))}
 .boost:disabled{opacity:.55;cursor:not-allowed}
 .preset{display:inline-flex;align-items:center;gap:4px;margin-right:6px}
+.xfer{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.xopt{background:var(--stone);border:1px solid var(--edge);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.xopt b{font-size:15px}.xopt textarea{min-height:64px}
+.xcode{font-family:var(--pixel);font-size:24px;letter-spacing:.12em;color:var(--gem)}
+#xferIn{font:inherit;width:190px;max-width:100%;text-transform:uppercase;letter-spacing:.1em;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}
+.filebtn{display:inline-flex;align-items:center;cursor:pointer}
+#xferIn::placeholder{text-transform:none;letter-spacing:0}
+.act:disabled,.act.ok:disabled{opacity:.45;filter:saturate(.4)}
+.overlay{z-index:60}
 #webName{font:inherit;width:170px;max-width:100%;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:6px 10px}
 #devPass{font:inherit;width:220px;max-width:100%;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}
 input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}
@@ -800,11 +809,28 @@ h3{font-family:var(--body);font-weight:800;font-size:17px}
     <div class="mhead"><h2 id="setTitle">Settings</h2><button class="pill" type="button" data-close="setModal">Close</button></div>
     <div class="setgrid" id="setGrid"></div>
     <div class="setextra" id="setExtra"></div>
-    <h3>Save file</h3>
-    <p>Your progress saves in this browser. Copy the code below to back it up or move it to another device, then paste it here to load it.</p>
-    <textarea id="saveText" aria-label="Save code" spellcheck="false"></textarea>
-    <div class="row"><button class="act ok heal" id="exportBtn" type="button">Show and copy my save</button><button class="act ok gold" id="importBtn" type="button">Load pasted save</button><button class="linkbtn" id="wipe" type="button">Erase save</button></div>
-    <p id="saveMsg"></p>
+    <h3>Move your save</h3>
+    <p>Your progress lives in this browser. To keep playing on another device (phone to PC or back), use one of these. Loading always asks first and replaces the game on that device.</p>
+    <div class="xfer">
+      <div class="xopt" id="xferCode">
+        <b>1. Transfer code</b>
+        <p class="hint">Get a 6-character code here, then type it on the other device within 30 minutes.</p>
+        <div class="row"><button class="act ok gem" id="xferMake" type="button">Get a transfer code</button><span class="xcode" id="xferShow"></span></div>
+        <div class="row"><input id="xferIn" maxlength="8" placeholder="Enter code" autocomplete="off" autocapitalize="characters" aria-label="Transfer code"><button class="act ok heal" id="xferLoad" type="button">Load from code</button></div>
+      </div>
+      <div class="xopt">
+        <b>2. Save file</b>
+        <p class="hint">Download a small file, send it to your other device (AirDrop, Google Drive, email, USB), then open it there.</p>
+        <div class="row"><button class="act ok heal" id="fileSave" type="button">Download save file</button><label class="act ok gold filebtn">Load save file<input id="fileLoad" type="file" accept=".txt,.json,text/plain" hidden></label></div>
+      </div>
+      <div class="xopt">
+        <b>3. Save code</b>
+        <p class="hint">Copy or share the code, paste it into the box on your other device, then press Load.</p>
+        <textarea id="saveText" aria-label="Save code" spellcheck="false"></textarea>
+        <div class="row"><button class="act ok heal" id="exportBtn" type="button">Copy my save code</button><button class="act ok gem" id="shareBtn2" type="button" hidden>Share…</button><button class="act ok gold" id="importBtn" type="button">Load pasted code</button><button class="linkbtn" id="wipe" type="button">Erase save</button></div>
+      </div>
+    </div>
+    <p id="saveMsg" role="status"></p>
     <h3>Cloud save</h3>
     <div id="cloudBox"></div>
     <h3>Developer menu</h3>

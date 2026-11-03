@@ -132,7 +132,7 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   // 6. Installable app: served over http, the service worker caches the game so it loads offline
   const types = { '.html': 'text/html', '.js': 'text/javascript', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
   // a tiny stand-in for Supabase so the global leaderboard can be tested offline
-  const board = new Map();
+  const board = new Map(), transfers = new Map();
   const server = http.createServer((req, res) => {
     const u = new URL(req.url, 'http://x');
     if (u.pathname === '/config.js') { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(`window.IDK_CONFIG = { supabaseUrl: location.origin, supabaseKey: 'test-key' };`); return; }
@@ -143,6 +143,14 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
         const row = cur || { player_id: b.p_id, secret: b.p_secret, deepest: 0, abyss: 0, rush: 0, titan: 0, stars: 0 };
         row.name = b.p_name; for (const k of ['deepest', 'abyss', 'rush', 'titan', 'stars']) row[k] = Math.max(row[k], b['p_' + k] || 0); row.cls = b.p_cls || row.cls;
         board.set(b.p_id, row); res.writeHead(204); res.end();
+      }); return;
+    }
+    if (u.pathname === '/rest/v1/rpc/create_transfer' || u.pathname === '/rest/v1/rpc/take_transfer') {
+      let body = ''; req.on('data', c => { body += c; }); req.on('end', () => {
+        const b = JSON.parse(body);
+        res.writeHead(200, { 'content-type': 'application/json' });
+        if (u.pathname.endsWith('create_transfer')) { const code = Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, 'X'); transfers.set(code, b.p_data); res.end(JSON.stringify(code)); }
+        else { const c = String(b.p_code || '').toUpperCase(), d = transfers.get(c); transfers.delete(c); res.end(JSON.stringify(d === undefined ? null : d)); }
       }); return;
     }
     if (u.pathname === '/rest/v1/scores') {
@@ -180,7 +188,42 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   check(/Tester b \(you\)/.test(await page.textContent('#boardBox')), 'your row shows on the board');
   const forged = await page.evaluate(async () => { const r = await fetch('/rest/v1/rpc/submit_score', { method: 'POST', headers: { apikey: 'test-key', 'Content-Type': 'application/json' }, body: JSON.stringify({ p_id: window.IDKBoard.me().id, p_secret: 'wrong'.repeat(8), p_name: 'Hacker', p_deepest: 9999 }) }); return r.status; });
   check(forged >= 400 && [...board.values()][0].deepest === 40, 'someone without your secret cannot overwrite your score');
-  await ctx.close(); server.close();
+  await ctx.close();
+
+  // 8. Moving a save between devices: transfer code, save file and save code
+  const deviceA = await browser.newContext({ ...require('playwright').devices['iPhone 13'], acceptDownloads: true });
+  await deviceA.addInitScript(raw => { if (!sessionStorage.getItem('s')) { sessionStorage.setItem('s', 1); localStorage.setItem('coincrawl.v1', raw); } }, JSON.stringify({ floor: 37, maxFloor: 37, deepest: 37, runs: 2, gems: 123, seenVer: 99, life: { kills: 50, time: 3600 }, set: { tips: false } }));
+  const phone = await deviceA.newPage(); phone.on('pageerror', e => errors.push(`phone: ${e.message}`));
+  await phone.goto(base + '/coin-crawl/'); await phone.waitForTimeout(500); await phone.click('#titleGo');
+  await phone.click('#openSettings'); await phone.click('#xferMake'); await phone.waitForTimeout(600);
+  const code = (await phone.textContent('#xferShow')).trim();
+  check(/^[A-Z0-9]{6}$/.test(code), `the phone gets a 6-character transfer code (${code})`);
+  const [dl] = await Promise.all([phone.waitForEvent('download'), phone.click('#fileSave')]);
+  const file = path.join(require('os').tmpdir(), 'cc-save-test.txt'); await dl.saveAs(file);
+  await phone.click('#exportBtn'); await phone.waitForTimeout(300);
+  const pasted = await phone.inputValue('#saveText');
+  check(pasted.startsWith('CC2:') && pasted.length < JSON.stringify(await phone.evaluate(() => JSON.parse(localStorage.getItem('coincrawl.v1')))).length / 2, `save codes are compressed (${pasted.length} characters)`);
+  const fresh = async () => {
+    const c = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    await c.addInitScript(() => { if (!sessionStorage.getItem('s')) { sessionStorage.setItem('s', 1); localStorage.clear(); } });
+    const pg = await c.newPage(); pg.on('pageerror', e => errors.push(`pc: ${e.message}`)); pg.on('dialog', d => d.accept());
+    await pg.goto(base + '/coin-crawl/'); await pg.waitForTimeout(500); await pg.click('#titleGo'); await pg.click('#openSettings');
+    return { c, pg, floor: () => pg.evaluate(() => JSON.parse(localStorage.getItem('coincrawl.v1')).deepest) };
+  };
+  let pc = await fresh();
+  await pc.pg.fill('#xferIn', code.toLowerCase()); await pc.pg.click('#xferLoad'); await pc.pg.waitForTimeout(800);
+  check(await pc.floor() === 37, 'a PC loads the phone save from the transfer code');
+  await pc.pg.fill('#xferIn', code); await pc.pg.click('#xferLoad'); await pc.pg.waitForTimeout(500);
+  check(/already used|wrong/.test(await pc.pg.textContent('#saveMsg')), 'a transfer code only works once');
+  await pc.c.close();
+  pc = await fresh();
+  await pc.pg.setInputFiles('#fileLoad', file); await pc.pg.waitForTimeout(800);
+  check(await pc.floor() === 37, 'a PC loads the phone save from a save file');
+  await pc.c.close();
+  pc = await fresh();
+  await pc.pg.fill('#saveText', pasted); await pc.pg.click('#importBtn'); await pc.pg.waitForTimeout(800);
+  check(await pc.floor() === 37, 'a PC loads the phone save from a pasted save code');
+  await pc.c.close(); await deviceA.close(); server.close();
 
   check(errors.length === 0, `no page errors${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''}`);
   await browser.close();

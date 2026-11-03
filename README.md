@@ -13,7 +13,7 @@ Two small browser games. No install, no account, no build tools needed to play.
 - **As an app:** open the site on your phone or in Chrome or Edge and choose *Install* or *Add to Home Screen*. After one visit the games also work offline.
 - **Locally:** run `npm run serve` and open http://localhost:8080, or open `dist/index.html` after `npm run build`.
 
-Progress saves in your browser (`localStorage`). Coin Crawl also has save export/import in Settings. Its leaderboard and cloud save only work when the game is opened inside Claude as an artifact; anywhere else those panels say so and the rest of the game works normally.
+Progress saves in your browser (`localStorage`). To move it between devices, such as phone and PC, use **Settings > Move your save**. A 6-character transfer code works once the online database is set up; a save file or a save code always works. Its leaderboard and cloud save only work when the game is opened inside Claude as an artifact; anywhere else those panels say so and the rest of the game works normally.
 
 ## Project layout
 
@@ -129,6 +129,10 @@ The anon key is meant to be public. The database only lets it read scores (not t
 The game also never posts dev saves. Scores still come from players' browsers, so a determined cheater could fake a plausible one. If that happens, delete the row in Supabase's **Table Editor**.
 
 Players set their name in Coin Crawl under **Legacy > Leaderboard**. The board shows floor, stars, Abyss, Boss Rush and Titan scores, for all time or for players active this week.
+
+### Save transfer
+
+The same Supabase project also powers transfer codes. One device uploads its save and gets a 6-character code; another device redeems it within 30 minutes, and the code works once. The `transfers` table can't be read directly, only through `create_transfer()` and `take_transfer()` in `supabase/schema.sql`. If you set up the leaderboard before transfer codes existed, run the schema file again; it is safe to re-run.
 
 ## Deploying
 

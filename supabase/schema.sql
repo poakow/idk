@@ -71,3 +71,51 @@ end $$;
 
 revoke all on function public.submit_score from public;
 grant execute on function public.submit_score to anon, authenticated;
+
+-- Save transfer between devices: one device uploads its save and gets a
+-- 6-character code; another device redeems the code within 30 minutes.
+-- Codes work once. Nobody can list or read transfers directly.
+create table if not exists public.transfers (
+  code       text primary key,
+  data       text not null check (length(data) <= 400000),
+  created_at timestamptz not null default now()
+);
+alter table public.transfers enable row level security;
+revoke all on public.transfers from anon, authenticated;
+
+create or replace function public.create_transfer(p_data text) returns text
+language plpgsql security definer set search_path = public, extensions as $$
+declare
+  alphabet constant text := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  c text;
+  b bytea;
+  i int;
+begin
+  if p_data is null or length(p_data) > 400000 then raise exception 'save too big'; end if;
+  delete from public.transfers where created_at < now() - interval '30 minutes';
+  if (select count(*) from public.transfers) > 5000 then raise exception 'busy, try again soon'; end if;
+  loop
+    b := extensions.gen_random_bytes(6);
+    c := '';
+    for i in 0..5 loop c := c || substr(alphabet, 1 + (get_byte(b, i) % 32), 1); end loop;
+    exit when not exists (select 1 from public.transfers where code = c);
+  end loop;
+  insert into public.transfers (code, data) values (c, p_data);
+  return c;
+end $$;
+
+create or replace function public.take_transfer(p_code text) returns text
+language plpgsql security definer set search_path = public as $$
+declare d text;
+begin
+  delete from public.transfers
+  where code = upper(regexp_replace(coalesce(p_code, ''), '[^A-Za-z0-9]', '', 'g'))
+    and created_at > now() - interval '30 minutes'
+  returning data into d;
+  return d; -- null when the code is wrong, used or expired
+end $$;
+
+revoke all on function public.create_transfer from public;
+revoke all on function public.take_transfer from public;
+grant execute on function public.create_transfer to anon, authenticated;
+grant execute on function public.take_transfer to anon, authenticated;

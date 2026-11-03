@@ -36,5 +36,9 @@
     const q = `select=player_id,name,deepest,abyss,rush,titan,stars,cls,title&${c}=gt.0${since}&order=${c}.desc,updated_at.asc&limit=${Math.min(100, n || 50)}`;
     try { const r = await fetch(url + '/rest/v1/scores?' + q, { headers: headers() }); if (!r.ok) return null; return await r.json(); } catch (e) { return null; }
   }
-  window.IDKBoard = { enabled, me, setName, cleanName, submit, top };
+  // Save transfer between devices (see transfers in supabase/schema.sql)
+  async function rpc(fn, body) { const r = await fetch(url + '/rest/v1/rpc/' + fn, { method: 'POST', headers: headers(), body: JSON.stringify(body) }); if (!r.ok) throw new Error(await r.text()); return r.json(); }
+  async function sendSave(data) { if (!enabled) return null; try { return await rpc('create_transfer', { p_data: data }); } catch (e) { return null; } }
+  async function takeSave(code) { if (!enabled) return null; try { return await rpc('take_transfer', { p_code: code }); } catch (e) { return null; } }
+  window.IDKBoard = { enabled, me, setName, cleanName, submit, top, sendSave, takeSave };
 })();
