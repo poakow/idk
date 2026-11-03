@@ -3871,7 +3871,7 @@
     add(PARTS.some(p => atCap(p) && ptier(p.id) < PEVO_AT.length && S.gold >= pevoCost(p).gold && S.shards >= pevoCost(p).shards), 'Part ready to evolve', 'hero', '#pevoList', 'pevo');
     add(isOpen('evo') && evoReady(), 'Class evolution ready', 'hero', '#evoBtn', 'evo');
     const nx = RANKS[S.rank + 1];
-    add(isOpen('tab:trials') && nx && S.deepest >= nx.need && mode === 'main', `${nx.n} rank trial`, 'trials', '#trialBtn', 'trial');
+    add(isOpen('tab:trials') && nx && S.deepest >= nx.need && mode === 'main', nx ? `${nx.n} rank trial` : '', 'trials', '#trialBtn', 'trial');
     const full = DUNGEONS.filter(d => S.keys[d.id] >= keyMax(d.id)).length;
     add(isOpen('dung') && full > 0 && !autoOn('autodungeon'), `${full} dungeon${full > 1 ? 's' : ''} with full keys`, 'trials', '#dungList', 'dung');
     add(isOpen('abyss') && Date.now() >= (S.abyssT || 0), 'Abyss dive ready', 'trials', '#abyssBtn', 'abyss');

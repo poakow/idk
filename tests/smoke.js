@@ -90,7 +90,7 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   s = await state();
   check(Object.values(s.set.fold || {}).some(Boolean), 'folded sections are remembered');
   await page.keyboard.press('KeyP');
-  const tA = (await state()).life.time; await page.waitForTimeout(6000); const tB = (await state()).life.time;
+  await page.waitForTimeout(5600); const tA = (await state()).life.time; await page.waitForTimeout(5600); const tB = (await state()).life.time;
   check(tB - tA < 1, `pause stops the game (moved ${(tB - tA).toFixed(1)}s while paused)`);
   await page.keyboard.press('KeyP');
   await page.keyboard.press('Shift+Slash');

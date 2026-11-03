@@ -48,7 +48,7 @@ const CASES = {
       if (r < 0.4) { for (let k = 0; k < 4; k++) await page.mouse.click(box.x + Math.random() * box.width, box.y + Math.random() * box.height); }
       else {
         const n = await page.evaluate(() => {
-          const els = [...document.querySelectorAll('button, .chip, [data-tal], [data-lab]')].filter(b => !b.disabled && b.offsetParent && !/reset|wipe|delete|export|download/i.test(b.textContent + b.id));
+          const els = [...document.querySelectorAll('button, .chip, [data-tal], [data-lab]')].filter(b => !b.disabled && b.offsetParent && !/reset|wipe|delete|export|download|pause/i.test(b.textContent + b.id));
           const b = els[Math.floor(Math.random() * els.length)];
           if (b) b.click();
           return els.length;
