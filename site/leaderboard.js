@@ -1,4 +1,4 @@
-// Global leaderboard client shared by the games on the website.
+// Global leaderboard client for Coin Crawl on the website.
 // Talks to Supabase (see supabase/schema.sql). Each device gets a random
 // player id and secret, kept in this browser; the secret proves a score
 // update comes from the same device. Exposes window.IDKBoard.
@@ -28,12 +28,12 @@
       const t = await r.text(); return { ok: false, why: /implausible/.test(t) ? 'implausible' : /not your/.test(t) ? 'taken' : /bad name/.test(t) ? 'name' : 'error' };
     } catch (e) { return { ok: false, why: 'network' }; }
   }
-  const COLS = ['deepest', 'abyss', 'rush', 'titan', 'stars', 'orbit'];
+  const COLS = ['deepest', 'abyss', 'rush', 'titan', 'stars'];
   async function top(cat, n, sinceDays) {
     if (!enabled) return null;
     const c = COLS.includes(cat) ? cat : 'deepest';
     const since = sinceDays ? `&updated_at=gte.${new Date(Date.now() - sinceDays * 864e5).toISOString()}` : '';
-    const q = `select=player_id,name,deepest,abyss,rush,titan,stars,orbit,cls,title&${c}=gt.0${since}&order=${c}.desc,updated_at.asc&limit=${Math.min(100, n || 50)}`;
+    const q = `select=player_id,name,deepest,abyss,rush,titan,stars,cls,title&${c}=gt.0${since}&order=${c}.desc,updated_at.asc&limit=${Math.min(100, n || 50)}`;
     try { const r = await fetch(url + '/rest/v1/scores?' + q, { headers: headers() }); if (!r.ok) return null; return await r.json(); } catch (e) { return null; }
   }
   window.IDKBoard = { enabled, me, setName, cleanName, submit, top };

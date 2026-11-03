@@ -140,8 +140,8 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
       let body = ''; req.on('data', c => { body += c; }); req.on('end', () => {
         const b = JSON.parse(body), cur = board.get(b.p_id);
         if (req.headers.apikey !== 'test-key' || !/^[A-Za-z0-9 _.-]{2,16}$/.test(b.p_name || '') || (cur && cur.secret !== b.p_secret)) { res.writeHead(400); res.end('{"message":"bad name or not your score"}'); return; }
-        const row = cur || { player_id: b.p_id, secret: b.p_secret, deepest: 0, abyss: 0, rush: 0, titan: 0, stars: 0, orbit: 0 };
-        row.name = b.p_name; for (const k of ['deepest', 'abyss', 'rush', 'titan', 'stars', 'orbit']) row[k] = Math.max(row[k], b['p_' + k] || 0); row.cls = b.p_cls || row.cls;
+        const row = cur || { player_id: b.p_id, secret: b.p_secret, deepest: 0, abyss: 0, rush: 0, titan: 0, stars: 0 };
+        row.name = b.p_name; for (const k of ['deepest', 'abyss', 'rush', 'titan', 'stars']) row[k] = Math.max(row[k], b['p_' + k] || 0); row.cls = b.p_cls || row.cls;
         board.set(b.p_id, row); res.writeHead(204); res.end();
       }); return;
     }
@@ -167,7 +167,7 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   check(await page.isVisible('#titleGo') || await page.isVisible('#arena'), 'the game loads offline after one visit');
   await ctx.close();
 
-  // 7. Global leaderboard on the website: set a name, post, see yourself, Orbit Hop shares it
+  // 7. Global leaderboard on the website: set a name, post, see yourself
   ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   await ctx.addInitScript(raw => { if (!sessionStorage.getItem('s')) { sessionStorage.setItem('s', 1); localStorage.setItem('coincrawl.v1', raw); } }, JSON.stringify({ floor: 40, maxFloor: 40, deepest: 40, runs: 3, seenVer: 99, life: { kills: 50, time: 3600 }, set: { tips: false } }));
   page = await ctx.newPage(); page.on('pageerror', e => errors.push(`board: ${e.message}`));
@@ -180,9 +180,6 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   check(/Tester b \(you\)/.test(await page.textContent('#boardBox')), 'your row shows on the board');
   const forged = await page.evaluate(async () => { const r = await fetch('/rest/v1/rpc/submit_score', { method: 'POST', headers: { apikey: 'test-key', 'Content-Type': 'application/json' }, body: JSON.stringify({ p_id: window.IDKBoard.me().id, p_secret: 'wrong'.repeat(8), p_name: 'Hacker', p_deepest: 9999 }) }); return r.status; });
   check(forged >= 400 && [...board.values()][0].deepest === 40, 'someone without your secret cannot overwrite your score');
-  await page.goto(base + '/orbit-hop/'); await page.waitForTimeout(400);
-  await page.evaluate(() => window.IDKBoard.submit({ orbit: 42 })); await page.waitForTimeout(300);
-  check([...board.values()][0].orbit === 42, 'Orbit Hop posts to the same player on the board');
   await ctx.close(); server.close();
 
   check(errors.length === 0, `no page errors${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''}`);

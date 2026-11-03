@@ -27,7 +27,7 @@ orbit-hop/
 scripts/build.js        Builds dist/ for normal web hosting, plus the app manifest and offline service worker
 site/icons/             App icons
 site/config.js          Website settings (global leaderboard keys)
-site/leaderboard.js     Global leaderboard client used by both games on the website
+site/leaderboard.js     Global leaderboard client for Coin Crawl on the website
 supabase/schema.sql     Database setup for the global leaderboard
 scripts/sim.js          Balance simulator: a bot plays Coin Crawl for hours of game time
 tests/smoke.js          Playwright smoke test of the built site
@@ -128,7 +128,7 @@ The anon key is meant to be public. The database only lets it read scores (not t
 
 The game also never posts dev saves. Scores still come from players' browsers, so a determined cheater could fake a plausible one. If that happens, delete the row in Supabase's **Table Editor**.
 
-Players set their name in Coin Crawl under **Legacy > Leaderboard**. The board shows floor, stars, Abyss, Boss Rush, Titan and Orbit Hop scores, for all time or for players active this week. Orbit Hop posts your best score and shows the top 5 after each run.
+Players set their name in Coin Crawl under **Legacy > Leaderboard**. The board shows floor, stars, Abyss, Boss Rush and Titan scores, for all time or for players active this week.
 
 ## Deploying
 

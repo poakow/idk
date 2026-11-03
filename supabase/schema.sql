@@ -1,4 +1,4 @@
--- Global leaderboard for the website (GitHub Pages) version of the games.
+-- Global leaderboard for the website (GitHub Pages) version of Coin Crawl.
 -- Run this once in your Supabase project: SQL Editor > New query > paste > Run.
 -- Then copy the Project URL and the anon public key into site/config.js.
 --
@@ -17,7 +17,6 @@ create table if not exists public.scores (
   rush         int  not null default 0 check (rush between 0 and 10),
   titan        int  not null default 0 check (titan between 0 and 25),
   stars        int  not null default 0 check (stars between 0 and 100000),
-  orbit        int  not null default 0 check (orbit between 0 and 1000000),
   cls          text check (char_length(cls) <= 40),
   title        text check (char_length(title) <= 40),
   play_seconds int  not null default 0,
@@ -30,12 +29,12 @@ alter table public.scores enable row level security;
 drop policy if exists "anyone can read scores" on public.scores;
 create policy "anyone can read scores" on public.scores for select to anon, authenticated using (true);
 revoke all on public.scores from anon, authenticated;
-grant select (player_id, name, deepest, abyss, rush, titan, stars, orbit, cls, title, updated_at) on public.scores to anon, authenticated;
+grant select (player_id, name, deepest, abyss, rush, titan, stars, cls, title, updated_at) on public.scores to anon, authenticated;
 
 create or replace function public.submit_score(
   p_id uuid, p_secret text, p_name text,
   p_deepest int default null, p_abyss int default null, p_rush int default null, p_titan int default null,
-  p_stars int default null, p_orbit int default null, p_cls text default null, p_title text default null, p_play int default null
+  p_stars int default null, p_cls text default null, p_title text default null, p_play int default null
 ) returns void
 language plpgsql security definer set search_path = public, extensions as $$
 declare
@@ -58,16 +57,15 @@ begin
       rush = greatest(cur.rush, coalesce(p_rush, 0)),
       titan = greatest(cur.titan, coalesce(p_titan, 0)),
       stars = greatest(cur.stars, coalesce(p_stars, 0)),
-      orbit = greatest(cur.orbit, coalesce(p_orbit, 0)),
       cls = coalesce(left(p_cls, 40), cur.cls),
       title = coalesce(left(p_title, 40), cur.title),
       play_seconds = greatest(cur.play_seconds, coalesce(p_play, 0)),
       updated_at = now()
     where player_id = p_id;
   else
-    insert into public.scores (player_id, secret_hash, name, deepest, abyss, rush, titan, stars, orbit, cls, title, play_seconds)
+    insert into public.scores (player_id, secret_hash, name, deepest, abyss, rush, titan, stars, cls, title, play_seconds)
     values (p_id, h, p_name, coalesce(p_deepest, 0), coalesce(p_abyss, 0), coalesce(p_rush, 0), coalesce(p_titan, 0),
-            coalesce(p_stars, 0), coalesce(p_orbit, 0), left(p_cls, 40), left(p_title, 40), coalesce(p_play, 0));
+            coalesce(p_stars, 0), left(p_cls, 40), left(p_title, 40), coalesce(p_play, 0));
   end if;
 end $$;
 
