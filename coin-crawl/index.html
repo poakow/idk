@@ -253,6 +253,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .toggle[aria-pressed="true"] b{color:var(--heal)}
 textarea{width:100%;box-sizing:border-box;min-height:80px;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:8px;resize:vertical}
 select,#devNum{font:inherit;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}#devNum{width:130px}
+#devPass{font:inherit;width:220px;max-width:100%;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}
 input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}
 .devgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
 .devgrid button{font:inherit;font-size:13px;font-weight:700;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:8px;cursor:pointer;text-align:left}
@@ -767,8 +768,9 @@ h3{font-family:var(--body);font-weight:800;font-size:17px}
     <h3>Cloud save</h3>
     <div id="cloudBox"></div>
     <h3>Developer menu</h3>
-    <p>Cheats for testing: free currency, any floor, spawn bosses, game speed. Using it marks your save as a dev save.</p>
-    <div><button class="act ok gem" id="openDev" type="button">Open developer menu</button> <span class="hint">Shortcut: <kbd>`</kbd></span></div>
+    <p>Cheats for testing, for the game's owner only: it opens with a passphrase. Using it marks your save as a dev save, and dev saves stay off the leaderboard.</p>
+    <div id="devRow" hidden><button class="act ok gem" id="openDev" type="button">Open developer menu</button> <span class="hint">Shortcut: <kbd>`</kbd></span></div>
+    <div id="devLock" class="row"><input id="devPass" type="password" placeholder="Developer passphrase" autocomplete="off" aria-label="Developer passphrase"><button class="pill" id="devUnlock" type="button">Unlock</button><span class="hint" id="devMsg"></span></div>
   </div>
 </div>
 

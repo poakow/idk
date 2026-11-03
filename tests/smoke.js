@@ -94,6 +94,13 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   await page.waitForTimeout(5600); const tA = (await state()).life.time; await page.waitForTimeout(5600); const tB = (await state()).life.time;
   check(tB - tA < 1, `pause stops the game (moved ${(tB - tA).toFixed(1)}s while paused)`);
   await page.keyboard.press('KeyP');
+  await page.keyboard.press('Backquote'); await page.waitForTimeout(200);
+  check(!(await page.isVisible('#devModal')), 'developer menu is locked without the passphrase');
+  await page.click('#setBtn').catch(() => page.evaluate(() => document.querySelector('[data-open="setModal"], #settingsBtn') && 0));
+  await page.evaluate(() => { document.querySelector('#devPass').value = 'not-the-passphrase'; document.querySelector('#devUnlock').click(); });
+  await page.waitForTimeout(300);
+  check(await page.evaluate(() => document.querySelector('#devRow').hidden), 'a wrong passphrase does not unlock it');
+  await page.evaluate(() => document.querySelectorAll('.overlay').forEach(o => { o.hidden = true; }));
   await page.keyboard.press('Shift+Slash');
   check(await page.isVisible('#keysModal'), 'question mark opens the shortcut list');
   await ctx.close();

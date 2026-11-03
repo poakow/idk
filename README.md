@@ -95,7 +95,7 @@ You start with only Train. Tabs, features and auto toggles open as your best flo
 
 ### Coin Crawl developer menu
 
-Press <kbd>`</kbd> in Coin Crawl, or open Settings > Developer menu, for cheats:
+The developer menu (cheats for testing) is locked behind a passphrase, so players can't open it. Only a SHA-256 hash of the passphrase is in the code (`DEV_HASH` in `coin-crawl.js`). To unlock it on a device, enter the passphrase in Settings, or open the game once with `#dev=<passphrase>` at the end of the address. Then press <kbd>`</kbd> or use Settings > Developer menu. It has:
 
 - typed amounts of any resource
 - jump to any floor
@@ -103,7 +103,7 @@ Press <kbd>`</kbd> in Coin Crawl, or open Settings > Developer menu, for cheats:
 - give gear, pets and skill copies
 - god mode, one-hit kills and game speed up to ×10
 
-Using it marks the save as a dev save.
+Using it marks the save as a dev save, and dev saves are never posted to the leaderboard. To change the passphrase, put the SHA-256 hex of the new one in `DEV_HASH`. The `?sim` hook used by the simulator only works on local files and localhost.
 
 ## Deploying
 

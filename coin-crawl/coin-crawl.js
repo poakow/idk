@@ -2189,7 +2189,7 @@
     save(); renderSettings(); applyPin(); renderHud();
   });
   function applyPin() { document.body.classList.toggle('pin', !!S.set.pin); document.body.classList.toggle('compact', !!S.set.compact); document.body.classList.toggle('cb', !!S.set.cb); document.body.classList.toggle('light', !!S.set.light); document.body.classList.toggle('mini', !!S.set.mini); const mb = $('#miniBtn'); if (mb) { mb.textContent = S.set.mini ? 'Show' : 'Hide'; mb.setAttribute('aria-pressed', String(!!S.set.mini)); } }
-  function openModal(id) { $('#' + id).hidden = false; if (id === 'setModal') { renderSettings(); xSettingsExtra(); renderOnline(); } if (id === 'devModal') buildDev(); if (id === 'mapModal') renderMap(); }
+  function openModal(id) { $('#' + id).hidden = false; if (id === 'setModal') { renderSettings(); xSettingsExtra(); renderOnline(); } if (id === 'devModal') { if (!devOK) { $('#devModal').hidden = true; return; } buildDev(); } if (id === 'mapModal') renderMap(); }
   for (const b of document.querySelectorAll('[data-close]')) b.addEventListener('click', () => { $('#' + b.dataset.close).hidden = true; });
   for (const m of document.querySelectorAll('.overlay')) m.addEventListener('click', e => { if (e.target === m && m.id !== 'classModal') m.hidden = true; });
   $('#openSettings').addEventListener('click', () => openModal('setModal'));
@@ -2339,6 +2339,26 @@
   }
 
   /* ---------- developer menu ---------- */
+  // Developer menu lock: only someone with the passphrase can open it. The
+  // code holds just a SHA-256 hash of the passphrase. Unlock once per device
+  // in Settings, or by opening the game with #dev=<passphrase> in the address.
+  const DEV_HASH = '9bfe24e0f67b8ace30c2303fd8abfaa211c1fada66f13aac5464fde4dc275053';
+  const DEV_KEY = KEY + '.devpass';
+  let devOK = false;
+  async function sha256(text) { const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)); return [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+  async function checkDev(pass, remember) {
+    try { if (pass && window.crypto && crypto.subtle && await sha256(String(pass).trim()) === DEV_HASH) { devOK = true; if (remember) localStorage.setItem(DEV_KEY, String(pass).trim()); syncDevUi(); return true; } } catch (e) {}
+    syncDevUi(); return false;
+  }
+  function syncDevUi() { const r = $('#devRow'), l = $('#devLock'); if (r) r.hidden = !devOK; if (l) l.hidden = devOK; }
+  function lockDev() { devOK = false; try { localStorage.removeItem(DEV_KEY); } catch (e) {} $('#devModal').hidden = true; syncDevUi(); log('Developer menu locked on this device.', 'c'); }
+  $('#devUnlock').addEventListener('click', async () => { const ok = await checkDev($('#devPass').value, true); $('#devPass').value = ''; setText($('#devMsg'), ok ? 'Unlocked on this device.' : 'Wrong passphrase.'); });
+  $('#devPass').addEventListener('keydown', e => { if (e.key === 'Enter') $('#devUnlock').click(); });
+  {
+    const m = location.hash.match(/[#&]dev=([^&]+)/);
+    if (m) { checkDev(decodeURIComponent(m[1]), true).then(ok => log(ok ? 'Developer menu unlocked on this device.' : 'That developer passphrase is wrong.', ok ? 'p' : 'r')); try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+    else { let saved = null; try { saved = localStorage.getItem(DEV_KEY); } catch (e) {} checkDev(saved, false); }
+  }
   function devMark() { if (!S.dev) { S.dev = true; log('Developer mode used. This save is now marked as a dev save.', 'r'); } }
   function goFloor(f) {
     f = clamp(Math.floor(f) || 1, 1, 999);
@@ -2395,7 +2415,8 @@
       ['Speed ×1', () => { dev.speed = 1; }, () => dev.speed === 1], ['Speed ×2', () => { dev.speed = 2; }, () => dev.speed === 2],
       ['Speed ×5', () => { dev.speed = 5; }, () => dev.speed === 5], ['Speed ×10', () => { dev.speed = 10; }, () => dev.speed === 10],
       ['Debug overlay', () => { dev.debug = !dev.debug; }, () => dev.debug],
-      ['Clear dev mark', () => { S.dev = false; }]
+      ['Clear dev mark', () => { S.dev = false; }],
+      ['Lock developer menu', () => { lockDev(); }]
     ]
   };
   function buildDev() {
@@ -2424,7 +2445,7 @@
     const open = [...document.querySelectorAll('.overlay')].find(m => !m.hidden);
     if (open) { if (open.id === 'titleModal' && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); $('#titleGo').click(); return; } if (e.key === 'Escape') { if (open.id === 'titleModal') $('#titleGo').click(); else open.hidden = true; } return; }
     if (e.target && /INPUT|TEXTAREA/.test(e.target.tagName)) return;
-    if (e.key === '`') { openModal('devModal'); return; }
+    if (e.key === '`') { if (devOK) openModal('devModal'); return; }
     if (/^Digit[1-5]$/.test(e.code)) { audio(); if (S.loadout[+e.code.slice(5) - 1]) castSkill(S.loadout[+e.code.slice(5) - 1], true); return; }
     if (e.code === 'KeyB') { toggleFarm(); return; }
     if (e.code === 'KeyM') { openModal('mapModal'); return; }
@@ -3033,6 +3054,7 @@
     } catch (e) { boardState = 'off'; renderOnline(); }
   })();
   async function postScore(manual) {
+    if (S.dev) { if (manual) { cloudMsg = 'Dev saves are not posted to the leaderboard.'; renderOnline(); } return; }
     if (!DB || !myId) { if (manual) { cloudMsg = 'The leaderboard is only available inside Claude while signed in.'; renderOnline(); } return; }
     try {
       await DB.doc('board/' + myId).set({ deepest: S.deepest, abyss: S.abyssBest, rush: S.rushBest, stars: S.stars || 0, cls: clsName(), title: titleNow(), combo: S.life.bestCombo, kills: S.life.kills, at: Date.now() });
@@ -4028,7 +4050,7 @@
   if (loadErr) log(loadErr, 'r');
   // Balance simulator hook (scripts/sim.js). Only active with ?sim in the URL:
   // it steps the game without drawing and exposes the internals to the bot.
-  const SIM = /[?&]sim\b/.test(location.search);
+  const SIM = /[?&]sim\b/.test(location.search) && (location.protocol === 'file:' || /^(localhost|127\.0\.0\.1)$/.test(location.hostname));
   if (SIM) window.__cc = { ev: c => eval(c), step(sec) { for (let k = 0; k < sec * 10; k++) { window.__simT = (window.__simT || 0) + 0.1; update(0.1); } } };
   let last = performance.now(), uiT = 0, saveT = 0, fps = 60;
   let errN = 0;
