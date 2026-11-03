@@ -344,44 +344,87 @@ body.cb .eqc::after{content:attr(data-g);position:absolute;left:3px;bottom:1px;f
 .area .mons img.boss{width:30px;height:30px;margin-left:6px}
 @media (prefers-reduced-motion:reduce){.buy.ok:active{transform:none}}
 
-/* ---------- Menu layout v2: more room, bigger type, bottom tab bar on phones ---------- */
-.wrap{max-width:1480px}
-@media (min-width:1200px){.grid{grid-template-columns:minmax(0,1fr) minmax(0,1.12fr)}}
-.panel.shop{padding:16px;gap:16px}
+/* ---------- Menu layout v3: roomy, readable, phone-first ---------- */
+.wrap{max-width:1680px}
+@media (min-width:1200px){.grid{grid-template-columns:minmax(460px,540px) minmax(0,1fr)}}
+@media (min-width:921px) and (max-width:1199px){.grid{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}}
+.panel.shop{padding:16px;gap:16px;container-type:inline-size}
+/* tabs */
 .tabs{gap:4px;padding:5px;border-radius:12px}
-.tabs button{font-size:12.5px;padding:9px 2px 7px;gap:4px;border-radius:9px}
+.tabs button{font-family:var(--body);font-size:12.5px;font-weight:800;padding:9px 2px 7px;gap:4px;border-radius:9px}
 .tabs button img{width:26px;height:26px}
 .tabs .badge{top:3px;right:4px}
-.tabpanel{gap:16px}
+/* type: pixel font only for big headings and numbers */
 h2{font-size:22px}
-h3{font-size:17px}
+h3{font-family:var(--body);font-weight:800;font-size:17px}
+.lbl{font-size:11.5px;letter-spacing:.07em}
+.hint,.box p,.pfx{font-size:14px;line-height:1.55}
+.tabpanel{gap:16px}
 .shophead{gap:12px}
 .list{gap:10px}
+.box{padding:16px;gap:12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--edge) 55%,transparent)}
+/* rows */
 .part{grid-template-columns:44px minmax(0,1fr) auto;gap:14px;padding:12px 12px 12px 10px;border:1px solid transparent;border-radius:10px}
 .part:hover{border-color:var(--edge)}
 .part img{width:44px;height:44px}
 .pname{font-size:15.5px;line-height:1.3}
 .pname .lv{font-family:var(--body);font-size:12px;font-weight:700;margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--wall);white-space:nowrap}
-.pfx{font-size:14px;line-height:1.45;margin-top:2px}
+.pfx{margin-top:2px}
 .buy{min-width:108px;padding-block:9px}
 .buy .bc{font-size:16px}
-.box{padding:16px;gap:12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--edge) 55%,transparent)}
-.box p{font-size:14px;line-height:1.5}
-.hint{font-size:13.5px;line-height:1.5}
+.quest{padding:12px 14px;border-radius:10px}
+.quest .qt{font-size:15px}
+.dung{padding:12px;border-radius:10px}
 .act{font-size:14px;padding:10px 14px}
 .pill{font-size:12.5px;padding:7px 13px}
+.chip{font-size:12.5px;padding:5px 11px}
+.rk{font-family:var(--body);font-weight:700;font-size:12.5px;padding:4px 10px}
+/* card grids reflow instead of squeezing */
+.evochain{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.evo{padding:10px;gap:6px}
+.evo b{font-family:var(--body);font-weight:800;font-size:14.5px;line-height:1.3}
+.evo span{font-size:13px;line-height:1.45}
+.talgrid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.tal{font-size:13.5px;padding:9px 10px;line-height:1.4;gap:10px}
+.tal i{font-family:var(--body);font-weight:800}
+.clsgrid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.clsgrid div{font-size:13px;padding:8px 10px}
+.cls b{font-family:var(--body);font-weight:800;font-size:17px}
+.cats button{font-family:var(--body);font-weight:800;font-size:13.5px;padding:9px 6px}
+.eqgrid .gl{font-family:var(--body);font-weight:800}
+.eqd .fx{font-size:14px;line-height:1.55}
+.beast{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.lifestats{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.setgrid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.sockets{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
 [data-lock].locked::before{font-family:var(--body);font-size:13.5px;font-weight:700;padding:12px 14px}
-.tutcard{bottom:16px}
+/* wide menus: lists flow into two columns */
+@container (min-width:820px){
+  .tabpanel .list:not(#boardBox):not(#enchList){display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* phones: bottom tab bar, compact pinned dungeon, optional slim mode */
+#miniBtn{display:none}
 @media (max-width:920px){
   body{padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
   .shop .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;border-radius:14px 14px 0 0;display:flex;overflow-x:auto;scrollbar-width:none;gap:2px;padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--stone) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--edge);box-shadow:0 -8px 24px rgba(0,0,0,.35)}
   .shop .tabs::-webkit-scrollbar{display:none}
-  .shop .tabs button{flex:0 0 auto;min-width:68px;padding:7px 6px 6px}
+  .shop .tabs button{flex:0 0 auto;min-width:66px;padding:7px 6px 6px}
   .tutcard{bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+  .panel.shop{padding:0;gap:14px;background:transparent;border:0}
+  .evochain{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+  .talgrid{grid-template-columns:minmax(0,1fr)}
+  .shophead .lbl{flex-basis:100%}
+  .foldhead .lbl{flex-basis:auto}
+  .box{padding:14px}
   .part{gap:10px;padding:10px}
-  .buy{min-width:96px}
+  .buy{min-width:94px}
+  body.pin .game{padding:8px 10px;gap:6px}
+  body.pin #arena{height:150px}
+  body.pin #miniBtn{display:inline-flex}
+  body.pin.mini #arena{display:none}
+  body.pin.mini .game{gap:4px}
 }
-@media (max-width:420px){.pname .lv{display:inline-block;margin:2px 0 0;margin-left:0}}
+@media (max-width:420px){.pname .lv{display:inline-block;margin:2px 0 0}.shophead h2{font-size:20px}}
 .readybar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .rchip{font:inherit;font-size:12.5px;font-weight:700;color:var(--ink);background:var(--heal);border:0;border-radius:999px;padding:5px 11px;cursor:pointer}
 .rchip:hover{filter:brightness(1.08)}
@@ -413,7 +456,7 @@ h3{font-size:17px}
     <section class="panel game" aria-label="Dungeon">
       <div class="floorbar">
         <div><div class="lbl" id="floorNum">Floor 1</div><div id="floorName">Damp Cellar</div></div>
-        <div class="floorright"><div class="pips" id="pips" aria-label="Floor progress"></div><button id="mapBtn" class="pill" type="button">Map</button><button id="farmBtn" class="pill" type="button">Farm here</button></div>
+        <div class="floorright"><div class="pips" id="pips" aria-label="Floor progress"></div><button id="miniBtn" class="pill" type="button" aria-pressed="false" title="Shrink the dungeon while you use the menus">Hide</button><button id="mapBtn" class="pill" type="button">Map</button><button id="farmBtn" class="pill" type="button">Farm here</button></div>
       </div>
       <div class="arenawrap"><canvas id="arena" aria-label="Battle. Tap to hit the nearest monster."></canvas><div id="debug" hidden></div></div>
       <div class="skillbar" id="skillbar"></div>
@@ -445,7 +488,7 @@ h3{font-size:17px}
         </div>
         <div class="row"><button class="pill" id="autobuyBtn" type="button" aria-pressed="false">Auto-buy: off</button><button class="pill" id="buyCheap" type="button">Buy cheapest</button><button class="pill" id="focusBtn" type="button">Focus: cheapest</button></div>
         <div class="row chips" id="abCats"></div>
-        <p class="hint">Auto-buy and Buy cheapest pick the cheapest upgrade across training, skills and allies (switch each one on or off above), and save up gold to evolve parts (evolving costs gold and shards). <b>Hold</b> any buy button to keep buying. Every 25 levels multiplies the stat by 1.6. At levels 100, 250, 500 and 1000 a part <b>evolves</b> into something much stronger.</p>
+        <p class="hint">Auto-buy and Buy cheapest pick the cheapest of whatever is ticked above, and save up to <b>evolve</b> parts. <b>Hold</b> a buy button to keep buying. Every 25 levels is ×1.6, and parts evolve at levels 100, 250, 500 and 1000.</p>
         <div class="list" id="parts"></div>
       </div>
 
