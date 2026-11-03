@@ -426,6 +426,36 @@ h3{font-family:var(--body);font-weight:800;font-size:17px}
   body.pin.mini .game{gap:4px}
 }
 @media (max-width:420px){.pname .lv{display:inline-block;margin:2px 0 0}.shophead h2{font-size:20px}}
+/* phones, pinned: app layout like other idle RPGs. The currency bar, dungeon and
+   bottom tabs stay put; only the menu panel scrolls. Tap the open tab to close it. */
+@media (max-width:920px){
+  .panel.shop{container-type:normal}
+  body.pin{height:100vh;height:100dvh;overflow:hidden;padding:env(safe-area-inset-top,0px) 0 0}
+  body.pin .wrap{height:100%;gap:0;display:flex;flex-direction:column}
+  body.pin header{flex:none;flex-wrap:nowrap;gap:8px;padding:8px max(12px,env(safe-area-inset-left,0px)) 6px}
+  body.pin .brand,body.pin #mute{display:none}
+  body.pin #openSettings{padding:6px 10px}
+  body.pin .purse{gap:12px;flex-wrap:nowrap;flex:1;justify-content:space-between;min-width:0}
+  body.pin #gold{font-size:19px} body.pin #gems,body.pin #runes,body.pin #shards{font-size:15px}
+  body.pin .gps{display:none}
+  body.pin .grid{flex:1;min-height:0;display:flex;flex-direction:column;gap:0}
+  body.pin .game{position:relative;top:auto;flex:none;border-radius:0;border-left:0;border-right:0;box-shadow:0 6px 16px rgba(0,0,0,.35);z-index:2}
+  body.pin .panel.shop{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:12px max(12px,env(safe-area-inset-left,0px)) calc(92px + env(safe-area-inset-bottom,0px));gap:14px}
+  body.pin .panel.info{background:transparent;border:0;padding:4px 0 0}
+  body.pin.panelClosed .panel.shop{flex:0 0 0;padding:0;overflow:hidden}
+  body.pin.panelClosed .game{flex:1;padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+  body.pin.panelClosed .arenawrap{flex:1 1 0;min-height:150px;display:flex;flex-direction:column}
+  body.pin.panelClosed #arena{flex:1 1 0;height:0;min-height:150px}
+  body.pin .wrap,body.pin .grid,body.pin .panel.shop,body.pin .panel.game{width:100%;max-width:100vw;min-width:0;box-sizing:border-box}
+  body.pin .panel.shop{overflow-x:hidden}
+  body.pin .readybar{width:100%;min-width:0;max-width:100%;box-sizing:border-box;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -2px;padding:0 2px 2px}
+  body.pin .readybar::-webkit-scrollbar{display:none}
+  body.pin .readybar .rchip,body.pin .readybar .lbl{flex:none;white-space:nowrap}
+  body.pin.panelClosed.mini #arena{display:block}
+  body.pin .shop .tabs button[aria-selected="true"]::after{content:"";position:absolute;left:30%;right:30%;top:2px;height:3px;border-radius:2px;background:var(--gold)}
+  body.pin.panelClosed .shop .tabs button[aria-selected="true"]{background:transparent;color:var(--mute)}
+  body.pin.panelClosed .shop .tabs button[aria-selected="true"]::after{display:none}
+}
 .readybar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .rchip{font:inherit;font-size:12.5px;font-weight:700;color:var(--ink);background:var(--heal);border:0;border-radius:999px;padding:5px 11px;cursor:pointer}
 .rchip:hover{filter:brightness(1.08)}

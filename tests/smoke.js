@@ -116,6 +116,17 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   ({ ctx, page } = await open('coin-crawl/index.html', { floor: 40, maxFloor: 40, deepest: 40, seenVer: 99, life: { kills: 1 } }, { width: 390, height: 844 }));
   await page.click('#titleGo'); await page.waitForTimeout(800);
   check(await page.evaluate(() => document.documentElement.scrollWidth) <= 390, 'Coin Crawl phone layout fits 390px');
+  // app layout: the bottom tabs stay on screen and work, nothing widens the page, closing the menu grows the dungeon
+  await page.waitForTimeout(1200);
+  for (const tab of ['equip', 'skills', 'allies', 'trials', 'quests', 'book', 'legacy', 'hero', 'forge', 'train']) await page.click('#tab-' + tab, { timeout: 3000 });
+  check(true, 'every bottom tab can be tapped on a phone');
+  check(await page.evaluate(() => innerWidth <= 390 && document.querySelector('.shop .tabs').getBoundingClientRect().bottom <= innerHeight + 1), 'the bottom tab bar stays on screen');
+  const h0 = await page.evaluate(() => document.querySelector('#arena').clientHeight);
+  await page.click('#tab-train'); await page.waitForTimeout(300);
+  const h1 = await page.evaluate(() => document.querySelector('#arena').clientHeight);
+  check(h1 > h0 * 1.5, `tapping the open tab closes the menu and grows the dungeon (${h0}px -> ${h1}px)`);
+  await page.click('#tab-equip'); await page.waitForTimeout(300);
+  check(await page.evaluate(() => !document.body.classList.contains('panelClosed')), 'tapping a tab opens the menu again');
   await ctx.close();
 
   // 6. Installable app: served over http, the service worker caches the game so it loads offline
