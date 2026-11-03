@@ -131,7 +131,25 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
 
   // 6. Installable app: served over http, the service worker caches the game so it loads offline
   const types = { '.html': 'text/html', '.js': 'text/javascript', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
+  // a tiny stand-in for Supabase so the global leaderboard can be tested offline
+  const board = new Map();
   const server = http.createServer((req, res) => {
+    const u = new URL(req.url, 'http://x');
+    if (u.pathname === '/config.js') { res.writeHead(200, { 'content-type': 'text/javascript' }); res.end(`window.IDK_CONFIG = { supabaseUrl: location.origin, supabaseKey: 'test-key' };`); return; }
+    if (u.pathname === '/rest/v1/rpc/submit_score' && req.method === 'POST') {
+      let body = ''; req.on('data', c => { body += c; }); req.on('end', () => {
+        const b = JSON.parse(body), cur = board.get(b.p_id);
+        if (req.headers.apikey !== 'test-key' || !/^[A-Za-z0-9 _.-]{2,16}$/.test(b.p_name || '') || (cur && cur.secret !== b.p_secret)) { res.writeHead(400); res.end('{"message":"bad name or not your score"}'); return; }
+        const row = cur || { player_id: b.p_id, secret: b.p_secret, deepest: 0, abyss: 0, rush: 0, titan: 0, stars: 0, orbit: 0 };
+        row.name = b.p_name; for (const k of ['deepest', 'abyss', 'rush', 'titan', 'stars', 'orbit']) row[k] = Math.max(row[k], b['p_' + k] || 0); row.cls = b.p_cls || row.cls;
+        board.set(b.p_id, row); res.writeHead(204); res.end();
+      }); return;
+    }
+    if (u.pathname === '/rest/v1/scores') {
+      const col = (u.searchParams.get('order') || 'deepest.desc').split('.')[0];
+      const rows = [...board.values()].filter(r => r[col] > 0).sort((a, b) => b[col] - a[col]).map(({ secret, ...r }) => r);
+      res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(rows)); return;
+    }
     let f = path.join(DIST, decodeURIComponent(req.url.split('?')[0]));
     if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
     if (!f.startsWith(DIST) || !fs.existsSync(f)) { res.writeHead(404); res.end(); return; }
@@ -147,6 +165,24 @@ const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!o
   await ctx.setOffline(true);
   await page.reload(); await page.waitForTimeout(800);
   check(await page.isVisible('#titleGo') || await page.isVisible('#arena'), 'the game loads offline after one visit');
+  await ctx.close();
+
+  // 7. Global leaderboard on the website: set a name, post, see yourself, Orbit Hop shares it
+  ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  await ctx.addInitScript(raw => { if (!sessionStorage.getItem('s')) { sessionStorage.setItem('s', 1); localStorage.setItem('coincrawl.v1', raw); } }, JSON.stringify({ floor: 40, maxFloor: 40, deepest: 40, runs: 3, seenVer: 99, life: { kills: 50, time: 3600 }, set: { tips: false } }));
+  page = await ctx.newPage(); page.on('pageerror', e => errors.push(`board: ${e.message}`));
+  await page.goto(base + '/coin-crawl/'); await page.waitForTimeout(600);
+  await page.click('#titleGo'); await page.click('#tab-legacy'); await page.waitForTimeout(800);
+  check(await page.isVisible('#webName'), 'website shows the global leaderboard when it is configured');
+  await page.fill('#webName', 'Tester <b>'); await page.click('[data-cl="name"]'); await page.waitForTimeout(1200);
+  const mine = [...board.values()][0];
+  check(!!mine && mine.name === 'Tester b' && mine.deepest === 40, `posting a score stores a clean name and the best floor (${mine && mine.name}, ${mine && mine.deepest})`);
+  check(/Tester b \(you\)/.test(await page.textContent('#boardBox')), 'your row shows on the board');
+  const forged = await page.evaluate(async () => { const r = await fetch('/rest/v1/rpc/submit_score', { method: 'POST', headers: { apikey: 'test-key', 'Content-Type': 'application/json' }, body: JSON.stringify({ p_id: window.IDKBoard.me().id, p_secret: 'wrong'.repeat(8), p_name: 'Hacker', p_deepest: 9999 }) }); return r.status; });
+  check(forged >= 400 && [...board.values()][0].deepest === 40, 'someone without your secret cannot overwrite your score');
+  await page.goto(base + '/orbit-hop/'); await page.waitForTimeout(400);
+  await page.evaluate(() => window.IDKBoard.submit({ orbit: 42 })); await page.waitForTimeout(300);
+  check([...board.values()][0].orbit === 42, 'Orbit Hop posts to the same player on the board');
   await ctx.close(); server.close();
 
   check(errors.length === 0, `no page errors${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''}`);

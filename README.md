@@ -26,6 +26,9 @@ orbit-hop/
   index.html            Orbit Hop (single file)
 scripts/build.js        Builds dist/ for normal web hosting, plus the app manifest and offline service worker
 site/icons/             App icons
+site/config.js          Website settings (global leaderboard keys)
+site/leaderboard.js     Global leaderboard client used by both games on the website
+supabase/schema.sql     Database setup for the global leaderboard
 scripts/sim.js          Balance simulator: a bot plays Coin Crawl for hours of game time
 tests/smoke.js          Playwright smoke test of the built site
 tests/stress.js         Crash and freeze test: extreme and broken saves plus random clicking
@@ -104,6 +107,28 @@ The developer menu (cheats for testing) is locked behind a passphrase, so player
 - god mode, one-hit kills and game speed up to ×10
 
 Using it marks the save as a dev save, and dev saves are never posted to the leaderboard. To change the passphrase, put the SHA-256 hex of the new one in `DEV_HASH`. The `?sim` hook used by the simulator only works on local files and localhost.
+
+## Global leaderboard
+
+Inside Claude the leaderboard uses the artifact's own storage. On the website it uses [Supabase](https://supabase.com), a hosted Postgres database with a free plan. Until it is set up, the website's leaderboard panel says so and everything else works.
+
+To turn it on (about 5 minutes, free, no card needed):
+
+1. Create a free account and a new project at https://supabase.com.
+2. In the project, open **SQL Editor > New query**, paste all of [`supabase/schema.sql`](supabase/schema.sql) and press **Run**.
+3. Open **Project Settings > API** (or **Connect**) and copy the **Project URL** and the **anon public** key.
+4. Put them in [`site/config.js`](site/config.js) as `supabaseUrl` and `supabaseKey`, commit and push. The site redeploys by itself.
+
+The anon key is meant to be public. The database only lets it read scores (not the secrets) and call `submit_score()`. That function:
+
+- checks a random secret each device keeps in its browser, so nobody else can change your row
+- only keeps your best value for each category
+- accepts names of 2 to 16 letters, numbers, spaces, dots and dashes
+- rejects floors that are too deep for the play time
+
+The game also never posts dev saves. Scores still come from players' browsers, so a determined cheater could fake a plausible one. If that happens, delete the row in Supabase's **Table Editor**.
+
+Players set their name in Coin Crawl under **Legacy > Leaderboard**. The board shows floor, stars, Abyss, Boss Rush, Titan and Orbit Hop scores, for all time or for players active this week. Orbit Hop posts your best score and shows the top 5 after each run.
 
 ## Deploying
 

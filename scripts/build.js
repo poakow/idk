@@ -26,7 +26,8 @@ const RESET = ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px)
   'body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}img{max-width:100%}[hidden]{display:none!important}';
 
 const APP_HEAD = up => `<link rel="manifest" href="${up}manifest.webmanifest">\n<meta name="theme-color" content="#16131d">\n` +
-  `<link rel="icon" type="image/png" href="${up}icons/favicon-32.png">\n<link rel="apple-touch-icon" href="${up}icons/apple-touch-icon.png">`;
+  `<link rel="icon" type="image/png" href="${up}icons/favicon-32.png">\n<link rel="apple-touch-icon" href="${up}icons/apple-touch-icon.png">\n` +
+  `<script src="${up}config.js"></script>\n<script src="${up}leaderboard.js"></script>`;
 const APP_BODY = up => `<script>if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('${up}sw.js').catch(() => {});</script>`;
 
 // Pull the leading <title>, <meta> and <link> tags into <head>; leave the rest in <body>.
@@ -54,6 +55,8 @@ function copy(rel, srcRoot = ROOT) {
 fs.rmSync(DIST, { recursive: true, force: true });
 for (const s of SOURCES) copy(s);
 copy('icons', path.join(ROOT, 'site'));
+copy('config.js', path.join(ROOT, 'site'));
+copy('leaderboard.js', path.join(ROOT, 'site'));
 fs.writeFileSync(path.join(DIST, '.nojekyll'), '');
 
 fs.writeFileSync(path.join(DIST, 'manifest.webmanifest'), JSON.stringify({

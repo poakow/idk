@@ -54,6 +54,7 @@ h2{font-size:44px}
 button:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
 .final{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;font-variant-numeric:tabular-nums}
 .final b{display:block;font-family:var(--display);font-weight:400;font-size:36px;line-height:1;margin-top:4px}
+.ohboard{margin:8px auto 0;max-width:280px;text-align:left;font-size:13px}.ohboard ol{margin:6px 0 0;padding-left:22px}.ohboard li{display:flex;justify-content:space-between;gap:8px}.ohboard li.me{color:var(--flare)}.ohboard .lbl{display:block;text-align:center}
 .newbest{color:var(--flare)!important;letter-spacing:.1em;text-transform:uppercase;font-size:12px!important}
 .small{font-size:12px!important;color:var(--dim)!important;text-align:center}
 @media (prefers-reduced-motion:reduce){.cta{transition:none}}
@@ -94,6 +95,7 @@ button:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
       <div><span class="lbl">Best</span><b id="fBest">0</b></div>
     </div>
     <p id="newbest" class="newbest" hidden>New best score</p>
+    <div id="ohBoard" class="ohboard" hidden></div>
     <button id="again" class="cta" type="button">Fly again</button>
     <p class="small">or press Space</p>
   </div>
@@ -262,6 +264,19 @@ button:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
     tone(300, 60, 0.5, 'sawtooth', 0.06);
   }
 
+  // Global leaderboard (website only, see site/leaderboard.js)
+  async function showBoard(post) {
+    const B = window.IDKBoard, box = $('#ohBoard');
+    if (!B || !B.enabled) return;
+    if (post) await B.submit({ orbit: best });
+    const rows = await B.top('orbit', 5);
+    if (!rows || !rows.length) return;
+    const me = B.me().id;
+    box.innerHTML = '<span class="lbl">Top pilots</span><ol></ol>';
+    const ol = box.querySelector('ol');
+    for (const r of rows) { const li = document.createElement('li'); if (r.player_id === me) li.className = 'me'; const a = document.createElement('span'), b = document.createElement('b'); a.textContent = r.name + (r.player_id === me ? ' (you)' : ''); b.textContent = r.orbit; li.append(a, b); ol.appendChild(li); }
+    box.hidden = false;
+  }
   function gameOver() {
     running = false;
     const isBest = G.score > best;
@@ -273,6 +288,7 @@ button:focus-visible{outline:2px solid var(--ring);outline-offset:3px}
     $('#fHops').textContent = G.hops;
     $('#fBest').textContent = best;
     $('#newbest').hidden = !(isBest && G.score > 0);
+    showBoard(isBest && G.score > 0);
     $('#over').hidden = false;
     hud();
     setTimeout(() => $('#again').focus({ preventScroll: true }), 50);

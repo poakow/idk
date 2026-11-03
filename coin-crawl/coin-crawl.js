@@ -3020,7 +3020,7 @@
     if (g > 0) banner = { text: 'WELCOME BACK', sub: `+${fmt(g)} gold while you were away`, life: 3 };
     return msg;
   }
-  const CHANGES = ['Phones now work like other idle RPGs: the dungeon and tabs stay put, only the menu scrolls, and tapping the open tab closes the menu for a full-screen dungeon', 'Menus redone for phone and PC: readable fonts, more room, cards that reflow, two-column lists on wide screens', 'Phones: a slimmer pinned dungeon and a Hide button that shrinks it to a strip while you use the menus', "Titan's Lair: a giant boss every 6 hours that pays every currency and a Legendary piece at 20 bars", '4 new areas and 4 new monsters past floor 110: Jellyfish Lagoon, Scarab Sanctum, Gargoyle Spires and Starship Basement', 'A progress chart in Legacy and 3 new achievements', 'Install the game as an app from the website (works offline)', 'A Ready bar under the dungeon with one-tap shortcuts to everything waiting for you', 'Pause (P), foldable sections, tabs that remember where you scrolled, and more shortcuts (press ?)', 'Retire advice: the Legacy tab tells you when a retire is worth it and how much stronger it makes you', 'Auto-buy now covers training, skills and allies (pick which) and saves up for evolutions', 'New automation: auto-merge, auto rank trial, auto-research and auto class evolution', 'New players retry bosses on their own until floor 10', 'Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
+  const CHANGES = ['Global leaderboard on the website: pick a name, compare floors, stars, Abyss, Boss Rush, Titan and Orbit Hop scores, all time or this week', 'Phones now work like other idle RPGs: the dungeon and tabs stay put, only the menu scrolls, and tapping the open tab closes the menu for a full-screen dungeon', 'Menus redone for phone and PC: readable fonts, more room, cards that reflow, two-column lists on wide screens', 'Phones: a slimmer pinned dungeon and a Hide button that shrinks it to a strip while you use the menus', "Titan's Lair: a giant boss every 6 hours that pays every currency and a Legendary piece at 20 bars", '4 new areas and 4 new monsters past floor 110: Jellyfish Lagoon, Scarab Sanctum, Gargoyle Spires and Starship Basement', 'A progress chart in Legacy and 3 new achievements', 'Install the game as an app from the website (works offline)', 'A Ready bar under the dungeon with one-tap shortcuts to everything waiting for you', 'Pause (P), foldable sections, tabs that remember where you scrolled, and more shortcuts (press ?)', 'Retire advice: the Legacy tab tells you when a retire is worth it and how much stronger it makes you', 'Auto-buy now covers training, skills and allies (pick which) and saves up for evolutions', 'New automation: auto-merge, auto rank trial, auto-research and auto class evolution', 'New players retry bosses on their own until floor 10', 'Roomier, easier-to-read menus, and a bottom tab bar on phones', 'Tips that explain each feature when it unlocks', 'Crash and freeze fixes, plus automatic save backups', 'Rebalanced economy: monsters, gold, training, allies, pets, combo, ranks and stars were retuned so power no longer runs away', 'Features now unlock as you go deeper and retire, with a teaser showing what opens each one', 'Research lab (after 3 retires): timed projects that keep running while you are away', 'Floor milestones: one-time rewards for your best floor, with Legendary gear every 50 floors', 'Auto-retire (after 5 retires) and 5 new achievements', 'Ascending now keeps your ranks, and stars come from tales and depth', 'Branching class evolutions: two paths at every step', 'Skill summon with 18 new skills, from Double Slash to Black Hole', 'Helmets and boots, gem sockets, a daily featured banner, a wardrobe with hats, capes and weapon looks', 'Talents, challenges, a legacy shop and heirlooms', 'Daily challenge, treasure maps, fishing, a camp, floor events and mini-bosses', 'A monthly event and pass, a leaderboard and cloud save', 'A light menu theme, an auto-buy focus and a How to play guide', 'Endless Abyss and Boss Rush in Trials, plus the Gem Grotto dungeon', 'Expeditions: send allies away for loot', 'Ascend: a second prestige layer with stars', 'Gear awakening, pet evolution, set bonuses and up to 3 pets with skills', 'Healer Frog and Cannon Crab, and allies now evolve at levels 10 and 25', 'Necromancer and Minstrel classes, plus a fourth evolution for every class', 'Three new skills, a skill bar you pick, and an ultimate (U)', '5 new monsters, 6 new areas, floor guardians, rare monsters and boss parries', 'Weekly quest, titles, records, stat breakdown, full log and a share card', 'Music, flying coins, hit pauses, props and many quality-of-life settings'];
   function showTitle(report) {
     const returning = S.life.kills > 0, isNew = (S.seenVer || 0) < VER && returning;
     $('#titleHero').src = heroIcon(S.cls);
@@ -3046,6 +3046,32 @@
 
   /* ================= expansion 2e: leaderboard, cloud save, guide ================= */
   let DB = null, USER = null, myId = null, boardRows = [], boardState = 'loading', lastPostDeep = 0, lastPostT = 0, lastCloudT = 0, cloudArm = 0, cloudMsg = '';
+  // Website: global leaderboard through site/leaderboard.js (Supabase).
+  const WEBB = () => !DB && window.IDKBoard && window.IDKBoard.enabled;
+  let webWeek = false, webRows = null, webCat = 'deepest', webMsg = '', webT = 0, webPostDeep = 0, webPostT = 0, webBusy = false;
+  const WEB_CATS = [['deepest', 'Floor'], ['stars', 'Stars'], ['abyss', 'Abyss'], ['rush', 'Boss Rush'], ['titan', 'Titan'], ['orbit', 'Orbit Hop']];
+  const WHY = { implausible: 'That score looks impossible for your play time, so it was not posted.', taken: 'That player slot belongs to someone else.', name: 'Pick a name with 2 to 16 letters, numbers, spaces, dots or dashes.', network: 'Could not reach the leaderboard. Check your connection.', error: 'The leaderboard is unavailable right now.' };
+  async function webRefresh() { if (!WEBB()) return; webRows = await window.IDKBoard.top(webCat, 50, webWeek ? 7 : 0); webT = Date.now(); renderOnline(); }
+  async function webPost(manual) {
+    if (!WEBB() || webBusy) return;
+    if (S.dev) { if (manual) { webMsg = 'Dev saves are not posted to the leaderboard.'; renderOnline(); } return; }
+    webBusy = true;
+    const r = await window.IDKBoard.submit({ deepest: bestDeep(), abyss: S.abyssBest, rush: S.rushBest, titan: S.life.titanBest || 0, stars: S.stars || 0, cls: clsName(), title: titleNow(), play: S.life.time });
+    webBusy = false; webPostDeep = bestDeep(); webPostT = Date.now();
+    webMsg = r.ok ? (manual ? 'Score posted.' : webMsg) : WHY[r.why] || WHY.error;
+    if (r.ok && manual) log('Posted your score to the global leaderboard.', 't');
+    webRefresh();
+  }
+  function renderWeb(box) {
+    const B = window.IDKBoard, me = B.me();
+    const esc = v => String(v == null ? '' : v).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const rows = webRows === null ? '<p>Loading the leaderboard…</p>' : !webRows.length ? '<p>No scores here yet. Be the first!</p>' :
+      webRows.map((r, k) => `<div class="brow${r.player_id === me.id ? ' me' : ''}"><span><b>${k + 1}.</b> ${esc(r.name)}${r.player_id === me.id ? ' (you)' : ''}${r.cls ? ` · <span class="hint" style="display:inline">${esc(r.cls)}${r.title ? ' · ' + esc(r.title) : ''}</span>` : ''}</span><b>${webCat === 'deepest' ? 'Floor ' : ''}${fmt(r[webCat] || 0)}</b></div>`).join('');
+    box.innerHTML = `<div class="row"><label class="hint" for="webName">Your name</label><input id="webName" maxlength="16" value="${esc(me.name)}" autocomplete="off"><button class="pill" type="button" data-cl="name">Save name</button></div>` +
+      `<div class="chips" style="margin:8px 0">${WEB_CATS.map(([k, n]) => `<button type="button" class="chip${k === webCat ? ' got' : ''}" data-wcat="${k}">${n}</button>`).join('')}<button type="button" class="chip${webWeek ? ' got' : ''}" data-wweek="1">Active this week</button></div>` + rows +
+      `<div class="row"><button class="act ok gem" type="button" data-cl="post">Post my score</button><span class="hint">${esc(webMsg || 'Your best scores post themselves as you play. Everyone on this website shares this board.')}</span></div>`;
+  }
+  document.addEventListener('click', e => { const w = e.target.closest('[data-wweek]'); if (w) { webWeek = !webWeek; webRows = null; renderOnline(); webRefresh(); return; } const b = e.target.closest('[data-wcat]'); if (!b) return; webCat = b.dataset.wcat; webRows = null; renderOnline(); webRefresh(); });
   (async () => {
     try {
       if (!window.claude || typeof window.claude.use !== 'function') { boardState = 'off'; renderOnline(); return; }
@@ -3091,6 +3117,8 @@
     renderOnline();
   }
   function onlineTick() {
+    if (WEBB() && !S.dev && bestDeep() >= 10 && Date.now() - webPostT > 120e3 && (bestDeep() >= webPostDeep + 5 || Date.now() - webPostT > 600e3)) webPost(false);
+    if (WEBB() && S.tab === 'legacy' && Date.now() - webT > 60e3) webRefresh();
     if (!DB || !myId) return;
     if (S.deepest >= lastPostDeep + 5 && Date.now() - lastPostT > 120e3 && S.deepest >= 10) postScore(false);
     if (S.set.cloudauto !== false && Date.now() - lastCloudT > 600e3 && S.life.kills > 50) cloudSave(false);
@@ -3099,7 +3127,10 @@
     const box = $('#boardBox'), cb = $('#cloudBox');
     if (cb) setHTML(cb, DB && myId ? `<p>Your private cloud slot. Only you can read it. It also saves itself every 10 minutes and when you retire${S.set.cloudauto === false ? ' (turned off in settings)' : ''}.</p><div class="row"><button class="act ok heal" type="button" data-cl="save">Save to cloud</button><button class="act ok gold" type="button" data-cl="load">Load from cloud</button></div><p>${cloudMsg}</p>` : `<p>Cloud save works when the game is open in Claude and you're signed in. Here, use the save code above.</p>`);
     if (!box) return;
-    if (boardState === 'off') { setHTML(box, '<p>The leaderboard works when the game is open in Claude and you\'re signed in.</p>'); return; }
+    if (boardState === 'off') {
+      if (WEBB()) { renderWeb(box); if (webRows === null && Date.now() - webT > 3000) webRefresh(); return; }
+      setHTML(box, '<p>The global leaderboard is not set up on this copy of the game yet. It works on the website once its owner connects a free database (see the README), and inside Claude when you are signed in.</p>'); return;
+    }
     if (boardState === 'loading') { setHTML(box, '<p>Loading the leaderboard…</p>'); return; }
     if (boardState === 'slow') { setHTML(box, "<p>The leaderboard can't be reached yet. It will appear when the connection comes back.</p>"); return; }
     if (boardState === 'error') { setHTML(box, '<p>The leaderboard is unavailable right now.</p>'); return; }
@@ -3113,7 +3144,8 @@
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-cl]'); if (!b) return;
     audio();
-    if (b.dataset.cl === 'post') postScore(true);
+    if (b.dataset.cl === 'post') { if (WEBB()) webPost(true); else postScore(true); }
+    if (b.dataset.cl === 'name' && WEBB()) { const ok = window.IDKBoard.setName($('#webName').value); webMsg = ok ? 'Name saved. It shows next time your score posts.' : WHY.name; if (ok) webPost(false); renderOnline(); }
     if (b.dataset.cl === 'save') cloudSave(true);
     if (b.dataset.cl === 'load') cloudLoad();
   });
@@ -4033,8 +4065,9 @@
     const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
     const H = (S.hist || []).concat([[S.life.time, S.maxFloor, bestDeep(), S.stars || 0]]);
     const css = k => getComputedStyle(document.body).getPropertyValue(k).trim();
-    setText($('#histLbl'), H.length > 1 ? `${dur(S.life.time)} played` : 'Play a little to see your progress');
-    if (H.length < 2) return;
+    const span = H.length > 1 ? H[H.length - 1][0] - H[0][0] : 0;
+    setText($('#histLbl'), span >= 60 ? `${dur(S.life.time)} played` : 'Play a few minutes to see your progress');
+    if (span < 60) return;
     const pad = { l: 34, r: 8, t: 10, b: 20 }, t0 = H[0][0], t1 = Math.max(t0 + 1, H[H.length - 1][0]), top = Math.max(10, ...H.map(x => x[2]));
     const X = v => pad.l + (v - t0) / (t1 - t0) * (w - pad.l - pad.r), Y = v => h - pad.b - v / top * (h - pad.t - pad.b);
     g.strokeStyle = css('--edge'); g.lineWidth = 1; g.fillStyle = css('--mute'); g.font = '11px Nunito, sans-serif';
