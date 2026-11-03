@@ -1,0 +1,67 @@
+<title>idk Games</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Two small browser games: Coin Crawl, an idle dungeon crawler, and Orbit Hop, a one-button space game.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Nunito:wght@400;700;800&display=swap">
+<style>
+/* Layout: a short header and two game cards side by side, stacking on phones. Single dark look to match both games. */
+:root{
+  --bg:#13111a;
+  --panel:#1f1b29;
+  --edge:#352d49;
+  --text:#f1ecff;
+  --mute:#a99fc2;
+  --gold:#f5b942;
+  --mint:#7de2d1;
+  --display:"Pixelify Sans","Courier New",monospace;
+  --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-block:40px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{margin:0;font-family:var(--display);font-weight:700;font-size:clamp(36px,7vw,56px);line-height:1;text-wrap:balance}
+.lede{margin:8px 0 0;color:var(--mute);max-width:60ch}
+.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:680px){.games{grid-template-columns:minmax(0,1fr)}}
+.game{display:flex;flex-direction:column;gap:12px;background:var(--panel);border:1px solid var(--edge);border-radius:12px;padding:20px;text-decoration:none;color:inherit;transition:border-color .15s ease,transform .15s ease}
+.game:hover,.game:focus-visible{border-color:var(--accent);transform:translateY(-2px)}
+.game:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.game h2{margin:0;font-family:var(--display);font-weight:700;font-size:30px;color:var(--accent);line-height:1}
+.game p{margin:0;color:var(--mute)}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.tags li{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text);border:1px solid var(--edge);border-radius:999px;padding:3px 10px}
+.play{margin-top:auto;align-self:flex-start;font-weight:800;color:var(--bg);background:var(--accent);border-radius:999px;padding:10px 20px}
+.coin{--accent:var(--gold)}
+.orbit{--accent:var(--mint)}
+footer{color:var(--mute);font-size:14px}
+footer a{color:var(--text)}
+@media (prefers-reduced-motion:reduce){.game{transition:none}.game:hover{transform:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>idk Games</h1>
+    <p class="lede">Two small games that run in your browser. No install, no account. Your progress saves on this device.</p>
+  </header>
+
+  <main class="games">
+    <a class="game coin" href="coin-crawl/">
+      <h2>Coin Crawl</h2>
+      <p>An idle dungeon crawler. Your hero runs and fights on their own while you tap for combos, summon gear, pets and skills, evolve your class, and dive into the Endless Abyss.</p>
+      <ul class="tags"><li>Idle RPG</li><li>Tap combos</li><li>Desktop and phone</li></ul>
+      <span class="play">Play Coin Crawl</span>
+    </a>
+    <a class="game orbit" href="orbit-hop/">
+      <h2>Orbit Hop</h2>
+      <p>A one-button space game. Let go of your orbit at the right moment and get caught by the next planet before you drift into the dark.</p>
+      <ul class="tags"><li>Arcade</li><li>One button</li><li>Quick runs</li></ul>
+      <span class="play">Play Orbit Hop</span>
+    </a>
+  </main>
+
+  <footer>Made with Claude Code. Source on <a href="https://github.com/poakow/idk">GitHub</a>.</footer>
+</div>

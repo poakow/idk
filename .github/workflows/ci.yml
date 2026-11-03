@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Check game scripts parse
+        run: node -e "for (const f of ['coin-crawl/coin-crawl.js']) new Function(require('fs').readFileSync(f, 'utf8')); console.log('scripts parse')"
+      - name: Build and run smoke test
+        run: npm test

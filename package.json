@@ -1,0 +1,17 @@
+{
+  "name": "idk-games",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Browser games: Coin Crawl (idle dungeon crawler) and Orbit Hop (one-button space game).",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node scripts/build.js && node tests/smoke.js",
+    "serve": "node scripts/build.js && npx --yes http-server@14.1.1 dist -p 8080 -c-1"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

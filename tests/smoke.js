@@ -1,53 +1,81 @@
-// Smoke test for coin-crawl.html. Run with: node tests/smoke.js
-// Needs Playwright with Chromium. Fails (exit 1) on any page error,
-// a broken old-save upgrade, or a runaway early-game pace.
+// Smoke test for the built site in dist/. Run with: npm test
+// (which builds first). Needs Playwright with Chromium.
+// Fails (exit 1) on any page error, a broken page, a broken old-save
+// upgrade, or a runaway early-game pace in Coin Crawl.
 const { chromium } = require('playwright');
+const fs = require('fs');
 const path = require('path');
-const URL = 'file://' + path.resolve(__dirname, '..', 'coin-crawl.html');
+
+const DIST = path.resolve(__dirname, '..', 'dist');
+const url = rel => 'file://' + path.join(DIST, rel);
 const seed = o => `if (!sessionStorage.getItem('s')) { sessionStorage.setItem('s', 1); localStorage.setItem('coincrawl.v1', ${JSON.stringify(JSON.stringify(o))}); }`;
 const fails = [];
 const check = (ok, msg) => { console.log((ok ? 'PASS ' : 'FAIL ') + msg); if (!ok) fails.push(msg); };
 
 (async () => {
+  if (!fs.existsSync(path.join(DIST, 'index.html'))) { console.log('dist/ is missing. Run: npm run build'); process.exit(1); }
   const browser = await chromium.launch();
   const errors = [];
-  const open = async (save, viewport) => {
+  const open = async (rel, save, viewport) => {
     const ctx = await browser.newContext({ viewport: viewport || { width: 1280, height: 900 } });
     if (save) await ctx.addInitScript(seed(save));
     const page = await ctx.newPage();
-    page.on('pageerror', e => errors.push(e.message));
-    await page.goto(URL); await page.waitForTimeout(600);
+    page.on('pageerror', e => errors.push(`${rel}: ${e.message}`));
+    await page.goto(url(rel)); await page.waitForTimeout(600);
     return { ctx, page, state: () => page.evaluate(() => JSON.parse(localStorage.getItem('coincrawl.v1'))) };
   };
 
-  // 1. Fresh game: title screen, then 45 seconds of tapping and buying
-  let { ctx, page, state } = await open(null);
-  check(await page.isVisible('#titleModal'), 'title screen shows on load');
+  // 0. Every built page is a full document (standards mode, not quirks)
+  for (const rel of ['index.html', 'coin-crawl/index.html', 'orbit-hop/index.html']) {
+    const { ctx, page } = await open(rel);
+    check(await page.evaluate(() => document.compatMode) === 'CSS1Compat', `${rel} renders in standards mode`);
+    await ctx.close();
+  }
+
+  // 1. Landing page links to both games
+  let { ctx, page, state } = await open('index.html');
+  const links = await page.$$eval('a.game', as => as.map(a => a.getAttribute('href')));
+  check(links.includes('coin-crawl/') && links.includes('orbit-hop/'), 'landing page links to both games');
+  await ctx.close();
+
+  // 2. Orbit Hop starts and launches
+  ({ ctx, page } = await open('orbit-hop/index.html'));
+  check(await page.isVisible('#menu'), 'Orbit Hop menu shows');
+  await page.click('#go');
+  for (let i = 0; i < 4; i++) { await page.waitForTimeout(500); await page.keyboard.press('Space'); }
+  check(!(await page.isVisible('#menu')), 'Orbit Hop starts a run');
+  await ctx.close();
+
+  // 3. Coin Crawl fresh game: title screen, then 45 seconds of tapping and buying
+  ({ ctx, page, state } = await open('coin-crawl/index.html'));
+  check(await page.isVisible('#titleModal'), 'Coin Crawl title screen shows on load');
   await page.click('#titleGo');
   const box = await page.locator('#arena').boundingBox();
   const t0 = Date.now();
   while (Date.now() - t0 < 45000) {
     for (let i = 0; i < 3; i++) await page.mouse.click(box.x + box.width * 0.6, box.y + box.height - 80);
     await page.click('#tab-train'); await page.click('#buyCheap');
+    await page.waitForTimeout(300); // about 8 taps a second, like a fast human
   }
   let s = await state();
-  check(s.floor >= 4, `fresh game makes progress (floor ${s.floor} after 45s)`);
-  check(s.floor <= 25, `fresh game does not run away (floor ${s.floor} after 45s, limit 25)`);
+  check(s.floor >= 3, `fresh game makes progress (floor ${s.floor} after 45s)`);
+  check(s.floor <= 15, `fresh game does not run away (floor ${s.floor} after 45s, limit 15)`);
   for (const tab of ['train', 'equip', 'forge', 'hero', 'skills', 'allies', 'trials', 'quests', 'book', 'legacy']) await page.click('#tab-' + tab);
-  check(true, 'every tab opens');
+  check(true, 'every Coin Crawl tab opens');
+  check(/inside Claude|works when/.test(await page.textContent('#boardBox')), 'leaderboard explains it needs Claude when hosted elsewhere');
   await ctx.close();
 
-  // 2. Old save from before equipment existed upgrades cleanly
-  ({ ctx, page, state } = await open({ floor: 12, maxFloor: 12, deepest: 12, gold: 100, weapon: { name: 'Sharp Spatula', base: 'Spatula', rar: 1, power: 2, pre: 'Sharp', pm: 1.1 }, book: { 'Spoon|0': 1 }, tab: 'gear' }));
+  // 4. Old save from before equipment existed upgrades cleanly
+  ({ ctx, page, state } = await open('coin-crawl/index.html', { floor: 12, maxFloor: 12, deepest: 12, gold: 100, weapon: { name: 'Sharp Spatula', base: 'Spatula', rar: 1, power: 2, pre: 'Sharp', pm: 1.1 }, book: { 'Spoon|0': 1 }, tab: 'gear' }));
   s = await state();
   check(s.eq && s.eq.weapon.on >= 0 && s.prefix.pre === 'Sharp', 'old weapon converts into equipment and keeps its prefix');
   check(s.tab === 'train', 'old Gear tab maps to Train');
   await ctx.close();
 
-  // 3. Phone layout has no sideways scroll
-  ({ ctx, page } = await open({ floor: 40, maxFloor: 40, deepest: 40, seenVer: 99, life: { kills: 1 } }, { width: 390, height: 844 }));
+  // 5. Phone layout has no sideways scroll
+  ({ ctx, page } = await open('coin-crawl/index.html', { floor: 40, maxFloor: 40, deepest: 40, seenVer: 99, life: { kills: 1 } }, { width: 390, height: 844 }));
   await page.click('#titleGo'); await page.waitForTimeout(800);
-  check(await page.evaluate(() => document.documentElement.scrollWidth) <= 390, 'phone layout fits 390px');
+  check(await page.evaluate(() => document.documentElement.scrollWidth) <= 390, 'Coin Crawl phone layout fits 390px');
   await ctx.close();
 
   check(errors.length === 0, `no page errors${errors.length ? ': ' + errors.slice(0, 3).join(' | ') : ''}`);
