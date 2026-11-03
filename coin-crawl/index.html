@@ -253,6 +253,12 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .toggle[aria-pressed="true"] b{color:var(--heal)}
 textarea{width:100%;box-sizing:border-box;min-height:80px;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:8px;resize:vertical}
 select,#devNum{font:inherit;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}#devNum{width:130px}
+.boosts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.boost{font:inherit;text-align:left;display:flex;flex-direction:column;gap:2px;background:var(--wall);color:var(--text);border:1px solid var(--edge);border-left:4px solid var(--bc);border-radius:10px;padding:10px 12px;cursor:pointer}
+.boost b{font-size:15px;color:var(--bc)} .boost span{font-size:13px;color:var(--mute)} .boost i{font-style:normal;font-size:12px;letter-spacing:2px;color:var(--bc)}
+.boost.on{box-shadow:0 0 0 2px color-mix(in srgb,var(--bc) 45%,transparent);background:color-mix(in srgb,var(--bc) 12%,var(--wall))}
+.boost:disabled{opacity:.55;cursor:not-allowed}
+.preset{display:inline-flex;align-items:center;gap:4px;margin-right:6px}
 #webName{font:inherit;width:170px;max-width:100%;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:6px 10px}
 #devPass{font:inherit;width:220px;max-width:100%;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}
 input[type=number]{font:inherit;width:110px;background:var(--stone);color:var(--text);border:1px solid var(--edge);border-radius:8px;padding:7px 10px}
@@ -509,6 +515,7 @@ h3{font-family:var(--body);font-weight:800;font-size:17px}
       </nav>
 
       <div class="tabpanel" id="panel-train" role="tabpanel">
+        <div class="box" id="boostBox" data-lock="boost"></div>
         <div class="shophead">
           <h2>Training</h2>
           <div class="amt" role="group" aria-label="How many to buy">
@@ -535,6 +542,7 @@ h3{font-family:var(--body);font-weight:800;font-size:17px}
         </div>
         <div class="box eqd" id="eqDetail"></div>
         <div class="shophead"><h3>Collection</h3><div class="row"><button class="pill" id="mergeAll" type="button">Merge all</button><button class="pill" id="mergeEvery" type="button">Merge every slot</button><button class="pill" id="equipBest" type="button">Equip best</button><button class="pill" id="autoEq" type="button" aria-pressed="true">Auto-equip: on</button></div></div>
+        <div class="row" id="presetBox" data-lock="presets"></div>
         <p class="hint" id="eqOwned"></p>
         <div class="eqgrid" id="eqGrid"></div>
         <p class="hint">Every piece you've ever found gives its <b>owned</b> effect, even when it isn't equipped and even after merging it away. Merge 5 copies into 1 of the next piece. Level pieces up with shards. Your whole collection stays when you retire.</p>
@@ -624,6 +632,7 @@ h3{font-family:var(--body);font-weight:800;font-size:17px}
 
       <div class="tabpanel" id="panel-quests" role="tabpanel" hidden>
         <div class="box"><div class="shophead"><h3>Daily chest</h3><span class="lbl" id="dailyLbl"></span></div><p id="dailyText"></p><div class="row"><button class="act heal" id="dailyBtn" type="button">Open daily chest</button></div></div>
+        <div class="box" id="afkBox" data-lock="afk"></div>
         <div class="box" id="mileBox"></div>
         <p class="hint" id="comingUp"></p>
         <div class="box" id="weeklyBox" data-lock="weekly"></div>
